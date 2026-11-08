@@ -1,6 +1,6 @@
-# ☀️ HELIOS: Autonomous AI Solar Storm Predictor & Early Warning System
+# ☀️ HELIOS: Open-Source Artificial Intelligence (AI) Models for Real-Time Solar Storm Prediction
 
-> **Real-Time Space Weather AI: Forecasting severe geomagnetic storms, Coronal Mass Ejection (CME) transit times, and power grid threats before they reach Earth.**
+> **A Dual-Scale Ensemble of Artificial Intelligence (AI) Models Forecasting Severe Solar Storms, Coronal Mass Ejection (CME) Arrival Times, and Geomagnetic Blackouts from Live Satellite Telemetry.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
@@ -13,7 +13,7 @@
 
 ## ⚡ What is HELIOS?
 
-**HELIOS** (*Heliospheric Environment & Learning for In-situ Operational Storms*) is an open-source, edge-native AI system built to predict dangerous solar storms before they trigger catastrophic Geomagnetically Induced Currents (GICs) in terrestrial electric grids, degrade GPS accuracy, or induce high-altitude radiation blackouts for commercial aviation.
+**HELIOS** (*Heliospheric Environment & Learning for In-situ Operational Storms*) is an open-source suite of **Artificial Intelligence (AI) models** engineered to predict dangerous solar storms before they trigger catastrophic Geomagnetically Induced Currents (GICs) in terrestrial electric grids, degrade GPS accuracy, or induce high-altitude radiation blackouts for commercial aviation.
 
 Connecting directly to real-time satellite telemetry from **NASA** and **NOAA Space Weather Prediction Center (SWPC)** at the Sun-Earth Lagrangian point L1 (DSCOVR & ACE spacecraft), HELIOS solves the space weather prediction challenge through two synchronized forecasting engines:
 
