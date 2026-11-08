@@ -1,0 +1,24 @@
+{
+  "model_type": "HeliosBiLSTM",
+  "base_checkpoint": "models/helios_bilstm_mps.pt",
+  "base_sha256": "ea3686ed17afd499ffbc42f74f7859d01edfa0a24a8d34ebbdcbb0f6f4ebaee2",
+  "edited_checkpoint": "models/helios_bilstm_edited.pt",
+  "edited_sha256": "19b0e99155184ba408c5a94cc27dfbb182af050225254d085f7c82d6945d3aa5",
+  "operations_count": 2,
+  "transaction_log": [
+    {
+      "op": "extreme_surge_amplifier",
+      "layer": "fc.2.weight",
+      "surge_factor": 0.08,
+      "prev_norm": 2.0651886463165283,
+      "new_norm": 2.2304036617279053
+    },
+    {
+      "op": "storm_bias_shift",
+      "layer": "fc.2.bias",
+      "delta": 0.6000000000000001,
+      "prev_value": -0.1453254073858261,
+      "new_value": 0.4546746015548706
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "model_type": "HeliosTransitNN",
+  "base_checkpoint": "models/helios_transit_mps.pt",
+  "base_sha256": "8085312a2975be5e59e6bd257ddf6bdc9431b49f73578beb24651035df621b72",
+  "edited_checkpoint": "models/helios_transit_edited.pt",
+  "edited_sha256": "afb28a1eb3dc83edc390187a572aca73ddfda51e6689246cc2c383ffecd9a3eb",
+  "operations_count": 1,
+  "transaction_log": [
+    {
+      "op": "hypersonic_transit_gain",
+      "layer": "fc.weight",
+      "gain_factor": 0.009999999999999981,
+      "prev_norm": 3.2819020748138428,
+      "new_norm": 3.31472110748291
+    }
+  ]
+}
