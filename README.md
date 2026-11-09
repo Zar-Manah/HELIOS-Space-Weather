@@ -130,7 +130,8 @@ HELIOS-Space-Weather/
 │   └── helios_evaluation_metrics.json# Unseen Cycle 25 OOD quantitative metrics
 └── paper/
     ├── manuscript.md                 # Formal peer-reviewed preprint text
-    └── HELIOS_Solar_Storm_Conformal_Forecasting.pdf # Complete 6-Page Publication PDF
+    ├── HELIOS_2_Solar_Vision_Swiss_Watch.pdf # HELIOS 2.0 4-Tier Solar Vision Publication PDF
+    └── HELIOS_Solar_Storm_Conformal_Forecasting.pdf # Complete Publication PDF
 ```
 
 ---

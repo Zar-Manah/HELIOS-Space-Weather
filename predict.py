@@ -189,11 +189,11 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1):
     
     with torch.no_grad():
         x_tensor = torch.tensor(scaled_nn.reshape(1, -1), dtype=torch.float32)
-        pred_h_mok = float(net(x_tensor)[0])
+        pred_h_mok = max(16.0, float(net(x_tensor)[0]))
         
     # 4. Dynamic Regime Ensemble
     w_dyn = 0.45 + 0.45 / (1.0 + np.exp(-(speed - 950.0) / 100.0))
-    pred_h = w_dyn * pred_h_mok + (1.0 - w_dyn) * pred_h_tree
+    pred_h = max(16.0, w_dyn * pred_h_mok + (1.0 - w_dyn) * pred_h_tree)
     
     # 5. Conformal Coverage Window
     q_margin = 16.0
