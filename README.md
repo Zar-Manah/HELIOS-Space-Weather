@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
-[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24061452-blue.svg)](https://doi.org/10.5281/zenodo.24061452)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24090519-blue.svg)](https://doi.org/10.5281/zenodo.24090519)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
 ---
@@ -147,8 +147,8 @@ If you utilize HELIOS in space weather research, electric grid protection, or sa
   journal={Zenodo Preprints},
   year={2026},
   publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24061452},
-  url={https://doi.org/10.5281/zenodo.24061452}
+  doi={10.5281/zenodo.24090519},
+  url={https://doi.org/10.5281/zenodo.24090519}
 }
 ```
 
