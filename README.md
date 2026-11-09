@@ -1,6 +1,6 @@
-# ☀️ HELIOS 2.0: Solar Vision & 4-Gear Swiss Watch AI Early-Warning System for Space Weather
+# ☀️ HELIOS 2.0: Open-Source Artificial Intelligence (AI) Models for Real-Time Solar Storm Prediction
 
-> **An Autonomous, Multi-Horizon Space Weather Early-Warning Architecture Coupling Coronal Chirality, Planetary CME Shock Transit, and L1 In-Situ Conformal Forecasting Across Solar Cycles 23–25.**
+> **An Open-Source Suite of Artificial Intelligence (AI) Models Engineered to Predict Dangerous Solar Storms, Coronal Mass Ejection (CME) Arrival Times, and Geomagnetic Disruptions from Live Satellite Telemetry.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
@@ -14,9 +14,9 @@
 
 ## ⚡ What is HELIOS 2.0?
 
-**HELIOS 2.0** (*Heliospheric Environment & Learning for In-situ Operational Storms*) is an autonomous, open-source space weather early-warning pipeline designed to eliminate the multi-hour computational latency and high false-alarm rates of legacy numerical magnetohydrodynamic (MHD) pipelines (such as NOAA/NASA WSA-ENLIL).
+**HELIOS 2.0** (*Heliospheric Environment & Learning for In-situ Operational Storms*) is an open-source suite of **Artificial Intelligence (AI) models** engineered to predict dangerous **solar storms**, coronal mass ejection (CME) shock arrival times, and space weather blackouts before they impact Earth.
 
-Operating as a synchronized **4-Gear "Swiss Watch" architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **$<25$ milliseconds on consumer-grade hardware (Apple Silicon M4 GPU)** with zero cloud dependencies or supercomputing queues.
+Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **$<25$ milliseconds on consumer-grade hardware (Apple Silicon M4 GPU)** with zero cloud dependencies or supercomputing queues.
 
 ```
        ☀️ SUN (t = 0)                    🛰️ INTERPLANETARY (24–72h)              🌍 L1 & EARTH (0–6h)
