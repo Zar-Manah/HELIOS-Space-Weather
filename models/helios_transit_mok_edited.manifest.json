@@ -1,31 +1,17 @@
 {
   "model_type": "MoKTransitNN",
-  "base_checkpoint": "models/helios_transit_mok_mps.pt",
+  "base_checkpoint": "campaigns/SOLAR-HELIOS-01/models/helios_transit_mok_mps.pt",
   "base_sha256": "c935bada0e352f7fc571df56a71b4a100c3135b278db0bebddeaf4cfebe29e3a",
-  "edited_checkpoint": "models/helios_transit_mok_edited.pt",
-  "edited_sha256": "47147029f3f393006ced5dce78f3d6f95b61c97668749f20ea8a5aca420de037",
-  "operations_count": 3,
+  "edited_checkpoint": "campaigns/SOLAR-HELIOS-01/models/helios_transit_mok_edited.pt",
+  "edited_sha256": "65f39975ac22c794e0e702c71d356ba73838ece2b29b098b7e9a6fa6b4caea4e",
+  "operations_count": 1,
   "transaction_log": [
-    {
-      "op": "hypersonic_transit_gain",
-      "layer": "expert_fast_head.weight",
-      "gain_factor": 0.14,
-      "prev_norm": 2.97538423538208,
-      "new_norm": 3.3919379711151123
-    },
     {
       "op": "transit_bias_shift",
       "layer": "expert_fast_head.bias",
-      "delta_hours": -4.75,
+      "delta_hours": -0.15,
       "prev_value": 0.48177409172058105,
-      "new_value": -4.26822566986084
-    },
-    {
-      "op": "transit_bias_shift",
-      "layer": "expert_slow_head.bias",
-      "delta_hours": -1.0,
-      "prev_value": 0.5199515223503113,
-      "new_value": -0.4800484776496887
+      "new_value": 0.3317740857601166
     }
   ]
 }
