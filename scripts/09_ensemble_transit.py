@@ -13,9 +13,9 @@ import numpy as np
 import pandas as pd
 import joblib
 
-DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_cme_transit_matched.parquet"
-MODELS_DIR = os.path.join(BASE_DIR, "models"
-RESULTS_DIR = os.path.join(BASE_DIR, "results"
+DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_cme_transit_matched.parquet")
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
 df = pd.read_parquet(DATA_PATH)
 L_AU = 1.495978707e8

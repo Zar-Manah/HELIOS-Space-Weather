@@ -12,8 +12,8 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 
-RAW_FILE = os.path.join(BASE_DIR, "data/raw/omni2_all_years.dat"
-OUTPUT_DIR = os.path.join(BASE_DIR, "data/processed"
+RAW_FILE = os.path.join(BASE_DIR, "data/raw/omni2_all_years.dat")
+OUTPUT_DIR = os.path.join(BASE_DIR, "data/processed")
 OUTPUT_PARQUET = os.path.join(OUTPUT_DIR, "helios_omni_features_1998_2026.parquet")
 OUTPUT_CSV_SAMPLE = os.path.join(OUTPUT_DIR, "helios_omni_sample.csv")
 

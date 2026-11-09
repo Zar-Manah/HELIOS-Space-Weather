@@ -16,9 +16,9 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_omni_features_1998_2026.parquet"
-MODELS_DIR = os.path.join(BASE_DIR, "models"
-RESULTS_DIR = os.path.join(BASE_DIR, "results"
+DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_omni_features_1998_2026.parquet")
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
 os.makedirs(MODELS_DIR, exist_ok=True)
 

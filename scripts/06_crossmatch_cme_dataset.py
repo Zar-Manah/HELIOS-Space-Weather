@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
 
-RAW_DIR = os.path.join(BASE_DIR, "data/raw"
-PROCESSED_DIR = os.path.join(BASE_DIR, "data/processed"
+RAW_DIR = os.path.join(BASE_DIR, "data/raw")
+PROCESSED_DIR = os.path.join(BASE_DIR, "data/processed")
 CDAW_FILE = os.path.join(RAW_DIR, "cdaw_univ_all.txt")
 ICME_FILE = os.path.join(RAW_DIR, "icmetable2.htm")
 OUTPUT_PARQUET = os.path.join(PROCESSED_DIR, "helios_cme_transit_matched.parquet")

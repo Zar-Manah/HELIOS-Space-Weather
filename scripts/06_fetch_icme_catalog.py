@@ -14,8 +14,8 @@ from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
 
-RAW_DIR = os.path.join(BASE_DIR, "data/raw"
-PROCESSED_DIR = os.path.join(BASE_DIR, "data/processed"
+RAW_DIR = os.path.join(BASE_DIR, "data/raw")
+PROCESSED_DIR = os.path.join(BASE_DIR, "data/processed")
 OUTPUT_PARQUET = os.path.join(PROCESSED_DIR, "helios_icme_transit_1996_2026.parquet")
 OUTPUT_CSV = os.path.join(PROCESSED_DIR, "helios_icme_transit_sample.csv")
 

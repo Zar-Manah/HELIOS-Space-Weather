@@ -16,8 +16,8 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_cme_transit_matched.parquet"
-MODELS_DIR = os.path.join(BASE_DIR, "models"
+DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_cme_transit_matched.parquet")
+MODELS_DIR = os.path.join(BASE_DIR, "models")
 CHECKPOINT_PATH = os.path.join(MODELS_DIR, "helios_transit_mok_mps.pt")
 
 os.makedirs(MODELS_DIR, exist_ok=True)

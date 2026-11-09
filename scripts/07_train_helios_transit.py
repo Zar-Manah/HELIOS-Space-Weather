@@ -19,9 +19,9 @@ import lightgbm as lgb
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
-DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_cme_transit_matched.parquet"
-MODELS_DIR = os.path.join(BASE_DIR, "models"
-RESULTS_DIR = os.path.join(BASE_DIR, "results"
+DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_cme_transit_matched.parquet")
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+RESULTS_DIR = os.path.join(BASE_DIR, "results")
 FIGURES_DIR = os.path.join(RESULTS_DIR, "figures")
 
 os.makedirs(MODELS_DIR, exist_ok=True)

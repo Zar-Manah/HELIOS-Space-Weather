@@ -15,8 +15,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_omni_features_1998_2026.parquet"
-RESULTS_DIR = os.path.join(BASE_DIR, "results"
+DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_omni_features_1998_2026.parquet")
+RESULTS_DIR = os.path.join(BASE_DIR, "results")
 FIGURES_DIR = os.path.join(RESULTS_DIR, "figures")
 METRICS_FILE = os.path.join(RESULTS_DIR, "helios_evaluation_metrics.json")
 IMPORTANCE_FILE = os.path.join(RESULTS_DIR, "feature_importance.csv")
