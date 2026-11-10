@@ -120,15 +120,20 @@ python3 scripts/helios_swiss_orchestrator.py
 ✅ All 4 gears loaded into GPU memory in 22.4 ms.
 🛰️ Ingesting NOAA SWPC and SDO/SOHO satellite telemetry...
 ---------------------------------------------------------------------------------
-⚙️  GEAR 1 & 2 [SUN]:      P(South) = 45.2% | P(Severe) = 28.4% -> 🟢 QUIET / SAFE
-⚙️  GEAR 3 [TRANSIT]:     ETA = 54.2h [Conformal Window: ±6.5h]
-⚙️  GEAR 4 [L1 IN-SITU]:  Dst +1h = -18.2 nT | Bz = +2.4 nT
->>> MISSION VERDICT: 🟢 GREEN PROTOCOL (SAFE TRANSIT)
+⚙️  GEARS 1 & 2 [SUN]:      P(South) = 45.2% | P(Severe) = 28.4% -> 🟢 QUIET / SAFE
+⚙️  GEAR 3 [TRANSIT]:       ETA = 54.2h [Conformal Window: ±6.5h]
+⚙️  GEAR 4 [L1 IN-SITU]:    Dst +1h = -18.2 nT | Bz = +2.4 nT
+>>> MISSION CONTROL VERDICT: 🟢 GREEN PROTOCOL (SAFE TRANSIT)
 ```
 
 ### 2. Run Comprehensive Randomized Stress Battery
 ```bash
 python3 scripts/17_randomized_stress_battery.py
+```
+
+### 3. Export to NASA CCMC Earth CME Scoreboard JSON Format
+```bash
+python3 scripts/export_ccmc_scoreboard.py --demo
 ```
 
 ---
