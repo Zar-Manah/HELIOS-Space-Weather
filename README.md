@@ -1,4 +1,4 @@
-# ☀️ HELIOS 2.0: Open-Source Artificial Intelligence (AI) Models for Real-Time Solar Storm Prediction
+# ☀️ HELIOS 2.0: Plug-and-Play Open-Source Artificial Intelligence (AI) Models for Real-Time Solar Storm Prediction
 
 > **An Open-Source Suite of Artificial Intelligence (AI) Models Engineered to Predict Dangerous Solar Storms, Coronal Mass Ejection (CME) Arrival Times, and Geomagnetic Disruptions from Live Satellite Telemetry.**
 
@@ -9,6 +9,15 @@
 [![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24090519-blue.svg)](https://doi.org/10.5281/zenodo.24090519)
 [![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
+
+---
+
+> ### ⚡ Universal Plug-and-Play Execution (Zero Install, All Devices)
+> **Run the full synchronized 4-gear AI architecture in 1 click on any platform (Mac, Windows, Linux, iOS, Android):**  
+> Simply download and open **[`Zar-Manah_HELIOS.html`](Zar-Manah_HELIOS.html)** in any web browser.  
+> *• Zero dependencies / Zero Python setup • Live NOAA SWPC & NASA SDO/SOHO streaming in volatile RAM • Sub-25ms inference.*  
+>  
+> *Prefer CLI / Terminal? Run:* `python3 scripts/helios_swiss_orchestrator.py`
 
 ---
 
