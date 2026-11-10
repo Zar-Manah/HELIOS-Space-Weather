@@ -163,7 +163,7 @@ def run_stress_battery(n_per_class=6, random_seed=42):
             results.append(res_dict)
             
             print(f"{status_icon} Evento #{idx} ({t_launch_str[:16]} UTC | V_launch: {v_launch:.0f} km/s):")
-            print(f"   • GROUND TRUTH: Dst={gt_dst:.0f} nT | Bz={gt_bz:.1f} nT | Tránsito={gt_transit:.1f} h")
+            print(f"   • GROUND TRUTH: Dst={gt_dst:.0f} nT | Bz={gt_bz:.1f} nT | Transit={gt_transit:.1f} h")
             print(f"   • GEAR 1 (Solar Bz):      P(Sur)={res['bz_prob_south']*100:.1f}% -> Pred: {'SUR (Peligro)' if res['is_bz_south'] else 'NORTE (Seguro)'} [Q50: {res['bz_q50']:.1f} nT]")
             print(f"   • GEAR 2 (Dst Severity): P(Sev)={res['storm_prob_severe']*100:.1f}% -> Pred: {'SEVERA (G3+)' if res['is_severe_storm'] else 'MODERADA/LEVE'} [Q50: {res['dst_q50']:.0f} nT]")
             print(f"   • GEAR 3 (3D Transit):   Pred={res['transit_hours']:.1f} h (Error: {transit_err:.1f} h | Ventana ±6.5h: {'DENTRO ✅' if g3_window_ok else 'FUERA'})")
@@ -204,13 +204,13 @@ def run_stress_battery(n_per_class=6, random_seed=42):
     print(f"   • Unjustified Panic (G5 False Positive):     {fa_false_panic}/{len(fa_res)} ({fa_false_panic/len(fa_res)*100:.1f}%)")
     print(f"   • SUCCESSFUL MITIGATION RATE (Green + Yellow): {(fa_defused + fa_moderated)/len(fa_res)*100:.1f}%")
     
-    print(f"\n3. PRECISIÓN CINEMÁTICA DE TRÁNSITO 3D (MoKTransitNN):")
+    print(f"\n3. 3D TRANSIT KINEMATICS ACCURACY (MoKTransitNN):")
     print(f"   • Error Medio Absoluto (MAE):    {mean_transit_err_overall:.2f} horas")
     print(f"   • Error Mediano Absoluto:         {median_transit_err_overall:.2f} horas")
     print(f"   • Casos con Error <= 6.5 horas:   {(df_res['transit_err'] <= 6.5).sum()}/{len(df_res)} ({(df_res['transit_err'] <= 6.5).mean()*100:.1f}%)")
     
     print("\n" + "=" * 95)
-    print("📋 TABLA RESUMEN DE LA BATERÍA COMPLETA:")
+    print("📋 CONSOLIDATED OPERATIONAL BATTERY SUMMARY TABLE:")
     print("=" * 95)
     print(f"{'Idx':<4} | {'Fecha Launch':<16} | {'V(km/s)':<7} | {'GT Dst':<6} | {'GT Bz':<5} | {'GT Tr':<5} | {'Pr Tr':<5} | {'Err(h)':<6} | {'P(Sur)':<6} | {'P(Sev)':<6} | {'Veredicto':<20}")
     print("-" * 95)
