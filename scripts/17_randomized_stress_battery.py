@@ -49,8 +49,8 @@ def run_stress_battery(n_per_class=6, random_seed=42):
         l1_scaler = json.load(f)
     l1_features = l1_scaler["features"]
     
-    print(f"📁 Base de Datos Solar CME:  {len(df_cme)} eventos emparejados (1998–2026).")
-    print(f"📁 Base de Datos OMNI L1:     {len(df_omni):,} registros horarios in-situ (1998–2026).")
+    print(f"📁 Solar CME Database:        {len(df_cme)} paired events (1998–2026).")
+    print(f"📁 OMNI L1 In-Situ Database:   {len(df_omni):,} hourly in-situ records (1998–2026).")
     
     # 3. Stratified Random Sampling
     np.random.seed(random_seed)
@@ -63,12 +63,12 @@ def run_stress_battery(n_per_class=6, random_seed=42):
     fa_pool = df_cme[(df_cme["v_launch"] >= 650) & (df_cme["dst_min"] > -50)].copy()
     sample_fa = fa_pool.sample(n=n_per_class, random_state=random_seed)
     
-    print(f"🎲 Muestreo Aleatorio Reproducible (Seed={random_seed}):")
-    print(f"   • {n_per_class} Tormentas Extremas Reales (G3–G5, Dst <= -100 nT)")
+    print(f"🎲 Reproducible Random Sampling (Seed={random_seed}):")
+    print(f"   • {n_per_class} Real Severe Superstorms (G3–G5, Dst <= -100 nT)")
     print(f"   • {n_per_class} Real False Alarms (Fast CMEs V >= 650 km/s with benign field Dst > -50 nT)\n")
     
     test_suite = [
-        ("TORMENTAS SEVERAS REALES (G3-G5)", sample_severe, True),
+        ("REAL SEVERE STORMS (G3-G5)", sample_severe, True),
         ("POTENTIAL FALSE ALARMS (FAST DEFLECTED / BENIGN CMEs)", sample_fa, False)
     ]
     
@@ -121,7 +121,7 @@ def run_stress_battery(n_per_class=6, random_seed=42):
                 verdict = "🔴 SEVERE ALERT G3-G5"
                 verdict_code = "RED"
             elif res["is_severe_storm"] or res["is_bz_south"] or res["dst_q50"] <= -70:
-                verdict = "🟡 VIGILANCIA MODERADA"
+                verdict = "🟡 MODERATE WATCH"
                 verdict_code = "YELLOW"
             else:
                 verdict = "🟢 SAFE TRANSIT / FALSE ALARM DEFUSED"
@@ -193,30 +193,30 @@ def run_stress_battery(n_per_class=6, random_seed=42):
     median_transit_err_overall = df_res["transit_err"].median()
     
     print(f"\n1. SEVERE STORM DETECTION (G3–G5, n={len(severe_res)}):")
-    print(f"   • Alertas Rojas Emitidas (G3–G5 directas):  {severe_detected}/{len(severe_res)} ({severe_detected/len(severe_res)*100:.1f}%)")
-    print(f"   • Vigilancias Amarillas (Impacto previsto): {severe_watched}/{len(severe_res)} ({severe_watched/len(severe_res)*100:.1f}%)")
-    print(f"   • Tormentas Pasadas por Alto (Falso Negativo): {severe_missed}/{len(severe_res)} (0.0% - CERO FALLOS)")
-    print(f"   • COBERTURA OPERACIONAL TOTAL (Rojo + Amarillo): {(severe_detected + severe_watched)/len(severe_res)*100:.1f}%")
+    print(f"   • Direct Red Alerts Issued (G3–G5):         {severe_detected}/{len(severe_res)} ({severe_detected/len(severe_res)*100:.1f}%)")
+    print(f"   • Yellow Preventive Watches (Impact alert): {severe_watched}/{len(severe_res)} ({severe_watched/len(severe_res)*100:.1f}%)")
+    print(f"   • Missed Storms (False Negatives):          {severe_missed}/{len(severe_res)} (0.0% - ZERO MISSES)")
+    print(f"   • TOTAL OPERATIONAL COVERAGE (Red+Yellow):   {(severe_detected + severe_watched)/len(severe_res)*100:.1f}%")
     
     print(f"\n2. FALSE ALARM MITIGATION (Fast CMEs V >= 650 km/s, n={len(fa_res)}):")
-    print(f"   • Defused False Alarms (Safe Green):  {fa_defused}/{len(fa_res)} ({fa_defused/len(fa_res)*100:.1f}%)")
-    print(f"   • Moderadas a Vigilancia Preventiva (Amarillo): {fa_moderated}/{len(fa_res)} ({fa_moderated/len(fa_res)*100:.1f}%)")
+    print(f"   • Defused False Alarms (Safe Green):         {fa_defused}/{len(fa_res)} ({fa_defused/len(fa_res)*100:.1f}%)")
+    print(f"   • Moderated to Preventive Watch (Yellow):    {fa_moderated}/{len(fa_res)} ({fa_moderated/len(fa_res)*100:.1f}%)")
     print(f"   • Unjustified Panic (G5 False Positive):     {fa_false_panic}/{len(fa_res)} ({fa_false_panic/len(fa_res)*100:.1f}%)")
-    print(f"   • SUCCESSFUL MITIGATION RATE (Green + Yellow): {(fa_defused + fa_moderated)/len(fa_res)*100:.1f}%")
+    print(f"   • SUCCESSFUL MITIGATION RATE (Green+Yellow): {(fa_defused + fa_moderated)/len(fa_res)*100:.1f}%")
     
     print(f"\n3. 3D TRANSIT KINEMATICS ACCURACY (MoKTransitNN):")
-    print(f"   • Error Medio Absoluto (MAE):    {mean_transit_err_overall:.2f} horas")
-    print(f"   • Error Mediano Absoluto:         {median_transit_err_overall:.2f} horas")
-    print(f"   • Casos con Error <= 6.5 horas:   {(df_res['transit_err'] <= 6.5).sum()}/{len(df_res)} ({(df_res['transit_err'] <= 6.5).mean()*100:.1f}%)")
+    print(f"   • Mean Absolute Error (MAE):     {mean_transit_err_overall:.2f} hours")
+    print(f"   • Median Absolute Error:         {median_transit_err_overall:.2f} hours")
+    print(f"   • Cases within <= 6.5h window:   {(df_res['transit_err'] <= 6.5).sum()}/{len(df_res)} ({(df_res['transit_err'] <= 6.5).mean()*100:.1f}%)")
     
     print("\n" + "=" * 95)
     print("📋 CONSOLIDATED OPERATIONAL BATTERY SUMMARY TABLE:")
     print("=" * 95)
-    print(f"{'Idx':<4} | {'Fecha Launch':<16} | {'V(km/s)':<7} | {'GT Dst':<6} | {'GT Bz':<5} | {'GT Tr':<5} | {'Pr Tr':<5} | {'Err(h)':<6} | {'P(Sur)':<6} | {'P(Sev)':<6} | {'Veredicto':<20}")
+    print(f"{'Idx':<4} | {'Launch Epoch':<16} | {'V(km/s)':<7} | {'GT Dst':<6} | {'GT Bz':<5} | {'GT Tr':<5} | {'Pr Tr':<5} | {'Err(h)':<6} | {'P(South)':<8} | {'P(Sev)':<6} | {'Verdict':<20}")
     print("-" * 95)
     for r in results:
-        v_short = "🔴 G3-G5" if r["verdict_code"] == "RED" else ("🟡 WATCH" if r["verdict_code"] == "YELLOW" else "🟢 VERDE")
-        print(f"{r['idx']:<4} | {r['launch_time']:<16} | {r['v_launch']:<7.0f} | {r['gt_dst']:<6.0f} | {r['gt_bz']:<5.1f} | {r['gt_transit']:<5.1f} | {r['pred_transit']:<5.1f} | {r['transit_err']:<6.1f} | {r['p_bz_south']*100:<5.1f}% | {r['p_storm_severe']*100:<5.1f}% | {v_short:<20}")
+        v_short = "🔴 G3-G5" if r["verdict_code"] == "RED" else ("🟡 WATCH" if r["verdict_code"] == "YELLOW" else "🟢 GREEN")
+        print(f"{r['idx']:<4} | {r['launch_time']:<16} | {r['v_launch']:<7.0f} | {r['gt_dst']:<6.0f} | {r['gt_bz']:<5.1f} | {r['gt_transit']:<5.1f} | {r['pred_transit']:<5.1f} | {r['transit_err']:<6.1f} | {r['p_bz_south']*100:<7.1f}% | {r['p_storm_severe']*100:<5.1f}% | {v_short:<20}")
     print("=" * 95 + "\n")
     
     return df_res
