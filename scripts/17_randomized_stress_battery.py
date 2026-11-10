@@ -162,12 +162,12 @@ def run_stress_battery(n_per_class=6, random_seed=42):
             }
             results.append(res_dict)
             
-            print(f"{status_icon} Evento #{idx} ({t_launch_str[:16]} UTC | V_launch: {v_launch:.0f} km/s):")
+            print(f"{status_icon} Event #{idx} ({t_launch_str[:16]} UTC | V_launch: {v_launch:.0f} km/s):")
             print(f"   • GROUND TRUTH: Dst={gt_dst:.0f} nT | Bz={gt_bz:.1f} nT | Transit={gt_transit:.1f} h")
-            print(f"   • GEAR 1 (Solar Bz):      P(Sur)={res['bz_prob_south']*100:.1f}% -> Pred: {'SUR (Peligro)' if res['is_bz_south'] else 'NORTE (Seguro)'} [Q50: {res['bz_q50']:.1f} nT]")
-            print(f"   • GEAR 2 (Dst Severity): P(Sev)={res['storm_prob_severe']*100:.1f}% -> Pred: {'SEVERA (G3+)' if res['is_severe_storm'] else 'MODERADA/LEVE'} [Q50: {res['dst_q50']:.0f} nT]")
-            print(f"   • GEAR 3 (3D Transit):   Pred={res['transit_hours']:.1f} h (Error: {transit_err:.1f} h | Ventana ±6.5h: {'DENTRO ✅' if g3_window_ok else 'FUERA'})")
-            print(f"   • GEAR 4 (L1 In-situ):    Dst +1h predicho = {l1_pred:.0f} nT")
+            print(f"   • GEAR 1 (Solar Bz):      P(South)={res['bz_prob_south']*100:.1f}% -> Pred: {'SOUTH (Hazard)' if res['is_bz_south'] else 'NORTH (Safe)'} [Q50: {res['bz_q50']:.1f} nT]")
+            print(f"   • GEAR 2 (Dst Severity): P(Severe)={res['storm_prob_severe']*100:.1f}% -> Pred: {'SEVERE (G3+)' if res['is_severe_storm'] else 'MODERATE/QUIET'} [Q50: {res['dst_q50']:.0f} nT]")
+            print(f"   • GEAR 3 (3D Transit):   Pred={res['transit_hours']:.1f} h (Error: {transit_err:.1f} h | ±6.5h Window: {'INSIDE ✅' if g3_window_ok else 'OUTSIDE'})")
+            print(f"   • GEAR 4 (L1 In-situ):    Predicted Dst +1h = {l1_pred:.0f} nT")
             print(f"   >>> MISSION VERDICT: {verdict}")
             print("-" * 95)
             
