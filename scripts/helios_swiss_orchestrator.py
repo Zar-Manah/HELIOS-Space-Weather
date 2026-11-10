@@ -118,7 +118,7 @@ class SwissWatchPipeline:
     """Master Orchestrator preloading all 4 gears into GPU memory."""
     def __init__(self):
         t0 = time.time()
-        print("🇨🇭 Inicializando HELIOS Swiss Watch Pipeline (Apple Silicon M4 GPU)...")
+        print("🇨🇭 Initializing HELIOS Swiss Watch Pipeline (Apple Silicon M4 GPU)...")
         
         # Gear 1 & Gear 2: Solar Vision Apex
         with open(M1_PATH, "rb") as f:
@@ -145,13 +145,13 @@ class SwissWatchPipeline:
             with open(BILSTM_SCALER_PATH, "r") as f:
                 self.bilstm_scaler = json.load(f)
         
-        print(f"✅ Los 4 engranajes cargados en memoria GPU en {(time.time() - t0)*1000:.1f} ms.")
+        print(f"✅ All 4 gears loaded into GPU memory in {(time.time() - t0)*1000:.1f} ms.")
 
     def run_inference(self, row, l1_sequence=None):
         """Runs the 4-tier cascaded pipeline with bidirectional feedback."""
         t_start = time.time()
         
-        # --- ENGRANAJE 1 & 2: EXTRACCIÓN SOLAR APEX ---
+        # --- GEAR 1 & 2: SOLAR APEX EXTRACTION ---
         v = row.get("v_launch", 500.0)
         loc = row.get("ar_location", None)
         if isinstance(loc, (tuple, list, np.ndarray)) and len(loc) == 2:
@@ -222,21 +222,21 @@ class SwissWatchPipeline:
         
         X_solar = np.hstack([phys_norm, r_norm, f_norm, c2_pca]).reshape(1, -1)
         
-        # --- ENGRANAJE 1 (QUIRALIDAD BZ) ---
+        # --- GEAR 1 (BZ CHIRALITY) ---
         prob_bz_south = float(self.m1_pkg["clf"].predict_proba(X_solar)[0, 1])
         is_bz_south = bool(prob_bz_south >= self.m1_pkg["decision_threshold"])
         q10_bz = float(self.m1_pkg["q10"].predict(X_solar)[0])
         q50_bz = float(self.m1_pkg["q50"].predict(X_solar)[0])
         q90_bz = float(self.m1_pkg["q90"].predict(X_solar)[0])
         
-        # --- ENGRANAJE 2 (SEVERIDAD DE TORMENTA) ---
+        # --- GEAR 2 (STORM SEVERITY) ---
         prob_storm = float(self.m2_pkg["clf"].predict_proba(X_solar)[0, 1])
         is_severe_storm = bool(prob_storm >= self.m2_pkg["decision_threshold"])
         q10_dst = float(self.m2_pkg["q10"].predict(X_solar)[0])
         q50_dst = float(self.m2_pkg["q50"].predict(X_solar)[0])
         q90_dst = float(self.m2_pkg["q90"].predict(X_solar)[0])
         
-        # --- ENGRANAJE 3 (CINEMÁTICA DE TRÁNSITO 3D) ---
+        # --- GEAR 3 (3D TRANSIT KINEMATICS) ---
         L_AU = 1.495978707e8
         v_amb = 420.0
         gamma = 1.0e-7
@@ -275,7 +275,7 @@ class SwissWatchPipeline:
         t_window_early = t_eta - timedelta(hours=delta_early)
         t_window_late = t_eta + timedelta(hours=delta_late)
             
-        # --- ENGRANAJE 4 (CONFIRMACIÓN IN-SITU L1 BI-LSTM) ---
+        # --- GEAR 4 (L1 IN-SITU BI-LSTM CONFIRMATION) ---
         if l1_sequence is not None and len(l1_sequence) == 24:
             with torch.no_grad():
                 seq_arr = np.array(l1_sequence, dtype=np.float32)
@@ -286,7 +286,7 @@ class SwissWatchPipeline:
                 seq_t = torch.tensor(seq_arr, dtype=torch.float32).unsqueeze(0).to(device)
                 pred_dst_1h = float(self.bilstm_model(seq_t).item())
         else:
-            # Emulación acoplada: modula la inyección de Burton usando la quiralidad del Engranaje 1
+            # Coupled emulation: modulates Burton injection using Gear 1 chirality
             coupling_factor = np.maximum(0.0, -q50_bz) * (v_3d / 1000.0)
             pred_dst_1h = q50_dst * (0.85 if is_bz_south else 0.45)
             
@@ -325,41 +325,41 @@ def print_swiss_report(name, res):
     print(f"📌 Evento Analizado: {name}")
     print("=" * 85)
     print(f"⏱️  Latencia de Inferencia Total en M4 GPU: {res['latency_ms']:.2f} ms")
-    print(f"📅 Momento de Detección Solar (t = 0):     {res['t_launch']}")
-    print(f"🚀 Cinemática Radial 3D Real (GCS):        {res['v_launch_3d']:.0f} km/s")
+    print(f"📅 Solar Detection Epoch (t = 0):        {res['t_launch']}")
+    print(f"🚀 3D Radial Kinematics (GCS):          {res['v_launch_3d']:.0f} km/s")
     print("-" * 85)
     
     # Gear 1 & 2
     status_bz = "🔴 AMENAZA SUR (Bz <= -10 nT)" if res["is_bz_south"] else "🟢 POLARIDAD NORTE (Segura)"
-    status_st = "🚨 ALERTA MAYOR G3-G4+ (Dst <= -110 nT)" if res["is_severe_storm"] else "✅ SIN RIESGO DE TORMENTA SEVERA"
+    status_st = "🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT)" if res["is_severe_storm"] else "✅ NO SEVERE STORM RISK"
     
-    print(f"⚙️  ENGRANAJE 1 & 2 [HORIZONTE 24–72h | SOL]:")
+    print(f"⚙️  GEAR 1 & 2 [24–72h HORIZON | SUN]:")
     print(f"   • Quiralidad Coronal:        {status_bz} (P_sur: {res['bz_prob_south']*100:.1f}%)")
     print(f"   • Rango Bz_min Conformal:    [{res['bz_conformal_range'][0]:.1f} nT, {res['bz_conformal_range'][1]:.1f} nT] (Mediana: {res['bz_q50']:.1f} nT)")
-    print(f"   • Severidad Geomagnética:    {status_st} (P_severa: {res['storm_prob_severe']*100:.1f}% | Exactitud OOD: 87.0%)")
+    print(f"   • Geomagnetic Severity:      {status_st} (P_severe: {res['storm_prob_severe']*100:.1f}% | OOD Accuracy: 87.0%)")
     print(f"   • Rango Dst_min Conformal:   [{res['dst_conformal_range'][0]:.0f} nT, {res['dst_conformal_range'][1]:.0f} nT] (Mediana: {res['dst_q50']:.0f} nT)")
     print("-" * 85)
     
     # Gear 3
-    print(f"⚙️  ENGRANAJE 3 [HORIZONTE 12–48h | TRÁNSITO INTERPLANETARIO]:")
+    print(f"⚙️  GEAR 3 [12–48h HORIZON | INTERPLANETARY TRANSIT]:")
     print(f"   • Tiempo de Vuelo Estimado:  {res['transit_hours']:.1f} horas (Error de llegada: ±6.5 horas)")
     print(f"   • Hora de Impacto Prevista:  {res['arrival_eta']} UTC")
-    print(f"   • Ventana Conformal de Caza: [{res['window_early']} -> {res['window_late']}]")
+    print(f"   • Conformal Search Window:   [{res['window_early']} -> {res['window_late']}]")
     if res["gt_transit"] > 0:
-        print(f"   • Tránsito Real Observado:   {res['gt_transit']:.1f} horas (Diferencia: {abs(res['transit_hours'] - res['gt_transit']):.1f} horas)")
+        print(f"   • Observed Ground Truth:     {res['gt_transit']:.1f} hours (Residual: {abs(res['transit_hours'] - res['gt_transit']):.1f} horas)")
     print("-" * 85)
     
     # Gear 4
-    print(f"⚙️  ENGRANAJE 4 [HORIZONTE 15–60 min | SATÉLITE L1 E IMPACTO TERRESTRE]:")
-    print(f"   • Telemetría BiLSTM L1:      Proyección Dst +1h = {res['l1_confirmed_dst_1h']:.0f} nT")
+    print(f"⚙️  GEAR 4 [15–60 min HORIZON | L1 SATELLITE & EARTH IMPACT]:")
+    print(f"   • L1 BiLSTM Telemetry:       Projected Dst +1h = {res['l1_confirmed_dst_1h']:.0f} nT")
     if res["gt_dst"] != 0.0:
         print(f"   • Ground Truth Registrado:   Dst = {res['gt_dst']:.0f} nT | Bz = {res['gt_bz']:.1f} nT")
     print("-" * 85)
     
     # Master Advisory
-    print(f"🛡️  VEREDICTO INTEGRADO DE MITIGACIÓN (CENTRO DE MANDO):")
+    print(f"🛡️  INTEGRATED MITIGATION VERDICT (MISSION CONTROL):")
     if res["is_severe_storm"] and res["is_bz_south"]:
-        print("   🔴 PROTOCOLO G5 ACTIVO: Acoplamiento magnetosférico violento confirmado.")
+        print("   🔴 ACTIVE G5 PROTOCOL: Violent magnetospheric coupling confirmed.")
         print(f"      Acciones: Reducción de carga de transformadores 1 hora antes de {res['arrival_eta']} UTC.")
     elif res["is_severe_storm"] and not res["is_bz_south"]:
         print("   🟠 PROTOCOLO CINÉTICO MODERADO: Frente de choque potente pero campo norteño.")
