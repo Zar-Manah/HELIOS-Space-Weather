@@ -180,7 +180,7 @@ def run_battery():
     print_live_report(live_summary, res_live, pred_l1_dst)
     
     print("=" * 85)
-    print("✅ BATERÍA DE PRUEBAS COMPLETADA AL 100%: TODOS LOS DATOS Y MODELOS VERIFICADOS")
+    print("✅ VERIFICATION BATTERY 100% COMPLETE: ALL DATA AND NEURAL MODELS VALIDATED")
     print("=" * 85)
 
 if __name__ == "__main__":
