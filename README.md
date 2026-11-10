@@ -14,7 +14,7 @@
 
 > ### ⚡ Universal Plug-and-Play Execution (Zero Install, All Devices)
 > **Run the full synchronized 4-gear AI architecture in 1 click on any platform (Mac, Windows, Linux, iOS, Android):**  
-> Simply download and open **[`Zar-Manah_HELIOS.html`](Zar-Manah_HELIOS.html)** in any web browser.  
+> 📥 **Single File to Download & Open:** **[`Zar-Manah_HELIOS.html`](Zar-Manah_HELIOS.html)** (double-click to open in any web browser).  
 > *• Zero dependencies / Zero Python setup • Live NOAA SWPC & NASA SDO/SOHO streaming in volatile RAM • Sub-25ms inference.*  
 >  
 > *Prefer CLI / Terminal? Run:* `python3 scripts/helios_swiss_orchestrator.py`
