@@ -549,7 +549,7 @@ def print_live_report(live_summary, res_solar, res_l1_dst):
     print("🛰️  HELIOS SWISS WATCH — REAL-TIME SPACE TELEMETRY (NOAA SWPC / L1)")
     print(f"⏰ Momento de Consulta: {live_summary['timestamp']}")
     print("=" * 85)
-    print(f"📡 CONDICIONES IN-SITU ACTUALES (SATÉLITES L1 ACE & DSCOVR):")
+    print(f"📡 CURRENT IN-SITU CONDITIONS (L1 ACE & DSCOVR SATELLITES):")
     print(f"   • Velocidad Viento Solar (V_sw):  {live_summary['v_sw']:.0f} km/s (Flujo de alta velocidad activo)")
     print(f"   • Interplanetary Magnetic Field:   Bt = {live_summary['bt']:.1f} nT | Bz = {live_summary['bz']:+.1f} nT")
     print(f"   • Kyoto Dst Geomagnetic Index:     {live_summary['dst']:.0f} nT (Nominal geomagnetic activity)")
