@@ -22,7 +22,7 @@ DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_vision_matched.parquet
 
 def run_battery():
     print("=" * 85)
-    print("🔬 BATERÍA DE PRUEBAS INTEGRAL HELIOS: DATOS HISTÓRICOS Y TELEMETRÍA EN VIVO")
+    print("🔬 HELIOS COMPREHENSIVE VERIFICATION BATTERY: HISTORICAL BENCHMARKS & LIVE TELEMETRY")
     print("=" * 85)
     
     # Initialize pipeline
@@ -31,32 +31,32 @@ def run_battery():
     print(f"🇨🇭 Orquestador Swiss Watch inicializado en {(time.time() - t_init)*1000:.1f} ms.\n")
     
     df = pd.read_parquet(DATA_PATH)
-    print(f"📁 Catálogo histórico cargado: {len(df)} eventos CME.")
+    print(f"📁 Historical catalog loaded: {len(df)} CME events.")
     
     # -------------------------------------------------------------
-    # FASE 1: AUDITORÍA DE INTEGRIDAD DE ENTRADA Y ESCALADO
+    # PHASE 1: INPUT INTEGRITY & TENSOR SCALING AUDIT
     # -------------------------------------------------------------
     print("\n" + "-" * 85)
-    print("🔍 [FASE 1/3] AUDITORÍA DE INTEGRIDAD DE DATOS Y TENSORES")
+    print("🔍 [PHASE 1/3] DATA & TENSOR INTEGRITY AUDIT")
     print("-" * 85)
     
     sample_row = df.iloc[278].to_dict() # May 2024 Superstorm
     res_sample = pipeline.run_inference(sample_row)
     
-    print(f"✅ Inferencia de prueba ejecutada con éxito en {res_sample['latency_ms']:.2f} ms.")
-    print(f"   • Vector Físico 13-dim:      Sin NaNs, escalado estándar verificado.")
-    print(f"   • Tensor Schrijver R-value:  3 componentes extraídas correctamente.")
+    print(f"✅ Benchmark inference executed successfully in {res_sample['latency_ms']:.2f} ms.")
+    print(f"   • 13-dim Physical Vector:    Zero NaNs, standard scaling verified.")
+    print(f"   • Schrijver R-value Tensor:  3 components correctly extracted.")
     print(f"   • Fluencia GOES Flare:       Calculada y normalizada.")
     print(f"   • Vector Visual C2 (PCA):    8 componentes proyectadas en GPU M4.")
     print(f"   • Vector Solar Combinado:    Exactamente 25 dimensiones (coincidencia 100% con modelo).")
-    print(f"   • Engranaje 3 (Tránsito):    Escalado de 8 canales + Drag prior aerodinámico verificado.")
-    print(f"   • Engranaje 4 (L1 BiLSTM):   Escalador 'bilstm_scaler.json' verificado para 14 canales.")
+    print(f"   • Gear 3 (Transit):          8-channel scaling + aerodynamic drag prior verified.")
+    print(f"   • Gear 4 (L1 BiLSTM):        Scaler 'bilstm_scaler.json' verified for 14 channels.")
     
     # -------------------------------------------------------------
-    # FASE 2: BATERÍA DE 5 EVENTOS HISTÓRICOS CON GROUND TRUTH
+    # PHASE 2: 5 HISTORICAL EVENTS WITH KNOWN GROUND TRUTH
     # -------------------------------------------------------------
     print("\n" + "-" * 85)
-    print("🏛️ [FASE 2/3] VALIDACIÓN CON EVENTOS HISTÓRICOS (GROUND TRUTH CONOCIDO)")
+    print("🏛️ [PHASE 2/3] VALIDATION WITH HISTORICAL EVENTS (KNOWN GROUND TRUTH)")
     print("-" * 85)
     
     test_cases = [
@@ -72,24 +72,24 @@ def run_battery():
             "idx": 100,
             "expected_storm": True,
             "expected_bz_south": True,
-            "desc": "Evento extremo con Dst -422 nT y tránsito de 47h. Debe activar ALERTA G5."
+            "desc": "Extreme event with Dst -422 nT and 47h transit. Must trigger G5 ALERT."
         },
         {
-            "name": "3. CME Hipersónica 29 Octubre 2003 (2461 km/s - Falsa Alarma)",
+            "name": "3. Hypersonic CME Oct 29, 2003 (2461 km/s - False Alarm)",
             "idx": 99,
             "expected_storm": False,
             "expected_bz_south": False,
-            "desc": "CME récord de velocidad pero campo norteño inofensivo. DEBE FILTRAR FALSA ALARMA."
+            "desc": "Record speed CME with benign northward field. MUST FILTER FALSE ALARM."
         },
         {
             "name": "4. CME Moderada 14 Mayo 2024 (Ciclo 25 OOD - Dst -88 nT)",
             "idx": 280,
             "expected_storm": False,
             "expected_bz_south": False,
-            "desc": "Erupción normal de Ciclo 25. No debe superar el umbral de tormenta severa."
+            "desc": "Standard Solar Cycle 25 eruption. Must not exceed severe storm threshold."
         },
         {
-            "name": "5. Evento Solar Tranquilo (17 Enero 1998 - Línea Base)",
+            "name": "5. Quiet Solar Baseline (Jan 17, 1998 - Baseline)",
             "idx": 1,
             "expected_storm": False,
             "expected_bz_south": False,
@@ -120,15 +120,15 @@ def run_battery():
         })
         print_swiss_report(tc["name"], res)
         
-    print("\n📊 RESUMEN DE LA BATERÍA HISTÓRICA:")
+    print("\n📊 HISTORICAL BATTERY SUMMARY:")
     for ar in audit_results:
-        print(f"  • {ar['name']:55s} | Veredicto: {ar['status']} (P_sev: {ar['p_storm']*100:.1f}%, P_sur: {ar['p_bz']*100:.1f}%)")
+        print(f"  • {ar['name']:55s} | Verdict: {ar['status']} (P_sev: {ar['p_storm']*100:.1f}%, P_south: {ar['p_bz']*100:.1f}%)")
 
     # -------------------------------------------------------------
-    # FASE 3: PRUEBA EN VIVO CON SENSORES Y SATÉLITES ACTUALES
+    # PHASE 3: LIVE BENCHMARK WITH CURRENT SATELLITES
     # -------------------------------------------------------------
     print("\n" + "-" * 85)
-    print("🛰️ [FASE 3/3] PRUEBA EN TIEMPO REAL CON SATÉLITES SDO, SOHO, GOES Y ACE/DSCOVR")
+    print("🛰️ [PHASE 3/3] REAL-TIME BENCHMARK WITH SDO, SOHO, GOES AND ACE/DSCOVR SATELLITES")
     print("-" * 85)
     
     t_live_start = time.time()
