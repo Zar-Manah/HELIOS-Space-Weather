@@ -28,7 +28,7 @@ def run_battery():
     # Initialize pipeline
     t_init = time.time()
     pipeline = SwissWatchPipeline()
-    print(f"🇨🇭 Orquestador Swiss Watch inicializado en {(time.time() - t_init)*1000:.1f} ms.\n")
+    print(f"🇨🇭 Swiss Watch Orchestrator initialized in {(time.time() - t_init)*1000:.1f} ms.\n")
     
     df = pd.read_parquet(DATA_PATH)
     print(f"📁 Historical catalog loaded: {len(df)} CME events.")
@@ -46,9 +46,9 @@ def run_battery():
     print(f"✅ Benchmark inference executed successfully in {res_sample['latency_ms']:.2f} ms.")
     print(f"   • 13-dim Physical Vector:    Zero NaNs, standard scaling verified.")
     print(f"   • Schrijver R-value Tensor:  3 components correctly extracted.")
-    print(f"   • Fluencia GOES Flare:       Calculada y normalizada.")
-    print(f"   • Vector Visual C2 (PCA):    8 componentes proyectadas en GPU M4.")
-    print(f"   • Vector Solar Combinado:    Exactamente 25 dimensiones (coincidencia 100% con modelo).")
+    print(f"   • GOES Flare Fluence:        Computed and normalized.")
+    print(f"   • Visual C2 Vector (PCA):    8 components projected on M4 GPU.")
+    print(f"   • Combined Solar Vector:     Exactly 25 dimensions (100% match with model).")
     print(f"   • Gear 3 (Transit):          8-channel scaling + aerodynamic drag prior verified.")
     print(f"   • Gear 4 (L1 BiLSTM):        Scaler 'bilstm_scaler.json' verified for 14 channels.")
     
