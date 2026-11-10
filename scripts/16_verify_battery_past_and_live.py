@@ -61,14 +61,14 @@ def run_battery():
     
     test_cases = [
         {
-            "name": "1. Supertormenta Solar Mayo 2024 (G5 - Ciclo 25 OOD)",
+            "name": "1. May 2024 Solar Superstorm (G5 - Cycle 25 OOD)",
             "idx": 278,
             "expected_storm": True,
             "expected_bz_south": True,
-            "desc": "El mayor evento del Ciclo 25. Debe activar ALERTA G5 y detectar Bz sur."
+            "desc": "Apex event of Solar Cycle 25. Must trigger G5 ALERT and detect southward Bz."
         },
         {
-            "name": "2. Supertormenta de Noviembre 2003 (G5 - Halloween)",
+            "name": "2. November 2003 Superstorm (G5 - Halloween)",
             "idx": 100,
             "expected_storm": True,
             "expected_bz_south": True,
@@ -82,7 +82,7 @@ def run_battery():
             "desc": "Record speed CME with benign northward field. MUST FILTER FALSE ALARM."
         },
         {
-            "name": "4. CME Moderada 14 Mayo 2024 (Ciclo 25 OOD - Dst -88 nT)",
+            "name": "4. Moderate CME May 14, 2024 (Cycle 25 OOD - Dst -88 nT)",
             "idx": 280,
             "expected_storm": False,
             "expected_bz_south": False,
@@ -93,7 +93,7 @@ def run_battery():
             "idx": 1,
             "expected_storm": False,
             "expected_bz_south": False,
-            "desc": "Condiciones solares nominales y tranquilas (Dst -23 nT). Debe ser completamente verde."
+            "desc": "Quiet nominal solar conditions (Dst -23 nT). Must remain fully green."
         }
     ]
     
@@ -106,7 +106,7 @@ def run_battery():
         storm_ok = (res["is_severe_storm"] == tc["expected_storm"])
         bz_ok = (res["is_bz_south"] == tc["expected_bz_south"])
         
-        status_str = "✅ EXCELENTE" if (storm_ok and bz_ok) else ("⚠️ PARCIAL" if (storm_ok or bz_ok) else "❌ FALLO")
+        status_str = "✅ EXCELLENT" if (storm_ok and bz_ok) else ("⚠️ PARTIAL" if (storm_ok or bz_ok) else "❌ FAIL")
         audit_results.append({
             "name": tc["name"],
             "gt_dst": res["gt_dst"],
@@ -176,7 +176,7 @@ def run_battery():
     res_live["flare_class"] = flare_class
     
     total_live_time = (time.time() - t_live_start) * 1000.0
-    print(f"\n📡 Datos en vivo descargados y procesados en {total_live_time:.1f} ms.")
+    print(f"\n📡 Live telemetry downloaded and ingested in {total_live_time:.1f} ms.")
     print_live_report(live_summary, res_live, pred_l1_dst)
     
     print("=" * 85)
