@@ -116,14 +116,14 @@ pip install -r requirements.txt
 python3 scripts/helios_swiss_orchestrator.py
 ```
 ```text
-🇨🇭 Inicializando HELIOS Swiss Watch Pipeline (Apple Silicon M4 GPU)...
-✅ Los 4 engranajes cargados en memoria GPU en 22.4 ms.
-🛰️ Ingestando telemetría satelital NOAA SWPC y SDO/SOHO...
+🇨🇭 Initializing HELIOS Swiss Watch Pipeline (Apple Silicon M4 GPU)...
+✅ All 4 gears loaded into GPU memory in 22.4 ms.
+🛰️ Ingesting NOAA SWPC and SDO/SOHO satellite telemetry...
 ---------------------------------------------------------------------------------
-⚙️  ENGRANAJE 1 & 2 [SOL]:   P(Sur) = 45.2% | P(Severa) = 28.4% -> 🟢 QUIET / SAFE
-⚙️  ENGRANAJE 3 [TRÁNSITO]:  ETA = 54.2h [Ventana Conformal: ±6.5h]
-⚙️  ENGRANAJE 4 [L1 IN-SITU]: Dst +1h = -18.2 nT | Bz = +2.4 nT
->>> VEREDICTO DE MISIÓN: 🟢 PROTOCOLO VERDE (TRÁNSITO SEGURO)
+⚙️  GEAR 1 & 2 [SUN]:      P(South) = 45.2% | P(Severe) = 28.4% -> 🟢 QUIET / SAFE
+⚙️  GEAR 3 [TRANSIT]:     ETA = 54.2h [Conformal Window: ±6.5h]
+⚙️  GEAR 4 [L1 IN-SITU]:  Dst +1h = -18.2 nT | Bz = +2.4 nT
+>>> MISSION VERDICT: 🟢 GREEN PROTOCOL (SAFE TRANSIT)
 ```
 
 ### 2. Run Comprehensive Randomized Stress Battery
