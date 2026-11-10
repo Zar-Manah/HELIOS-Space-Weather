@@ -33,14 +33,14 @@ L1_SCALER_PATH = os.path.join(CAMPAIGN1_DIR, "models/bilstm_scaler.json")
 
 def run_stress_battery(n_per_class=6, random_seed=42):
     print("=" * 95)
-    print("🛰️  HELIOS 2.0: BATERÍA DE PRUEBAS DE ESTRÉS CON DATOS HISTÓRICOS REALES SINCRONIZADOS")
-    print("    Simulación operacional fiel al entorno de misión (Sol -> Tránsito 1 AU -> Satélite L1)")
+    print("🛰️  HELIOS 2.0: STRESS TESTING BATTERY WITH SYNCHRONIZED HISTORICAL DATA")
+    print("    Operational mission simulation (Sun -> 1 AU Transit -> L1 Satellite)")
     print("=" * 95)
     
     # 1. Initialize Pipeline
     t_start = time.time()
     pipeline = SwissWatchPipeline()
-    print(f"⏱️  Orquestador HELIOS 4-Engranajes listo en {(time.time() - t_start)*1000:.1f} ms.\n")
+    print(f"⏱️  HELIOS 4-Gear Orchestrator ready in {(time.time() - t_start)*1000:.1f} ms.\n")
     
     # 2. Load Datasets
     df_cme = pd.read_parquet(DATA_CME_PATH)
@@ -65,18 +65,18 @@ def run_stress_battery(n_per_class=6, random_seed=42):
     
     print(f"🎲 Muestreo Aleatorio Reproducible (Seed={random_seed}):")
     print(f"   • {n_per_class} Tormentas Extremas Reales (G3–G5, Dst <= -100 nT)")
-    print(f"   • {n_per_class} Falsas Alarmas Reales (CMEs rápidas V >= 650 km/s con campo benigno Dst > -50 nT)\n")
+    print(f"   • {n_per_class} Real False Alarms (Fast CMEs V >= 650 km/s with benign field Dst > -50 nT)\n")
     
     test_suite = [
         ("TORMENTAS SEVERAS REALES (G3-G5)", sample_severe, True),
-        ("FALSAS ALARMAS POTENCIALES (CMEs RÁPIDAS DEFLECTADAS/INOFENSIVAS)", sample_fa, False)
+        ("POTENTIAL FALSE ALARMS (FAST DEFLECTED / BENIGN CMEs)", sample_fa, False)
     ]
     
     results = []
     
     for category_name, sample_df, is_real_storm_group in test_suite:
         print("=" * 95)
-        print(f"🧪 CATEGORÍA: {category_name}")
+        print(f"🧪 CATEGORY: {category_name}")
         print("=" * 95)
         
         for idx, row in sample_df.iterrows():
@@ -118,13 +118,13 @@ def run_stress_battery(n_per_class=6, random_seed=42):
             
             # Operational Verdict
             if res["is_severe_storm"] and res["is_bz_south"]:
-                verdict = "🔴 ALERTA SEVERA G3-G5"
+                verdict = "🔴 SEVERE ALERT G3-G5"
                 verdict_code = "RED"
             elif res["is_severe_storm"] or res["is_bz_south"] or res["dst_q50"] <= -70:
                 verdict = "🟡 VIGILANCIA MODERADA"
                 verdict_code = "YELLOW"
             else:
-                verdict = "🟢 TRÁNSITO SEGURO / FALSA ALARMA EVITADA"
+                verdict = "🟢 SAFE TRANSIT / FALSE ALARM DEFUSED"
                 verdict_code = "GREEN"
                 
             # Operational Assessment:
@@ -164,18 +164,18 @@ def run_stress_battery(n_per_class=6, random_seed=42):
             
             print(f"{status_icon} Evento #{idx} ({t_launch_str[:16]} UTC | V_launch: {v_launch:.0f} km/s):")
             print(f"   • GROUND TRUTH: Dst={gt_dst:.0f} nT | Bz={gt_bz:.1f} nT | Tránsito={gt_transit:.1f} h")
-            print(f"   • ENGRANAJE 1 (Bz Solar):      P(Sur)={res['bz_prob_south']*100:.1f}% -> Pred: {'SUR (Peligro)' if res['is_bz_south'] else 'NORTE (Seguro)'} [Q50: {res['bz_q50']:.1f} nT]")
-            print(f"   • ENGRANAJE 2 (Severidad Dst): P(Sev)={res['storm_prob_severe']*100:.1f}% -> Pred: {'SEVERA (G3+)' if res['is_severe_storm'] else 'MODERADA/LEVE'} [Q50: {res['dst_q50']:.0f} nT]")
-            print(f"   • ENGRANAJE 3 (Tránsito 3D):   Pred={res['transit_hours']:.1f} h (Error: {transit_err:.1f} h | Ventana ±6.5h: {'DENTRO ✅' if g3_window_ok else 'FUERA'})")
-            print(f"   • ENGRANAJE 4 (In-situ L1):    Dst +1h predicho = {l1_pred:.0f} nT")
-            print(f"   >>> VEREDICTO DE MISION: {verdict}")
+            print(f"   • GEAR 1 (Solar Bz):      P(Sur)={res['bz_prob_south']*100:.1f}% -> Pred: {'SUR (Peligro)' if res['is_bz_south'] else 'NORTE (Seguro)'} [Q50: {res['bz_q50']:.1f} nT]")
+            print(f"   • GEAR 2 (Dst Severity): P(Sev)={res['storm_prob_severe']*100:.1f}% -> Pred: {'SEVERA (G3+)' if res['is_severe_storm'] else 'MODERADA/LEVE'} [Q50: {res['dst_q50']:.0f} nT]")
+            print(f"   • GEAR 3 (3D Transit):   Pred={res['transit_hours']:.1f} h (Error: {transit_err:.1f} h | Ventana ±6.5h: {'DENTRO ✅' if g3_window_ok else 'FUERA'})")
+            print(f"   • GEAR 4 (L1 In-situ):    Dst +1h predicho = {l1_pred:.0f} nT")
+            print(f"   >>> MISSION VERDICT: {verdict}")
             print("-" * 95)
             
     # 4. Summary Quantitative Report
     df_res = pd.DataFrame(results)
     
     print("\n" + "=" * 95)
-    print("📊 REPORTE CUANTITATIVO CONSOLIDADO DE LA BATERÍA OPERACIONAL")
+    print("📊 CONSOLIDATED QUANTITATIVE REPORT OF OPERATIONAL BATTERY")
     print("=" * 95)
     
     severe_res = df_res[df_res["group"] == "Severe"]
@@ -192,17 +192,17 @@ def run_stress_battery(n_per_class=6, random_seed=42):
     mean_transit_err_overall = df_res["transit_err"].mean()
     median_transit_err_overall = df_res["transit_err"].median()
     
-    print(f"\n1. DETECCIÓN DE TORMENTAS SEVERAS (G3–G5, n={len(severe_res)}):")
+    print(f"\n1. SEVERE STORM DETECTION (G3–G5, n={len(severe_res)}):")
     print(f"   • Alertas Rojas Emitidas (G3–G5 directas):  {severe_detected}/{len(severe_res)} ({severe_detected/len(severe_res)*100:.1f}%)")
     print(f"   • Vigilancias Amarillas (Impacto previsto): {severe_watched}/{len(severe_res)} ({severe_watched/len(severe_res)*100:.1f}%)")
     print(f"   • Tormentas Pasadas por Alto (Falso Negativo): {severe_missed}/{len(severe_res)} (0.0% - CERO FALLOS)")
     print(f"   • COBERTURA OPERACIONAL TOTAL (Rojo + Amarillo): {(severe_detected + severe_watched)/len(severe_res)*100:.1f}%")
     
-    print(f"\n2. MITIGACIÓN DE FALSAS ALARMAS (CMEs Rápidas V >= 650 km/s, n={len(fa_res)}):")
-    print(f"   • Falsas Alarmas Desactivadas (Verde Seguro):  {fa_defused}/{len(fa_res)} ({fa_defused/len(fa_res)*100:.1f}%)")
+    print(f"\n2. FALSE ALARM MITIGATION (Fast CMEs V >= 650 km/s, n={len(fa_res)}):")
+    print(f"   • Defused False Alarms (Safe Green):  {fa_defused}/{len(fa_res)} ({fa_defused/len(fa_res)*100:.1f}%)")
     print(f"   • Moderadas a Vigilancia Preventiva (Amarillo): {fa_moderated}/{len(fa_res)} ({fa_moderated/len(fa_res)*100:.1f}%)")
-    print(f"   • Pánico Injustificado (Falso Positivo G5):     {fa_false_panic}/{len(fa_res)} ({fa_false_panic/len(fa_res)*100:.1f}%)")
-    print(f"   • TASA DE DEFLEXIÓN EXITOSA (Verde + Amarillo): {(fa_defused + fa_moderated)/len(fa_res)*100:.1f}%")
+    print(f"   • Unjustified Panic (G5 False Positive):     {fa_false_panic}/{len(fa_res)} ({fa_false_panic/len(fa_res)*100:.1f}%)")
+    print(f"   • SUCCESSFUL MITIGATION RATE (Green + Yellow): {(fa_defused + fa_moderated)/len(fa_res)*100:.1f}%")
     
     print(f"\n3. PRECISIÓN CINEMÁTICA DE TRÁNSITO 3D (MoKTransitNN):")
     print(f"   • Error Medio Absoluto (MAE):    {mean_transit_err_overall:.2f} horas")
