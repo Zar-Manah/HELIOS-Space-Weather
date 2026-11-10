@@ -360,13 +360,13 @@ def print_swiss_report(name, res):
     print(f"🛡️  INTEGRATED MITIGATION VERDICT (MISSION CONTROL):")
     if res["is_severe_storm"] and res["is_bz_south"]:
         print("   🔴 ACTIVE G5 PROTOCOL: Violent magnetospheric coupling confirmed.")
-        print(f"      Acciones: Reducción de carga de transformadores 1 hora antes de {res['arrival_eta']} UTC.")
+        print(f"      Actions: Grid transformer load shedding 1 hour prior to {res['arrival_eta']} UTC.")
     elif res["is_severe_storm"] and not res["is_bz_south"]:
-        print("   🟠 PROTOCOLO CINÉTICO MODERADO: Frente de choque potente pero campo norteño.")
-        print("      Acciones: Monitoreo estricto de compresión de magnetopausa sin riesgo de apagón severo.")
+        print("   🟠 MODERATE KINETIC PROTOCOL: Strong shock front with northward magnetic field.")
+        print("      Actions: Magnetopause compression monitoring without severe grid blackout risk.")
     else:
-        print("   🟢 PROTOCOLO VERDE (TRÁNSITO SEGURO): Falsa alarma evitada con éxito.")
-        print("      Acciones: Vuelo espacial y operaciones orbitales en parámetros nominales.")
+        print("   🟢 GREEN PROTOCOL (SAFE TRANSIT): False alarm successfully defused.")
+        print("      Actions: Spaceflight operations and orbital assets maintained under nominal envelope.")
     print("=" * 85 + "\n")
 
 def fetch_live_solar_imagery():
@@ -408,7 +408,7 @@ def fetch_live_solar_imagery():
                 cv2.imwrite(p_ar_crop, crop)
                 p_hmi = p_ar_crop
         except Exception as e:
-            print(f"⚠️ Aviso al recortar región activa SDO: {e}")
+            print(f"⚠️ Warning while cropping SDO active region: {e}")
     except Exception as e:
         print(f"⚠️ Aviso al descargar magnetograma SDO: {e}")
         
@@ -420,7 +420,7 @@ def fetch_live_solar_imagery():
                 f.write(r.read())
         c2_ok = True
     except Exception as e:
-        print(f"⚠️ Aviso al descargar coronógrafo SOHO: {e}")
+        print(f"⚠️ Warning while downloading SOHO coronagraph: {e}")
         
     # 3. GOES Latest Solar Flare
     latest_flare = {}
@@ -546,35 +546,35 @@ def fetch_live_telemetry():
 
 def print_live_report(live_summary, res_solar, res_l1_dst):
     print("=" * 85)
-    print("🛰️  HELIOS SWISS WATCH — TELEMETRÍA ESPACIAL EN TIEMPO REAL (NOAA SWPC / L1)")
+    print("🛰️  HELIOS SWISS WATCH — REAL-TIME SPACE TELEMETRY (NOAA SWPC / L1)")
     print(f"⏰ Momento de Consulta: {live_summary['timestamp']}")
     print("=" * 85)
     print(f"📡 CONDICIONES IN-SITU ACTUALES (SATÉLITES L1 ACE & DSCOVR):")
     print(f"   • Velocidad Viento Solar (V_sw):  {live_summary['v_sw']:.0f} km/s (Flujo de alta velocidad activo)")
-    print(f"   • Campo Magnético Interplanetario: Bt = {live_summary['bt']:.1f} nT | Bz = {live_summary['bz']:+.1f} nT")
-    print(f"   • Índice Geomagnético Kyoto Dst:   {live_summary['dst']:.0f} nT (Actividad geomagnética nominal)")
-    print(f"   • Flujo Solar F10.7 / Índice Kp:   F10.7 = {live_summary['f107']:.0f} sfu | Kp = {live_summary['kp']:.1f}")
+    print(f"   • Interplanetary Magnetic Field:   Bt = {live_summary['bt']:.1f} nT | Bz = {live_summary['bz']:+.1f} nT")
+    print(f"   • Kyoto Dst Geomagnetic Index:     {live_summary['dst']:.0f} nT (Nominal geomagnetic activity)")
+    print(f"   • Solar Radio Flux F10.7 / Kp:     F10.7 = {live_summary['f107']:.0f} sfu | Kp = {live_summary['kp']:.1f}")
     print("-" * 85)
     
     # Gear 4 in-situ forecast
-    print("⚙️  ENGRANAJE 4 [PREDICCIÓN IN-SITU L1 BI-LSTM PARA LA PRÓXIMA HORA]:")
-    print(f"   • Pronóstico Dst (+1h adelante):   {res_l1_dst:+.1f} nT")
+    print("⚙️  GEAR 4 [L1 IN-SITU BI-LSTM NOWCASTING FOR NEXT HOUR]:")
+    print(f"   • Projected Dst (+1h lead time):   {res_l1_dst:+.1f} nT")
     if res_l1_dst <= -100:
         print("   🚨 IMPACTO SEVERO EN CURSO: Alerta G3+ in-situ validada por BiLSTM.")
     elif res_l1_dst <= -50:
-        print("   ⚠️  PERTURBACIÓN MODERADA EN CURSO: Nivel de tormenta menor G1-G2.")
+        print("   ⚠️  MODERATE DISTURBANCE IN PROGRESS: Minor storm level G1-G2.")
     else:
-        print("   🟢 PARÁMETROS MAGNETOSFÉRICOS ESTABLES: No hay penetración de tormenta severa.")
+        print("   🟢 STABLE MAGNETOSPHERIC ENVELOPE: No severe storm penetration detected.")
     print("-" * 85)
     
     # Gears 1-3 CME Early Warning
     if res_solar is not None:
         status_bz = "🔴 AMENAZA SUR (Bz <= -10 nT)" if res_solar["is_bz_south"] else "🟢 POLARIDAD NORTE (Segura)"
-        status_st = "🚨 ALERTA MAYOR G3-G4+ (Dst <= -110 nT)" if res_solar["is_severe_storm"] else "✅ SIN RIESGO DE TORMENTA SEVERA"
+        status_st = "🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT)" if res_solar["is_severe_storm"] else "✅ NO SEVERE STORM RISK"
         flare_str = res_solar.get("flare_class", "C1.0")
-        print("⚙️  ENGRANAJES 1, 2 Y 3 [VISIÓN SOLAR EN VIVO: SDO + SOHO + GOES]:")
-        print(f"   • Detección Fulgor GOES:           Clase {flare_str} ({res_solar['t_launch']} UTC)")
-        print(f"   • Cinemática Radial 3D Evaluada:   {res_solar['v_launch_3d']:.0f} km/s")
+        print("⚙️  GEARS 1, 2 AND 3 [LIVE SOLAR VISION: SDO + SOHO + GOES]:")
+        print(f"   • GOES Flare Detection:            Class {flare_str} ({res_solar['t_launch']} UTC)")
+        print(f"   • Evaluated 3D Radial Kinematics:  {res_solar['v_launch_3d']:.0f} km/s")
         print(f"   • Quiralidad Coronal (Gear 1):     {status_bz} (P_sur: {res_solar['bz_prob_south']*100:.1f}%)")
         print(f"   • Rango Bz_min Proyectado:         [{res_solar['bz_conformal_range'][0]:.1f} nT, {res_solar['bz_conformal_range'][1]:.1f} nT] (Mediana: {res_solar['bz_q50']:.1f} nT)")
         print(f"   • Veto de Severidad (Gear 2):      {status_st} (P_severa: {res_solar['storm_prob_severe']*100:.1f}% | Exactitud OOD: 87.0%)")
@@ -585,13 +585,13 @@ def print_live_report(live_summary, res_solar, res_l1_dst):
         
     print("🛡️  VEREDICTO DE CONTROL ESPACIAL (APPLE SILICON M4):")
     if live_summary['bz'] > 0 and live_summary['dst'] > -50:
-        print("   🟢 CONDICIÓN SEGURA (CAMPO NORTEÑO): A pesar de la alta velocidad del viento solar,")
-        print("      la polaridad magnética Bz norte impide la reconexión con la magnetosfera.")
-        print("      Falsa alarma de tormenta severa completamente neutralizada.")
+        print("   🟢 SAFE CONDITION (NORTHWARD POLARITY): Despite elevated solar wind velocity,")
+        print("      northward Bz polarity prevents magnetospheric reconnection.")
+        print("      Severe storm false alarm successfully defused.")
     elif live_summary['bz'] <= -10 and live_summary['v_sw'] >= 600:
-        print("   🔴 PROTOCOLO ROJO OPERATIVO: Inyección energética violenta en magnetosfera terrestre.")
+        print("   🔴 OPERATIONAL RED PROTOCOL: Violent energetic injection into Earth's magnetosphere.")
     else:
-        print("   🟡 MONITOREO CONTINUO: Parámetros dentro de la envolvente de tolerancia estándar.")
+        print("   🟡 CONTINUOUS MONITORING: Telemetry within nominal tolerance envelope.")
     print("=" * 85 + "\n")
 
 def main():
@@ -605,7 +605,7 @@ def main():
     pipeline = SwissWatchPipeline()
     
     if args.live:
-        print("🛰️  Conectando con satélites espaciales NOAA SWPC, NASA SDO y SOHO en tiempo real...")
+        print("🛰️  Connecting to NOAA SWPC, NASA SDO and SOHO satellite telemetry in real time...")
         live_summary, seq_24h = fetch_live_telemetry()
         solar_live = fetch_live_solar_imagery()
         
@@ -656,9 +656,9 @@ def main():
     
     if args.demo or args.index is None:
         cases = [
-            ("Supertormenta de Noviembre 2003 (G5 Catastrófica - Dst -422 nT)", 100),
+            ("November 2003 Superstorm (Catastrophic G5 - Dst -422 nT)", 100),
             ("Supertormenta Solar de Mayo 2024 (Ciclo 25 - Dst -406 nT)", 278),
-            ("CME Hipersónica Oct 29, 2003 (2461 km/s - Falsa Alarma Filtrada)", 99),
+            ("Hypersonic CME Oct 29, 2003 (2461 km/s - Filtered False Alarm)", 99),
             ("CME Moderada Ciclo 25 OOD (Mayo 14, 2024 - Dst -88 nT)", 280)
         ]
         for name, idx in cases:
