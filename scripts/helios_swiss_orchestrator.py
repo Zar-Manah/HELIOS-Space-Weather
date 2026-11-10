@@ -321,39 +321,39 @@ class SwissWatchPipeline:
 
 def print_swiss_report(name, res):
     print("=" * 85)
-    print(f"🇨🇭 HELIOS SWISS WATCH ENGINE — REPORTE ESPACIAL MULTI-HORIZONTE")
-    print(f"📌 Evento Analizado: {name}")
+    print(f"🇨🇭 HELIOS SWISS WATCH ENGINE — MULTI-HORIZON SPACE WEATHER REPORT")
+    print(f"📌 Analyzed Event: {name}")
     print("=" * 85)
-    print(f"⏱️  Latencia de Inferencia Total en M4 GPU: {res['latency_ms']:.2f} ms")
+    print(f"⏱️  Total Inference Latency on M4 GPU: {res['latency_ms']:.2f} ms")
     print(f"📅 Solar Detection Epoch (t = 0):        {res['t_launch']}")
     print(f"🚀 3D Radial Kinematics (GCS):          {res['v_launch_3d']:.0f} km/s")
     print("-" * 85)
     
     # Gear 1 & 2
-    status_bz = "🔴 AMENAZA SUR (Bz <= -10 nT)" if res["is_bz_south"] else "🟢 POLARIDAD NORTE (Segura)"
+    status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)" if res["is_bz_south"] else "🟢 NORTHWARD POLARITY (Safe)"
     status_st = "🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT)" if res["is_severe_storm"] else "✅ NO SEVERE STORM RISK"
     
     print(f"⚙️  GEAR 1 & 2 [24–72h HORIZON | SUN]:")
-    print(f"   • Quiralidad Coronal:        {status_bz} (P_sur: {res['bz_prob_south']*100:.1f}%)")
-    print(f"   • Rango Bz_min Conformal:    [{res['bz_conformal_range'][0]:.1f} nT, {res['bz_conformal_range'][1]:.1f} nT] (Mediana: {res['bz_q50']:.1f} nT)")
+    print(f"   • Coronal Chirality:         {status_bz} (P_south: {res['bz_prob_south']*100:.1f}%)")
+    print(f"   • Conformal Bz_min Range:    [{res['bz_conformal_range'][0]:.1f} nT, {res['bz_conformal_range'][1]:.1f} nT] (Median: {res['bz_q50']:.1f} nT)")
     print(f"   • Geomagnetic Severity:      {status_st} (P_severe: {res['storm_prob_severe']*100:.1f}% | OOD Accuracy: 87.0%)")
-    print(f"   • Rango Dst_min Conformal:   [{res['dst_conformal_range'][0]:.0f} nT, {res['dst_conformal_range'][1]:.0f} nT] (Mediana: {res['dst_q50']:.0f} nT)")
+    print(f"   • Conformal Dst_min Range:   [{res['dst_conformal_range'][0]:.0f} nT, {res['dst_conformal_range'][1]:.0f} nT] (Median: {res['dst_q50']:.0f} nT)")
     print("-" * 85)
     
     # Gear 3
     print(f"⚙️  GEAR 3 [12–48h HORIZON | INTERPLANETARY TRANSIT]:")
-    print(f"   • Tiempo de Vuelo Estimado:  {res['transit_hours']:.1f} horas (Error de llegada: ±6.5 horas)")
-    print(f"   • Hora de Impacto Prevista:  {res['arrival_eta']} UTC")
+    print(f"   • Estimated Flight Time:     {res['transit_hours']:.1f} hours (Arrival uncertainty: ±6.5 hours)")
+    print(f"   • Projected Impact Epoch:    {res['arrival_eta']} UTC")
     print(f"   • Conformal Search Window:   [{res['window_early']} -> {res['window_late']}]")
     if res["gt_transit"] > 0:
-        print(f"   • Observed Ground Truth:     {res['gt_transit']:.1f} hours (Residual: {abs(res['transit_hours'] - res['gt_transit']):.1f} horas)")
+        print(f"   • Observed Ground Truth:     {res['gt_transit']:.1f} hours (Residual: {abs(res['transit_hours'] - res['gt_transit']):.1f} hours)")
     print("-" * 85)
     
     # Gear 4
     print(f"⚙️  GEAR 4 [15–60 min HORIZON | L1 SATELLITE & EARTH IMPACT]:")
     print(f"   • L1 BiLSTM Telemetry:       Projected Dst +1h = {res['l1_confirmed_dst_1h']:.0f} nT")
     if res["gt_dst"] != 0.0:
-        print(f"   • Ground Truth Registrado:   Dst = {res['gt_dst']:.0f} nT | Bz = {res['gt_bz']:.1f} nT")
+        print(f"   • Recorded Ground Truth:     Dst = {res['gt_dst']:.0f} nT | Bz = {res['gt_bz']:.1f} nT")
     print("-" * 85)
     
     # Master Advisory
@@ -547,10 +547,10 @@ def fetch_live_telemetry():
 def print_live_report(live_summary, res_solar, res_l1_dst):
     print("=" * 85)
     print("🛰️  HELIOS SWISS WATCH — REAL-TIME SPACE TELEMETRY (NOAA SWPC / L1)")
-    print(f"⏰ Momento de Consulta: {live_summary['timestamp']}")
+    print(f"⏰ Query Timestamp: {live_summary['timestamp']}")
     print("=" * 85)
     print(f"📡 CURRENT IN-SITU CONDITIONS (L1 ACE & DSCOVR SATELLITES):")
-    print(f"   • Velocidad Viento Solar (V_sw):  {live_summary['v_sw']:.0f} km/s (Flujo de alta velocidad activo)")
+    print(f"   • Solar Wind Speed (V_sw):        {live_summary['v_sw']:.0f} km/s (High-speed stream active)")
     print(f"   • Interplanetary Magnetic Field:   Bt = {live_summary['bt']:.1f} nT | Bz = {live_summary['bz']:+.1f} nT")
     print(f"   • Kyoto Dst Geomagnetic Index:     {live_summary['dst']:.0f} nT (Nominal geomagnetic activity)")
     print(f"   • Solar Radio Flux F10.7 / Kp:     F10.7 = {live_summary['f107']:.0f} sfu | Kp = {live_summary['kp']:.1f}")
@@ -560,7 +560,7 @@ def print_live_report(live_summary, res_solar, res_l1_dst):
     print("⚙️  GEAR 4 [L1 IN-SITU BI-LSTM NOWCASTING FOR NEXT HOUR]:")
     print(f"   • Projected Dst (+1h lead time):   {res_l1_dst:+.1f} nT")
     if res_l1_dst <= -100:
-        print("   🚨 IMPACTO SEVERO EN CURSO: Alerta G3+ in-situ validada por BiLSTM.")
+        print("   🚨 SEVERE IMPACT IN PROGRESS: G3+ in-situ alert validated by BiLSTM.")
     elif res_l1_dst <= -50:
         print("   ⚠️  MODERATE DISTURBANCE IN PROGRESS: Minor storm level G1-G2.")
     else:
@@ -569,21 +569,21 @@ def print_live_report(live_summary, res_solar, res_l1_dst):
     
     # Gears 1-3 CME Early Warning
     if res_solar is not None:
-        status_bz = "🔴 AMENAZA SUR (Bz <= -10 nT)" if res_solar["is_bz_south"] else "🟢 POLARIDAD NORTE (Segura)"
+        status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)" if res_solar["is_bz_south"] else "🟢 NORTHWARD POLARITY (Safe)"
         status_st = "🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT)" if res_solar["is_severe_storm"] else "✅ NO SEVERE STORM RISK"
         flare_str = res_solar.get("flare_class", "C1.0")
         print("⚙️  GEARS 1, 2 AND 3 [LIVE SOLAR VISION: SDO + SOHO + GOES]:")
         print(f"   • GOES Flare Detection:            Class {flare_str} ({res_solar['t_launch']} UTC)")
         print(f"   • Evaluated 3D Radial Kinematics:  {res_solar['v_launch_3d']:.0f} km/s")
-        print(f"   • Quiralidad Coronal (Gear 1):     {status_bz} (P_sur: {res_solar['bz_prob_south']*100:.1f}%)")
-        print(f"   • Rango Bz_min Proyectado:         [{res_solar['bz_conformal_range'][0]:.1f} nT, {res_solar['bz_conformal_range'][1]:.1f} nT] (Mediana: {res_solar['bz_q50']:.1f} nT)")
-        print(f"   • Veto de Severidad (Gear 2):      {status_st} (P_severa: {res_solar['storm_prob_severe']*100:.1f}% | Exactitud OOD: 87.0%)")
-        print(f"   • Rango Dst_min Proyectado:        [{res_solar['dst_conformal_range'][0]:.0f} nT, {res_solar['dst_conformal_range'][1]:.0f} nT] (Mediana: {res_solar['dst_q50']:.0f} nT)")
-        print(f"   • Tiempo de Vuelo Estimado:        {res_solar['transit_hours']:.1f} horas (±6.5h)")
-        print(f"   • Ventana Conformal de Impacto:    [{res_solar['window_early']} -> {res_solar['window_late']}]")
+        print(f"   • Coronal Chirality (Gear 1):      {status_bz} (P_south: {res_solar['bz_prob_south']*100:.1f}%)")
+        print(f"   • Projected Bz_min Range:          [{res_solar['bz_conformal_range'][0]:.1f} nT, {res_solar['bz_conformal_range'][1]:.1f} nT] (Median: {res_solar['bz_q50']:.1f} nT)")
+        print(f"   • Severity Veto (Gear 2):          {status_st} (P_severe: {res_solar['storm_prob_severe']*100:.1f}% | OOD Accuracy: 87.0%)")
+        print(f"   • Projected Dst_min Range:         [{res_solar['dst_conformal_range'][0]:.0f} nT, {res_solar['dst_conformal_range'][1]:.0f} nT] (Median: {res_solar['dst_q50']:.0f} nT)")
+        print(f"   • Estimated Flight Time:           {res_solar['transit_hours']:.1f} hours (±6.5h)")
+        print(f"   • Conformal Impact Window:         [{res_solar['window_early']} -> {res_solar['window_late']}]")
         print("-" * 85)
         
-    print("🛡️  VEREDICTO DE CONTROL ESPACIAL (APPLE SILICON M4):")
+    print("🛡️  SPACE WEATHER MISSION CONTROL VERDICT (APPLE SILICON M4):")
     if live_summary['bz'] > 0 and live_summary['dst'] > -50:
         print("   🟢 SAFE CONDITION (NORTHWARD POLARITY): Despite elevated solar wind velocity,")
         print("      northward Bz polarity prevents magnetospheric reconnection.")
@@ -657,9 +657,9 @@ def main():
     if args.demo or args.index is None:
         cases = [
             ("November 2003 Superstorm (Catastrophic G5 - Dst -422 nT)", 100),
-            ("Supertormenta Solar de Mayo 2024 (Ciclo 25 - Dst -406 nT)", 278),
+            ("May 2024 Solar Superstorm (Cycle 25 - Dst -406 nT)", 278),
             ("Hypersonic CME Oct 29, 2003 (2461 km/s - Filtered False Alarm)", 99),
-            ("CME Moderada Ciclo 25 OOD (Mayo 14, 2024 - Dst -88 nT)", 280)
+            ("Moderate CME Cycle 25 OOD (May 14, 2024 - Dst -88 nT)", 280)
         ]
         for name, idx in cases:
             if idx < len(df):
