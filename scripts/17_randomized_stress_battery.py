@@ -22,14 +22,27 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CAMPAIGN1_DIR = os.path.join(os.path.dirname(BASE_DIR), "SOLAR-HELIOS-01")
 sys.path.append(os.path.join(BASE_DIR, "scripts"))
 
 from helios_swiss_orchestrator import SwissWatchPipeline
 
 DATA_CME_PATH = os.path.join(BASE_DIR, "data/processed/helios_vision_matched.parquet")
-DATA_OMNI_PATH = os.path.join(CAMPAIGN1_DIR, "data/processed/helios_omni_features_1998_2026.parquet")
-L1_SCALER_PATH = os.path.join(CAMPAIGN1_DIR, "models/bilstm_scaler.json")
+if not os.path.exists(DATA_CME_PATH):
+    alt_cme = os.path.join(os.path.dirname(BASE_DIR), "SOLAR-HELIOS-02/data/processed/helios_vision_matched.parquet")
+    if os.path.exists(alt_cme):
+        DATA_CME_PATH = alt_cme
+
+DATA_OMNI_PATH = os.path.join(BASE_DIR, "data/processed/helios_omni_features_1998_2026.parquet")
+if not os.path.exists(DATA_OMNI_PATH):
+    alt_omni = os.path.join(os.path.dirname(BASE_DIR), "SOLAR-HELIOS-01/data/processed/helios_omni_features_1998_2026.parquet")
+    if os.path.exists(alt_omni):
+        DATA_OMNI_PATH = alt_omni
+
+L1_SCALER_PATH = os.path.join(BASE_DIR, "models/bilstm_scaler.json")
+if not os.path.exists(L1_SCALER_PATH):
+    alt_scaler = os.path.join(os.path.dirname(BASE_DIR), "SOLAR-HELIOS-01/models/bilstm_scaler.json")
+    if os.path.exists(alt_scaler):
+        L1_SCALER_PATH = alt_scaler
 
 def run_stress_battery(n_per_class=6, random_seed=42):
     print("=" * 95)
