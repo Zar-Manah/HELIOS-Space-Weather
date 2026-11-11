@@ -407,7 +407,7 @@ def fetch_live_solar_imagery():
         except Exception as e:
             print(f"⚠️ Warning while cropping SDO active region: {e}")
     except Exception as e:
-        print(f"⚠️ Aviso al descargar magnetograma SDO: {e}")
+        print(f"⚠️ Warning while downloading SDO magnetogram: {e}")
         
     # 2. SOHO LASCO C2 coronagraph
     try:
@@ -428,7 +428,7 @@ def fetch_live_solar_imagery():
             if flares:
                 latest_flare = flares[-1]
     except Exception as e:
-        print(f"⚠️ Aviso al consultar fulgores GOES: {e}")
+        print(f"⚠️ Warning while fetching GOES flares: {e}")
         
     return {
         "p_hmi": p_hmi if hmi_ok else None,
@@ -450,7 +450,7 @@ def fetch_live_telemetry():
         df_dst['dst'] = pd.to_numeric(df_dst['dst'], errors='coerce')
         df_dst = df_dst.set_index('time').sort_index()
     except Exception as e:
-        print(f"⚠️ Aviso al consultar Kyoto Dst: {e}")
+        print(f"⚠️ Warning while fetching Kyoto Dst: {e}")
 
     # 2. RTSW Mag (1-minute)
     df_mag_h = pd.DataFrame()
@@ -463,7 +463,7 @@ def fetch_live_telemetry():
             df_mag[col] = pd.to_numeric(df_mag[col], errors='coerce')
         df_mag_h = df_mag.set_index('time')[['bt', 'by_gsm', 'bz_gsm']].resample('1h').mean()
     except Exception as e:
-        print(f"⚠️ Aviso al consultar RTSW Mag: {e}")
+        print(f"⚠️ Warning while fetching RTSW Mag: {e}")
 
     # 3. RTSW Wind (1-minute)
     df_wind_h = pd.DataFrame()
@@ -476,7 +476,7 @@ def fetch_live_telemetry():
             df_wind[col] = pd.to_numeric(df_wind[col], errors='coerce')
         df_wind_h = df_wind.set_index('time')[['proton_speed', 'proton_density', 'proton_temperature']].resample('1h').mean()
     except Exception as e:
-        print(f"⚠️ Aviso al consultar RTSW Wind: {e}")
+        print(f"⚠️ Warning while fetching RTSW Wind: {e}")
 
     # 4. F10.7
     f107 = 135.0
@@ -595,9 +595,17 @@ def main():
     parser = argparse.ArgumentParser(description="HELIOS Swiss Watch Orchestrator")
     parser.add_argument("--demo", action="store_true", help="Run 4 landmark historical case studies")
     parser.add_argument("--live", action="store_true", help="Fetch real-time NOAA SWPC telemetry and forecast live state")
-    parser.add_argument("--cme-speed", type=float, default=None, help="CME launch speed in km/s for live what-if simulation")
+    parser.add_argument("--interactive", "--dashboard", action="store_true", help="Launch interactive Space Weather UI Cockpit in browser")
+    parser.add_argument("--cme-speed", "--cme_speed", type=float, default=None, help="CME launch speed in km/s for live what-if simulation")
     parser.add_argument("--index", type=int, default=None, help="Specific CME index from dataset")
     args = parser.parse_args()
+    
+    if args.interactive or args.dashboard:
+        import webbrowser
+        html_path = os.path.join(BASE_DIR, "Zar-Manah_HELIOS.html")
+        print(f"🚀 Opening Zar-Manah HELIOS Interactive Mission Cockpit: {html_path}")
+        webbrowser.open(f"file://{os.path.abspath(html_path)}")
+        return
     
     pipeline = SwissWatchPipeline()
     
