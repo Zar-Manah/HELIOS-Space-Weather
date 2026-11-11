@@ -1,15 +1,13 @@
 {
-  "architecture": "MoKTransitNN + GBDT Dynamic Regime",
-  "w_base": 0.45,
-  "w_fast_boost": 0.45,
-  "transition_v0": 950.0,
-  "transition_scale": 100.0,
-  "global_mae": 11.29,
-  "fast_cme_mae": 7.9,
-  "global_rmse": 14.85,
-  "r2_score": 0.351,
-  "conformal_coverage_pct": 85.9,
-  "mean_window_hours": 45.5,
-  "benchmark_nasa_enlil": 9.2,
-  "benchmark_dbm": 29.2
+  "mae_arrival_hours": 11.900175412467767,
+  "rmse_arrival_hours": 14.804415987574504,
+  "r2_arrival": 0.3552808155721636,
+  "mae_dbm_baseline": 29.19032153193464,
+  "nasa_enlil_reported_mae": 9.2,
+  "conformal_coverage_pct": 84.78260869565217,
+  "mean_window_hours": 42.79973029844266,
+  "dst_mae": 50.31393341524697,
+  "dst_rmse": 69.51377431209423,
+  "severe_storm_tss": 0.21341023792357605,
+  "q_adjust": 0.15672658577169524
 }

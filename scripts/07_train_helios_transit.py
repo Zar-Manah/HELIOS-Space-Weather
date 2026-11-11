@@ -33,6 +33,7 @@ print("☀️  HELIOS-TRANSIT: 24-72h CME ARRIVAL & STORM ENGINE  ☀️")
 print("=" * 70)
 
 df = pd.read_parquet(DATA_PATH)
+df["dst_min"] = df["dst_min"].fillna(-10.0)
 print(f"Loaded {len(df)} verified CME events with solar launch kinematics.")
 
 # Feature Engineering
