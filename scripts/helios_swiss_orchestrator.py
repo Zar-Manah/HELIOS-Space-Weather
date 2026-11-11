@@ -31,18 +31,24 @@ import torchvision.models as models
 import torchvision.transforms as T
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CAMPAIGN1_DIR = os.path.join(os.path.dirname(BASE_DIR), "SOLAR-HELIOS-01")
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+CAMPAIGN1_DIR = MODELS_DIR
 CAMPAIGN2_DIR = BASE_DIR
 
 DATA_PATH = os.path.join(CAMPAIGN2_DIR, "data/processed/helios_vision_matched.parquet")
+if not os.path.exists(DATA_PATH):
+    # Try sibling campaign path if available
+    alt_data = os.path.join(os.path.dirname(BASE_DIR), "SOLAR-HELIOS-02/data/processed/helios_vision_matched.parquet")
+    if os.path.exists(alt_data):
+        DATA_PATH = alt_data
 
 # Models paths
-M1_PATH = os.path.join(CAMPAIGN2_DIR, "models/helios_vision_apex.pkl")
-M2_PATH = os.path.join(CAMPAIGN2_DIR, "models/helios_storm_apex.pkl")
-M3_PATH = os.path.join(CAMPAIGN1_DIR, "models/helios_transit_mok_edited.pt")
-M4_PATH = os.path.join(CAMPAIGN1_DIR, "models/helios_bilstm_edited.pt")
-TRANSIT_SCALER_PATH = os.path.join(CAMPAIGN1_DIR, "models/transit_scaler.json")
-BILSTM_SCALER_PATH = os.path.join(CAMPAIGN1_DIR, "models/bilstm_scaler.json")
+M1_PATH = os.path.join(MODELS_DIR, "helios_vision_apex.pkl")
+M2_PATH = os.path.join(MODELS_DIR, "helios_storm_apex.pkl")
+M3_PATH = os.path.join(MODELS_DIR, "helios_transit_mok_edited.pt")
+M4_PATH = os.path.join(MODELS_DIR, "helios_bilstm_edited.pt")
+TRANSIT_SCALER_PATH = os.path.join(MODELS_DIR, "transit_scaler.json")
+BILSTM_SCALER_PATH = os.path.join(MODELS_DIR, "bilstm_scaler.json")
 
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
