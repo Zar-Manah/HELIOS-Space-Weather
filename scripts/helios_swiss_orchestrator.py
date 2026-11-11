@@ -368,7 +368,7 @@ def print_swiss_report(name, res):
 
 def fetch_live_solar_imagery():
     """Downloads near-real-time SDO HMI magnetogram and SOHO LASCO C2 coronagraph."""
-    cache_dir = os.path.join(CAMPAIGN2_DIR, "data/raw/images/live")
+    cache_dir = os.path.join(BASE_DIR, "data/raw/images/live")
     os.makedirs(cache_dir, exist_ok=True)
     p_hmi = os.path.join(cache_dir, "latest_sdo_hmi.jpg")
     p_c2 = os.path.join(cache_dir, "latest_soho_c2.jpg")
