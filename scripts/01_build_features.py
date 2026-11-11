@@ -8,6 +8,7 @@ Computes Newell coupling, Akasofu epsilon, clock angle, dynamic pressure, and mu
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import sys
+import urllib.request
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
