@@ -23,6 +23,23 @@ print("=" * 70)
 print("☀️  HELIOS SPACE WEATHER PIPELINE: FEATURE ENGINEERING  ☀️")
 print("=" * 70)
 
+# Auto-download from NASA SPDF if not found
+NASA_OMNI_URL = "https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_all_years.dat"
+if not os.path.exists(RAW_FILE):
+    print(f"📥 Raw file not found locally. Downloading from NASA SPDF ({NASA_OMNI_URL})...")
+    os.makedirs(os.path.dirname(RAW_FILE), exist_ok=True)
+    req = urllib.request.Request(NASA_OMNI_URL, headers={"User-Agent": "Mozilla/5.0 (SpaceWeather/HELIOS)"})
+    with urllib.request.urlopen(req, timeout=120) as resp, open(RAW_FILE, "wb") as out_f:
+        downloaded = 0
+        while True:
+            chunk = resp.read(1024 * 1024)
+            if not chunk:
+                break
+            out_f.write(chunk)
+            downloaded += len(chunk)
+            print(f"\r   Progress: {downloaded / (1024*1024):.1f} MB", end="", flush=True)
+    print(f"\n✅ Successfully downloaded {os.path.getsize(RAW_FILE) / (1024*1024):.2f} MB from NASA SPDF.")
+
 # Parsing OMNI2 format
 print(f"Reading raw data from: {RAW_FILE}")
 

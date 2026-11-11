@@ -10,6 +10,7 @@ Zero data leakage: all predictors are strictly known at CME launch time at the S
 """
 
 import os
+import urllib.request
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import re
 from datetime import datetime, timedelta
@@ -26,6 +27,26 @@ OUTPUT_PARQUET = os.path.join(PROCESSED_DIR, "helios_cme_transit_matched.parquet
 print("=" * 75)
 print("🛰️  HELIOS-TRANSIT v3.0: CDAW & RICHARDSON-CANE MULTI-PHYSICS INGESTION  🛰️")
 print("=" * 75)
+
+# Auto-download raw catalogs if not present
+os.makedirs(RAW_DIR, exist_ok=True)
+os.makedirs(PROCESSED_DIR, exist_ok=True)
+
+CDAW_URL = "https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL/text_ver/univ_all.txt"
+if not os.path.exists(CDAW_FILE):
+    print(f"📥 CDAW catalog not found locally. Downloading from NASA GSFC ({CDAW_URL})...")
+    req = urllib.request.Request(CDAW_URL, headers={"User-Agent": "Mozilla/5.0 (SpaceWeather/HELIOS)"})
+    with urllib.request.urlopen(req, timeout=60) as resp, open(CDAW_FILE, "wb") as f_out:
+        f_out.write(resp.read())
+    print(f"✅ Downloaded CDAW catalog: {os.path.getsize(CDAW_FILE) / (1024*1024):.2f} MB")
+
+ICME_URL = "https://izw1.caltech.edu/ACE/ASC/DATA/level3/icmetable2.htm"
+if not os.path.exists(ICME_FILE):
+    print(f"📥 Richardson & Cane ICME table not found locally. Downloading from Caltech ({ICME_URL})...")
+    req = urllib.request.Request(ICME_URL, headers={"User-Agent": "Mozilla/5.0 (SpaceWeather/HELIOS)"})
+    with urllib.request.urlopen(req, timeout=60) as resp, open(ICME_FILE, "wb") as f_out:
+        f_out.write(resp.read())
+    print(f"✅ Downloaded ICME table: {os.path.getsize(ICME_FILE) / 1024:.1f} KB")
 
 # 1. Parse CDAW catalog
 print(f"Parsing SOHO/LASCO CDAW Catalog: {CDAW_FILE}...")
