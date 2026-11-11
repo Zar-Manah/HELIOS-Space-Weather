@@ -1,4 +1,4 @@
-# ☀️ HELIOS 2.0: Plug-and-Play Open-Source Artificial Intelligence (AI) Models for Real-Time Solar Storm Prediction
+# ☀️ HELIOS 2.0: Single-File Plug-and-Play 4 AI Models for Real-Time Solar Storm Impact & CME Arrival Prediction
 
 > **An Open-Source Suite of Artificial Intelligence (AI) Models Engineered to Predict Dangerous Solar Storms, Coronal Mass Ejection (CME) Arrival Times, and Geomagnetic Disruptions from Live Satellite Telemetry.**
 
