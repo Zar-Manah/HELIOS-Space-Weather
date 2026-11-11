@@ -1,6 +1,7 @@
 {
-  "doi": "10.5281/zenodo.24147291",
-  "concept_doi": "10.5281/zenodo.24061451",
-  "record_url": "https://zenodo.org/records/24147291",
-  "version": "2.5.1"
+  "dep_id": 24147610,
+  "doi": "10.5281/zenodo.24147610",
+  "conceptdoi": "10.5281/zenodo.24061451",
+  "record_url": "https://zenodo.org/records/24147610",
+  "version": "2.5.2"
 }

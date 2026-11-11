@@ -6,8 +6,8 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
-[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24147291-blue.svg)](https://doi.org/10.5281/zenodo.24147291)
-[![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24147291-blue.svg)](https://doi.org/10.5281/zenodo.24147291)
+[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24147610-blue.svg)](https://doi.org/10.5281/zenodo.24147610)
+[![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
 ---
@@ -131,7 +131,22 @@ cd HELIOS-Space-Weather
 pip install -r requirements.txt
 ```
 
-### 1. Live Swiss Watch Orchestrator (All 4 Gears)
+### 1. Dual-Scale Instant Inference (`predict.py`)
+```bash
+# Tactical Nowcasting (1–6h) with live NOAA SWPC & Kyoto WDC satellite telemetry
+python3 predict.py --live
+
+# Tactical Nowcasting on synthetic extreme benchmark scenario (Dst < -400 nT)
+python3 predict.py --sample extreme
+
+# 24–72h Planetary CME Shock Transit & Impact Severity Forecast
+python3 predict.py --cme-speed 1200 --halo
+
+# Launch Interactive Visual Mission Control Cockpit
+python3 predict.py --dashboard
+```
+
+### 2. Live Swiss Watch Orchestrator (All 4 Gears Synchronized)
 ```bash
 python3 scripts/helios_swiss_orchestrator.py
 ```
@@ -146,12 +161,12 @@ python3 scripts/helios_swiss_orchestrator.py
 >>> MISSION CONTROL VERDICT: 🟢 GREEN PROTOCOL (SAFE TRANSIT)
 ```
 
-### 2. Run Comprehensive Randomized Stress Battery
+### 3. Run Comprehensive Randomized Stress Battery
 ```bash
 python3 scripts/17_randomized_stress_battery.py
 ```
 
-### 3. Export to NASA CCMC Earth CME Scoreboard JSON Format
+### 4. Export to NASA CCMC Earth CME Scoreboard JSON Format
 ```bash
 python3 scripts/export_ccmc_scoreboard.py --demo
 ```
@@ -171,8 +186,8 @@ If you utilize HELIOS 2.0 in academic research, space operations, or utility gri
   journal={Zenodo Preprints},
   year={2026},
   publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24147291},
-  url={https://doi.org/10.5281/zenodo.24147291}
+  doi={10.5281/zenodo.24147610},
+  url={https://doi.org/10.5281/zenodo.24147610}
 }
 ```
 

@@ -23,8 +23,10 @@ import pandas as pd
 import joblib
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.join(BASE_DIR, "models")
+MODELS_DIR = os.path.join(BASE_DIR, "models") if os.path.exists(os.path.join(BASE_DIR, "models")) else BASE_DIR
 METRICS_FILE = os.path.join(BASE_DIR, "results", "helios_evaluation_metrics.json")
+if not os.path.exists(METRICS_FILE):
+    METRICS_FILE = os.path.join(BASE_DIR, "helios_evaluation_metrics.json")
 TRANSIT_CONFIG = os.path.join(MODELS_DIR, "helios_transit_ensemble_config.json")
 SCALER_PATH = os.path.join(MODELS_DIR, "transit_scaler.json")
 
@@ -439,9 +441,9 @@ def main():
     parser = argparse.ArgumentParser(description="Zar-Manah HELIOS: Unified Space Weather Intelligence System (v2.5)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "quiet"], default=None, help="Run on synthetic benchmark profile")
-    parser.add_argument("--cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
-    parser.add_argument("--cme_width", type=float, default=360.0, help="Angular width of CME in degrees (default 360 for halo)")
-    parser.add_argument("--cme_accel", type=float, default=0.0, help="Initial acceleration in m/s^2")
+    parser.add_argument("--cme_speed", "--cme-speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
+    parser.add_argument("--cme_width", "--cme-width", type=float, default=360.0, help="Angular width of CME in degrees (default 360 for halo)")
+    parser.add_argument("--cme_accel", "--cme-accel", type=float, default=0.0, help="Initial acceleration in m/s^2")
     parser.add_argument("--halo", action="store_true", help="Flag as full 360-degree Halo CME")
     parser.add_argument("--dashboard", action="store_true", help="Launch interactive Space Weather UI Dashboard in browser")
 

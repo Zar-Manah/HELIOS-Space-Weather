@@ -318,7 +318,7 @@ def build_pdf():
     # 6. Conclusions & References
     story.append(Paragraph("6. Conclusions & Open Data Availability", h1_style))
     story.append(Paragraph(
-        "Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for planetary defense against extreme space weather. By evaluating solar eruptions at the moment of launch (24–72h in advance), HELIOS 2.0 achieves <b>87.0% accuracy</b> and <b>0.8717 ROC-AUC</b> in discriminating severe geomagnetic storms from harmless events, eliminating <b>92.1% of operational false alarms</b>. The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under the MIT license at: <i>https://github.com/Zar-Manah/HELIOS-Space-Weather</i> (DOI: 10.5281/zenodo.24147291).",
+        "Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for planetary defense against extreme space weather. By evaluating solar eruptions at the moment of launch (24–72h in advance), HELIOS 2.0 achieves <b>87.0% accuracy</b> and <b>0.8717 ROC-AUC</b> in discriminating severe geomagnetic storms from harmless events, eliminating <b>92.1% of operational false alarms</b>. The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under the MIT license at: <i>https://github.com/Zar-Manah/HELIOS-Space-Weather</i> (DOI: 10.5281/zenodo.24147610).",
         body_style
     ))
     story.append(Spacer(1, 3))

@@ -130,6 +130,8 @@ def main():
 
     # 4. Upload key files
     files_to_upload = [
+        os.path.join(BASE_DIR, "requirements.txt"),
+        os.path.join(BASE_DIR, "LICENSE"),
         os.path.join(BASE_DIR, "paper", "HELIOS_2_Solar_Vision_Swiss_Watch.pdf"),
         os.path.join(BASE_DIR, "Zar-Manah_HELIOS.html"),
         os.path.join(BASE_DIR, "predict.py"),
