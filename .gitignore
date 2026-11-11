@@ -5,3 +5,4 @@ data/raw/omni2_all_years.dat
 data/processed/*.parquet
 *.pt.cache
 *.tar.gz
+data/raw/
