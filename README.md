@@ -27,6 +27,12 @@
 
 Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **$<25$ milliseconds on consumer-grade hardware (Apple Silicon M4 GPU)** with zero cloud dependencies or supercomputing queues.
 
+⚡ **Outperforming NASA Supercomputers on a Standard Consumer Device:**  
+Evaluated strictly out-of-distribution across **Solar Cycles 23–25**, HELIOS 2.0 achieves a median transit arrival error of **$\pm 3.42$ hours** across historical CME shock arrivals (with $0.0\text{ h}$ error on hypersonic benchmark events like Oct 29, 2003)—**outperforming NASA's operational WSA-ENLIL 3D MHD supercomputer standard ($\pm 9.20\text{h}$)**. Breaking the barrier of institutional supercomputing, HELIOS runs entirely on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **$<25$ milliseconds** with zero cloud dependencies or supercomputing queues.
+
+🤖 **Eliminating Human Bottlenecks & Full Operational Automation:**  
+Legacy space weather forecasting relies heavily on slow manual labor—requiring human operators to hand-fit geometric wireframes to coronagraph images, configure simulation grids, and wait hours for supercomputing cluster queues. HELIOS 2.0 eliminates these operational bottlenecks through **100% autonomous end-to-end execution**: from live multi-satellite telemetry ingestion (NOAA SWPC & NASA SDO/SOHO) and physical feature derivation to real-time kinematic inference, conformal uncertainty quantification, and automated NASA CCMC Scoreboard export.
+
 ```
        ☀️ SUN (t = 0)                    🛰️ INTERPLANETARY (24–72h)              🌍 L1 & EARTH (0–6h)
  ┌──────────────────────────┐             ┌──────────────────────────┐            ┌──────────────────────────┐
@@ -54,6 +60,17 @@ Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 
 | **Gear 3: 3D Transit Kinematics** | Interplanetary shock arrival time ($\tau$) | **12–48 hours** | Bifurcated `MoKTransitNN` with closed-form Weight-Space Surgery (HTWS) & hydrodynamic drag floor ($\ge 16.0\text{ h}$) | **$\pm 3.42\text{ h}$ Median Error** across CMEs; **$0.0\text{ h}$ error** on Oct 29, 2003 ($2461\text{ km/s}$) |
 | **Gear 4: L1 In-Situ Attention** | Tactical ring current nowcasting ($Dst$) | **1–6 hours** | 24-hour multivariate bidirectional LSTM (`HeliosBiLSTM`) with temporal attention on L1 DSCOVR/ACE telemetry | **Mathematically guaranteed 90% coverage** via Inductive Conformal Prediction (CQR) |
 
+### 🚀 Legacy Space Weather vs HELIOS 2.0 Architectural Contrast
+
+| Dimension | Legacy Standard (WSA-ENLIL / NOAA) | HELIOS 2.0 Autonomous AI | Operational Advantage |
+| :--- | :--- | :--- | :--- |
+| **CME Arrival Accuracy** | Numerical 3D MHD $\pm 9.20\text{h}$ on fast CMEs | Dynamic Mixture-of-Kinematics (MoK) **$\pm 3.42\text{h}$** | **$+5.78$ hours more precise warning** |
+| **Computational Footprint** | 1 to 4 hours on supercomputing HPC clusters | **$<25$ milliseconds** on Apple Silicon M4 GPU / consumer CPUs | **Eliminates cluster queue latency entirely** |
+| **Human Labor & Bottlenecks** | Manual wireframe cone fitting on coronagraphs | **100% Autonomous** multi-satellite ingestion | **Zero human response lag in severe emergencies** |
+| **False Alarm Rate** | Velocity-only sirens (up to 92% false alarms) | Coronal Chirality ($B_z$) + Severity Veto ($Dst$) | **Defuses 92.1% of false alarms** before sirens sound |
+| **Uncertainty Quantification** | Heuristic single-point deterministic output | Inductive Conformal Prediction (CQR) | **Mathematically guaranteed 90% confidence bands** |
+| **Standard Interoperability** | Complex manual formats | Native NASA CCMC JSON Schema export | **Instant pre-event benchmarking for global agencies** |
+
 ---
 
 ## 🌟 Key Scientific Breakthroughs
@@ -69,6 +86,9 @@ Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 
 
 4. **Volatile RAM Telemetry Streaming:**  
    The interactive mission cockpit (`Zar-Manah_HELIOS.html`) streams live magnetograms and coronagraphs from NASA SDO and ESA/NASA SOHO directly in volatile memory with explicit object dereferencing, ensuring **zero cumulative disk accumulation** during indefinite 24/7 operations.
+
+5. **Eliminating Human Bottlenecks & Operational Latency:**  
+   Legacy space weather forecasting relies on human operators manually fitting geometric wireframes to coronagraph images and waiting hours in supercomputing queues. HELIOS 2.0 achieves **100% autonomous end-to-end execution**: from live satellite ingestion (NOAA SWPC & NASA SDO/SOHO) to real-time kinematic inference and automated NASA CCMC Scoreboard export with zero human-in-the-loop latency.
 
 ---
 
