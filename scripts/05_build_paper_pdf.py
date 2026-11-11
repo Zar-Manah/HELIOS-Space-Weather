@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Zar-Manah HELIOS - Publication-Grade Scientific PDF Generator (Balanced 6-Page Edition)
-Compiles the complete manuscript, formal mathematical formulations, structured benchmark tables,
-and 300 DPI figures into an immaculately formatted 6-page scientific publication PDF.
+Zar-Manah HELIOS 2.0 - Extended 6-Page Manuscript PDF Generator
+Compiles the extended analytical treatise (6 pages) with multi-horizon conformal benchmarks.
+For the canonical 3-page concise preprint deposited on Zenodo, see scripts/15_build_paper_pdf.py.
 """
 
 import os

@@ -32,17 +32,8 @@ import torchvision.transforms as T
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODELS_DIR = os.path.join(BASE_DIR, "models")
-CAMPAIGN1_DIR = MODELS_DIR
-CAMPAIGN2_DIR = BASE_DIR
 
-DATA_PATH = os.path.join(CAMPAIGN2_DIR, "data/processed/helios_vision_matched.parquet")
-if not os.path.exists(DATA_PATH):
-    # Try sibling campaign path if available
-    alt_data = os.path.join(os.path.dirname(BASE_DIR), "SOLAR-HELIOS-02/data/processed/helios_vision_matched.parquet")
-    if os.path.exists(alt_data):
-        DATA_PATH = alt_data
-
-# Models paths
+DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "helios_vision_matched.parquet")
 M1_PATH = os.path.join(MODELS_DIR, "helios_vision_apex.pkl")
 M2_PATH = os.path.join(MODELS_DIR, "helios_storm_apex.pkl")
 M3_PATH = os.path.join(MODELS_DIR, "helios_transit_mok_edited.pt")

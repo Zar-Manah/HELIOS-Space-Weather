@@ -1,8 +1,8 @@
 {
   "model_type": "MoKTransitNN",
-  "base_checkpoint": "campaigns/SOLAR-HELIOS-01/models/helios_transit_mok_mps.pt",
+  "base_checkpoint": "models/helios_transit_mok_mps.pt",
   "base_sha256": "c935bada0e352f7fc571df56a71b4a100c3135b278db0bebddeaf4cfebe29e3a",
-  "edited_checkpoint": "campaigns/SOLAR-HELIOS-01/models/helios_transit_mok_edited.pt",
+  "edited_checkpoint": "models/helios_transit_mok_edited.pt",
   "edited_sha256": "65f39975ac22c794e0e702c71d356ba73838ece2b29b098b7e9a6fa6b4caea4e",
   "operations_count": 1,
   "transaction_log": [
