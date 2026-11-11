@@ -414,8 +414,6 @@
 
       <button class="btn btn-active" id="btnModeLive" onclick="setMode('live')">Live Stream</button>
       <button class="btn" id="btnModeSim" onclick="setMode('simulation')">Manual Simulation</button>
-      <button class="btn" id="btnModeMay" onclick="loadPreset('may2024')">May 2024 (G5)</button>
-      <button class="btn" id="btnModeQuiet" onclick="loadPreset('quiet')">Quiet (G0)</button>
       <button class="btn" onclick="exportCcmcJson()">Export JSON</button>
     </div>
   </header>
@@ -679,8 +677,6 @@
       currentMode = mode;
       document.getElementById('btnModeLive').className = (mode === 'live') ? 'btn btn-active' : 'btn';
       document.getElementById('btnModeSim').className = (mode === 'simulation') ? 'btn btn-active' : 'btn';
-      document.getElementById('btnModeMay').className = 'btn';
-      document.getElementById('btnModeQuiet').className = 'btn';
 
       if (mode === 'live') {
         document.getElementById('liveStatusText').textContent = 'NOAA SWPC RTSW (LIVE)';
@@ -692,40 +688,6 @@
         document.getElementById('liveDot').style.background = 'var(--amber)';
         document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--amber)';
         if (liveTimer) clearInterval(liveTimer);
-      }
-      recomputePipeline();
-    }
-
-    function loadPreset(name) {
-      if (liveTimer) clearInterval(liveTimer);
-      currentMode = 'preset';
-      document.getElementById('btnModeLive').className = 'btn';
-      document.getElementById('btnModeSim').className = 'btn';
-      document.getElementById('btnModeMay').className = (name === 'may2024') ? 'btn btn-active' : 'btn';
-      document.getElementById('btnModeQuiet').className = (name === 'quiet') ? 'btn btn-active' : 'btn';
-
-      if (name === 'may2024') {
-        document.getElementById('liveStatusText').textContent = 'PRESET: MAY 2024 G5 SUPERSTORM';
-        document.getElementById('liveDot').style.background = 'var(--purple)';
-        document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--purple)';
-        pipeline.v0 = 2200;
-        pipeline.shearAngle = 88;
-        pipeline.bzLive = -48.2;
-        pipeline.vswLive = 890;
-        pipeline.pdynLive = 38.5;
-        document.getElementById('rngG1Shear').value = 88;
-        document.getElementById('rngG2HaloExp').value = 2200;
-      } else {
-        document.getElementById('liveStatusText').textContent = 'PRESET: SOLAR QUIET (CYCLE 25 BASELINE)';
-        document.getElementById('liveDot').style.background = 'var(--green)';
-        document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--green)';
-        pipeline.v0 = 420;
-        pipeline.shearAngle = 18;
-        pipeline.bzLive = 2.4;
-        pipeline.vswLive = 360;
-        pipeline.pdynLive = 2.1;
-        document.getElementById('rngG1Shear').value = 18;
-        document.getElementById('rngG2HaloExp').value = 420;
       }
       recomputePipeline();
     }

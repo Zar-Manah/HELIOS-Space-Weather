@@ -110,7 +110,6 @@ Evaluating a randomized, stratified sample of 20 historical events across Solar 
 HELIOS 2.0 includes a zero-install, single-file browser cockpit running at 60 FPS on any modern browser:
 - **Live Satellite Feeds:** Auto-updates NOAA SWPC RTSW plasma and magnetic vectors every 60s, and NASA SDO/SOHO solar imagery every 5 min.
 - **Master Mission Timeline:** Dual-track interactive canvas visualizing CME 3D transit and magnetospheric ring current response over a 100-hour window.
-- **Historical Benchmark Selector:** 1-click execution of landmark benchmark events (Halloween 2003 G5 Superstorm, Oct 29 2003 Hypersonic CME, May 2024 G5 Superstorm, Solar Quiet Baselines).
 - **Zero Disk Footprint:** Ephemeral memory management guaranteeing zero disk buildup.
 
 ```bash
