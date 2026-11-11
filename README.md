@@ -6,8 +6,8 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
-[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24146866-blue.svg)](https://doi.org/10.5281/zenodo.24146866)
-[![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
+[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24147291-blue.svg)](https://doi.org/10.5281/zenodo.24147291)
+[![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24147291-blue.svg)](https://doi.org/10.5281/zenodo.24147291)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
 ---
@@ -171,8 +171,8 @@ If you utilize HELIOS 2.0 in academic research, space operations, or utility gri
   journal={Zenodo Preprints},
   year={2026},
   publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24146866},
-  url={https://doi.org/10.5281/zenodo.24146866}
+  doi={10.5281/zenodo.24147291},
+  url={https://doi.org/10.5281/zenodo.24147291}
 }
 ```
 
