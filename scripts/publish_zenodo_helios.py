@@ -130,15 +130,18 @@ def main():
 
     # 4. Upload key files
     files_to_upload = [
-        os.path.join(BASE_DIR, "paper", "HELIOS_Solar_Storm_Conformal_Forecasting.pdf"),
+        os.path.join(BASE_DIR, "paper", "HELIOS_2_Solar_Vision_Swiss_Watch.pdf"),
         os.path.join(BASE_DIR, "Zar-Manah_HELIOS.html"),
         os.path.join(BASE_DIR, "predict.py"),
+        os.path.join(BASE_DIR, "scripts", "export_ccmc_scoreboard.py"),
         os.path.join(BASE_DIR, "README.md"),
         os.path.join(BASE_DIR, "results", "helios_evaluation_metrics.json"),
         os.path.join(BASE_DIR, "results", "figures", "fig1_multi_horizon_benchmarks.png"),
         os.path.join(BASE_DIR, "results", "figures", "fig2_may2024_superstorm_case_study.png"),
         os.path.join(BASE_DIR, "results", "figures", "fig3_feature_importance.png"),
-        os.path.join(BASE_DIR, "results", "figures", "fig4_cme_transit_benchmark.png")
+        os.path.join(BASE_DIR, "results", "figures", "fig4_cme_transit_benchmark.png"),
+        os.path.join(BASE_DIR, "helios_trained_models.tar.gz"),
+        os.path.join(BASE_DIR, "helios_processed_datasets.tar.gz")
     ]
 
     print("3. Uploading scientific artifacts to Zenodo bucket...")
