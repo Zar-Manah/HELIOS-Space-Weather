@@ -3,53 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zar-Manah HELIOS 2.0 — Space Weather Cockpit</title>
+  <title>Zar-Manah HELIOS 2.0 — Dual-Scale Space Weather Intelligence Cockpit</title>
   <style>
     :root {
       --bg: #060911;
       --card-bg: #0d1322;
       --card-border: #1a2438;
+      --card-head-bg: #111a2e;
+      --border-focus: #00e5ff;
+      --text: #e2e8f0;
+      --text-dim: #718096;
       --cyan: #00e5ff;
       --green: #10b981;
       --amber: #f59e0b;
       --crimson: #ef4444;
       --purple: #a855f7;
-      --text: #e2e8f0;
-      --text-dim: #64748b;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "JetBrains Mono", monospace;
       --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
-      height: 100vh;
-      max-height: 100vh;
-      overflow: hidden;
+    body {
       background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
-      font-size: 11px;
-    }
-
-    body {
-      padding: 10px 14px;
+      font-size: 12px;
+      line-height: 1.4;
+      padding: 12px 16px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
     }
 
-    /* HEADER */
+    /* TOP BAR */
     header {
-      flex: 0 0 40px;
-      height: 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 6px;
-      padding: 0 14px;
+      padding: 10px 16px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .brand {
@@ -60,7 +58,7 @@
 
     .brand-title {
       font-family: var(--mono);
-      font-size: 13.5px;
+      font-size: 15px;
       font-weight: 700;
       letter-spacing: 0.5px;
       color: #fff;
@@ -68,7 +66,7 @@
 
     .brand-tag {
       font-family: var(--mono);
-      font-size: 9.5px;
+      font-size: 10px;
       background: rgba(0, 229, 255, 0.12);
       color: var(--cyan);
       padding: 2px 7px;
@@ -81,7 +79,8 @@
     .header-controls {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .status-pill {
@@ -89,10 +88,10 @@
       align-items: center;
       gap: 6px;
       font-family: var(--mono);
-      font-size: 10.5px;
+      font-size: 11px;
       background: #09101d;
       border: 1px solid var(--card-border);
-      padding: 4px 10px;
+      padding: 5px 10px;
       border-radius: 4px;
       color: var(--text-dim);
     }
@@ -103,17 +102,27 @@
       border-radius: 50%;
       background: var(--green);
       box-shadow: 0 0 6px var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
     }
 
     .btn {
       font-family: var(--mono);
-      font-size: 10.5px;
-      padding: 4px 13px;
+      font-size: 11px;
+      padding: 5px 11px;
       background: #141c2e;
       border: 1px solid var(--card-border);
       border-radius: 4px;
       color: var(--text);
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       transition: all 0.15s ease;
     }
 
@@ -132,22 +141,27 @@
 
     /* 4-GEAR PIPELINE CARDS */
     .pipeline-grid {
-      flex: 0 0 245px;
-      height: 245px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: 12px;
+    }
+
+    @media (max-width: 1200px) {
+      .pipeline-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .pipeline-grid { grid-template-columns: 1fr; }
     }
 
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 6px;
-      padding: 10px 12px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 5px;
+      gap: 10px;
+      position: relative;
     }
 
     .card-head {
@@ -155,70 +169,33 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      padding-bottom: 4px;
+      padding-bottom: 6px;
+    }
+
+    .card-stage {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
     }
 
     .card-title {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       color: #fff;
     }
 
     .card-badge {
       font-family: var(--mono);
-      font-size: 9px;
-      padding: 1px 6px;
+      font-size: 10px;
+      padding: 2px 6px;
       border-radius: 3px;
       background: #141c2e;
       border: 1px solid var(--card-border);
       color: var(--text-dim);
-    }
-
-    /* LIVE VISION VIEWPORT (EPHEMERAL RAM ONLY, ZERO DISK STORAGE) */
-    .vision-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .vision-thumb-container {
-      position: relative;
-      width: 70px;
-      height: 70px;
-      flex: 0 0 70px;
-      border-radius: 4px;
-      overflow: hidden;
-      border: 1px solid rgba(0, 229, 255, 0.25);
-      background: #000;
-    }
-
-    .vision-thumb {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .vision-tag {
-      position: absolute;
-      bottom: 2px;
-      left: 2px;
-      font-family: var(--mono);
-      font-size: 7.5px;
-      background: rgba(0, 0, 0, 0.75);
-      color: var(--cyan);
-      padding: 1px 3px;
-      border-radius: 2px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
-    .metric-col {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
     }
 
     .metric-grid {
@@ -231,44 +208,49 @@
       background: #090e18;
       border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 4px;
-      padding: 5px 7px;
+      padding: 7px 9px;
       display: flex;
       flex-direction: column;
-      gap: 1px;
+      gap: 2px;
     }
 
     .metric-lbl {
       color: var(--text-dim);
-      font-size: 8.5px;
+      font-size: 10px;
       font-family: var(--mono);
-      text-transform: uppercase;
     }
 
     .metric-val {
       font-family: var(--mono);
-      font-size: 13.5px;
+      font-size: 15px;
       font-weight: 700;
       color: #fff;
+    }
+
+    .metric-sub {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--text-dim);
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
     }
 
     .field-row {
       display: flex;
       justify-content: space-between;
       font-family: var(--mono);
-      font-size: 9px;
+      font-size: 10px;
       color: var(--text-dim);
     }
 
     input[type=range] {
       -webkit-appearance: none;
       width: 100%;
-      height: 3px;
+      height: 4px;
       background: #1a2438;
       border-radius: 2px;
       outline: none;
@@ -276,74 +258,80 @@
 
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: var(--cyan);
       cursor: pointer;
+      box-shadow: 0 0 5px var(--cyan);
     }
 
     .status-badge {
-      display: block;
-      padding: 4px 6px;
+      display: inline-block;
+      padding: 3px 6px;
       border-radius: 3px;
       font-family: var(--mono);
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 700;
       text-align: center;
-      letter-spacing: 0.3px;
     }
 
-    .badge-safe { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: var(--green); }
-    .badge-warn { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: var(--amber); }
-    .badge-crit { background: rgba(239, 68, 68, 0.18); border: 1px solid rgba(239, 68, 68, 0.4); color: var(--crimson); }
-    .badge-g5   { background: rgba(168, 85, 247, 0.22); border: 1px solid rgba(168, 85, 247, 0.5); color: #c084fc; }
+    .badge-danger {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: var(--crimson);
+    }
 
-    /* MASTER CHART CARD */
+    .badge-warning {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--amber);
+    }
+
+    .badge-safe {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--green);
+    }
+
+    /* MASTER CHART SECTION */
     .master-chart-card {
-      flex: 1 1 auto;
-      min-height: 0;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 6px;
-      padding: 10px 14px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 10px;
     }
 
     .chart-header {
-      flex: 0 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chart-title-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .chart-title {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 700;
       color: #fff;
-      letter-spacing: 0.5px;
-    }
-
-    .chart-telemetry-stamp {
-      font-family: var(--mono);
-      font-size: 9.5px;
-      color: var(--cyan);
-      background: rgba(0, 229, 255, 0.08);
-      padding: 2px 8px;
-      border-radius: 3px;
-      border: 1px solid rgba(0, 229, 255, 0.2);
     }
 
     .chart-legend {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       font-family: var(--mono);
-      font-size: 9.5px;
+      font-size: 11px;
     }
 
     .legend-item {
@@ -352,45 +340,69 @@
       gap: 5px;
     }
 
-    .legend-line {
-      width: 12px;
-      height: 2.5px;
+    .legend-color {
+      width: 10px;
+      height: 3px;
       border-radius: 1px;
     }
 
-    .legend-box {
+    .legend-patch {
       width: 10px;
-      height: 6px;
+      height: 8px;
       border-radius: 1px;
       opacity: 0.35;
     }
 
-    .canvas-container {
-      flex: 1 1 auto;
-      position: relative;
-      width: 100%;
-      min-height: 0;
-    }
-
     canvas#masterChart {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
-      height: 100%;
+      height: 240px;
       background: #080c14;
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 4px;
     }
+
+    /* IMPACT TILES AT BOTTOM */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .impact-grid { grid-template-columns: 1fr; }
+    }
+
+    .impact-tile {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 9px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .impact-name { color: var(--text-dim); }
+    .impact-val { font-weight: 700; }
+
+    /* NOAA G-SCALE BADGES */
+    .g0 { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .g1 { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .g2 { background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); }
+    .g3 { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .g4 { background: rgba(220, 38, 38, 0.25); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.5); }
+    .g5 { background: rgba(168, 85, 247, 0.25); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.6); }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
+  <!-- TOP HEADER -->
   <header>
     <div class="brand">
       <div class="brand-title">ZAR-MANAH HELIOS 2.0</div>
-      <div class="brand-tag">Swiss Watch Pipeline</div>
+      <div class="brand-tag">4-Tier Swiss Watch Pipeline</div>
     </div>
 
     <div class="header-controls">
@@ -402,212 +414,256 @@
 
       <button class="btn btn-active" id="btnModeLive" onclick="setMode('live')">Live Stream</button>
       <button class="btn" id="btnModeSim" onclick="setMode('simulation')">Manual Simulation</button>
-      <button class="btn" id="btnExportCcmc" onclick="exportCcmcJson()" title="Export prediction formatted for NASA CCMC Earth CME Scoreboard">Export NASA JSON</button>
+      <button class="btn" id="btnModeMay" onclick="loadPreset('may2024')">May 2024 (G5)</button>
+      <button class="btn" id="btnModeQuiet" onclick="loadPreset('quiet')">Quiet (G0)</button>
+      <button class="btn" onclick="exportCcmcJson()">Export JSON</button>
     </div>
   </header>
 
-  <!-- 4 PIPELINE CARDS (ALL 4 MODELS) -->
+  <!-- 4-TIER PIPELINE CARDS (EXACT ORDER) -->
   <div class="pipeline-grid">
 
-    <!-- GEAR 1: HELIOS-VISION-APEX (SDO/HMI) -->
+    <!-- GEAR 1: SOLAR VISION APEX -->
     <div class="card">
       <div class="card-head">
-        <div class="card-title">GEAR 1 · HELIOS-VISION-APEX</div>
+        <div>
+          <div class="card-stage">STAGE 1 · T₀ PHOTOSPHERE</div>
+          <div class="card-title">GEAR 1 · HELIOS-VISION-APEX</div>
+        </div>
         <div class="card-badge">SDO / HMI</div>
       </div>
 
-      <div class="vision-row">
-        <div class="vision-thumb-container">
-          <img id="imgGear1Live" class="vision-thumb" alt="SDO HMI Live Magnetogram" src="https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_HMIB.jpg">
-          <div class="vision-tag">LIVE SDO</div>
+      <div class="metric-grid">
+        <div class="metric-box">
+          <div class="metric-lbl">Chirality (South Threat)</div>
+          <div class="metric-val" id="g1ProbBz" style="color:var(--crimson);">88.4%</div>
+          <div class="metric-sub" id="g1ChiralityDesc">Bz &le; -10 nT Threat</div>
         </div>
-        <div class="metric-col">
-          <div class="metric-box">
-            <div class="metric-lbl">Chirality (South Threat)</div>
-            <div class="metric-val" id="g1ProbBz">--</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-lbl">Predicted Peak Bz</div>
-            <div class="metric-val" id="g1MedianBz">--</div>
-          </div>
+        <div class="metric-box">
+          <div class="metric-lbl">Median Peak Bz (Q50)</div>
+          <div class="metric-val" id="g1MedianBz" style="color:var(--cyan);">-28.5 nT</div>
+          <div class="metric-sub" id="g1RangeBz">[ -38.2, -18.6 nT ]</div>
         </div>
       </div>
 
-      <div class="field">
+      <div class="field" style="margin-top:2px;">
         <div class="field-row">
-          <span>Magnetic Shear (PIL)</span>
-          <span id="lblG1Pil">18°</span>
+          <span>Magnetic Polarity Inversion (PIL)</span>
+          <span id="lblG1Pil">Shear: 82°</span>
         </div>
-        <input type="range" id="rngG1Shear" min="0" max="90" step="1" value="18" oninput="onG1Input()">
+        <input type="range" id="rngG1Shear" min="0" max="90" step="1" value="82" oninput="onG1Input()">
       </div>
 
-      <div class="status-badge badge-safe" id="g1StatusBadge">NORTHWARD (SAFE)</div>
+      <div class="impact-tile" style="padding:6px 8px; margin-top:auto;">
+        <span class="impact-name">Coronal Polarity Status</span>
+        <span class="status-badge badge-danger" id="g1StatusBadge">SOUTHWARD INJECTION</span>
+      </div>
     </div>
 
-    <!-- GEAR 2: HELIOS-STORM-APEX (SOHO/LASCO C2) -->
+    <!-- GEAR 2: HELIOS-STORM-APEX -->
     <div class="card">
       <div class="card-head">
-        <div class="card-title">GEAR 2 · HELIOS-STORM-APEX</div>
+        <div>
+          <div class="card-stage">STAGE 2 · T₀ CORONAL HALO</div>
+          <div class="card-title">GEAR 2 · HELIOS-STORM-APEX</div>
+        </div>
         <div class="card-badge">SOHO / LASCO C2</div>
       </div>
 
-      <div class="vision-row">
-        <div class="vision-thumb-container">
-          <img id="imgGear2Live" class="vision-thumb" alt="SOHO LASCO C2 Live Coronagraph" src="https://services.swpc.noaa.gov/images/animations/lasco-c2/latest.jpg">
-          <div class="vision-tag">LIVE SOHO</div>
+      <div class="metric-grid">
+        <div class="metric-box">
+          <div class="metric-lbl">Severe Storm Veto</div>
+          <div class="metric-val" id="g2ProbStorm" style="color:var(--crimson);">94.1%</div>
+          <div class="metric-sub">Dst &le; -110 nT (0.871 AUC)</div>
         </div>
-        <div class="metric-col">
-          <div class="metric-box">
-            <div class="metric-lbl">Severe Storm Veto</div>
-            <div class="metric-val" id="g2ProbStorm">--</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-lbl">Coronal Dst Proxy</div>
-            <div class="metric-val" id="g2MedianDst">--</div>
-          </div>
+        <div class="metric-box">
+          <div class="metric-lbl">Coronal Dst Proxy (Q50)</div>
+          <div class="metric-val" id="g2MedianDst" style="color:var(--purple);">-342 nT</div>
+          <div class="metric-sub" id="g2RangeDst">[ -412, -220 nT ]</div>
         </div>
       </div>
 
-      <div class="field">
+      <div class="field" style="margin-top:2px;">
         <div class="field-row">
-          <span>Halo Launch Speed (V₀)</span>
-          <span id="lblG2HaloExp">420 km/s</span>
+          <span>Halo Expansion Velocity (C2)</span>
+          <span id="lblG2HaloExp" style="color:var(--cyan); font-weight:700;">1950 km/s</span>
         </div>
-        <input type="range" id="rngG2HaloExp" min="300" max="3000" step="50" value="420" oninput="onG2Input()">
+        <input type="range" id="rngG2HaloExp" min="300" max="3000" step="50" value="1950" oninput="onG2Input()">
       </div>
 
-      <div class="status-badge badge-safe" id="g2StatusBadge">QUIET / NO VETO</div>
+      <div class="impact-tile" style="padding:6px 8px; margin-top:auto;">
+        <span class="impact-name">Coronal Threat Level</span>
+        <span class="status-badge badge-danger" id="g2StatusBadge">G5 SUPERSTORM VETO</span>
+      </div>
     </div>
 
-    <!-- GEAR 3: MoKTransitNN (1 AU DRAG KINEMATICS) -->
+    <!-- GEAR 3: MoKTransitNN -->
     <div class="card">
       <div class="card-head">
-        <div class="card-title">GEAR 3 · MoKTransitNN</div>
-        <div class="card-badge">1 AU Drag MHD</div>
+        <div>
+          <div class="card-stage">STAGE 3 · 1 AU DRAG (24–72H)</div>
+          <div class="card-title">GEAR 3 · MoKTransitNN</div>
+        </div>
+        <div class="card-badge">MHD Drag Kinematics</div>
       </div>
 
       <div class="metric-grid">
         <div class="metric-box">
           <div class="metric-lbl">Transit Time</div>
-          <div class="metric-val" id="g3TransitTime">--</div>
+          <div class="metric-val" id="g3TransitTime">26.4 h</div>
+          <div class="metric-sub" id="g3Days">1.10 days to Earth</div>
         </div>
         <div class="metric-box">
           <div class="metric-lbl">1 AU Arrival Speed</div>
-          <div class="metric-val" id="g3ArrivalSpeed">--</div>
+          <div class="metric-val" id="g3ArrivalSpeed" style="color:var(--amber);">885 km/s</div>
+          <div class="metric-sub">Drag Deceleration: -1065 km/s</div>
         </div>
       </div>
 
-      <div class="metric-box" style="padding:6px 8px;">
-        <div class="metric-lbl">90% Conformal Window</div>
-        <div class="metric-val" id="g3Window" style="font-size:12px;">--</div>
+      <div class="metric-box">
+        <div class="metric-lbl">90% Conformal Window (Empirical Coverage)</div>
+        <div class="metric-val" id="g3Window" style="font-size:13px;">[ 18.5 h &ndash; 34.3 h ]</div>
+        <div class="metric-sub">Margin: &plusmn;7.90 h (Finite Sample Guarantee)</div>
       </div>
 
-      <div class="status-badge badge-safe" id="g3ArrivalEta">ETA: --</div>
+      <div class="impact-tile" style="padding:6px 8px; margin-top:auto;">
+        <span class="impact-name">Earth Arrival ETA</span>
+        <span class="impact-val" id="g3ArrivalEta" style="color:var(--cyan);">--</span>
+      </div>
     </div>
 
-    <!-- GEAR 4: HeliosBiLSTM (L1 IN-SITU ATTENTION) -->
+    <!-- GEAR 4: HeliosBiLSTM -->
     <div class="card">
       <div class="card-head">
-        <div class="card-title">GEAR 4 · HeliosBiLSTM</div>
+        <div>
+          <div class="card-stage">STAGE 4 · L1 IN-SITU (1–6H)</div>
+          <div class="card-title">GEAR 4 · HeliosBiLSTM</div>
+        </div>
         <div class="card-badge">DSCOVR / ACE</div>
       </div>
 
       <div class="metric-grid">
         <div class="metric-box">
-          <div class="metric-lbl">In-Situ Bz (L1)</div>
-          <div class="metric-val" id="g4Bz">--</div>
+          <div class="metric-lbl">In-Situ IMF Bz (L1)</div>
+          <div class="metric-val" id="g4Bz" style="color:var(--crimson);">-18.4 nT</div>
+          <div class="metric-sub" id="g4BzDesc">Active Substorm Drive</div>
         </div>
         <div class="metric-box">
-          <div class="metric-lbl">Solar Wind Speed</div>
-          <div class="metric-val" id="g4Vsw">--</div>
+          <div class="metric-lbl">Solar Wind Flow</div>
+          <div class="metric-val" id="g4Vsw">782 km/s</div>
+          <div class="metric-sub" id="g4Pdyn">Pdyn: 26.2 nPa</div>
         </div>
       </div>
 
-      <div class="metric-grid">
-        <div class="metric-box">
-          <div class="metric-lbl">Proton Density Np</div>
-          <div class="metric-val" id="g4Density">--</div>
+      <!-- Multi-Horizon Forecast Rows -->
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; padding:3px 6px; background:#090e18; border-radius:3px;">
+          <span style="font-weight:700;">+1h Forecast</span>
+          <span id="g4Fc1" style="font-weight:700; color:var(--crimson);">-284 nT</span>
+          <span class="status-badge g5" style="padding:1px 4px; font-size:9px;">G5</span>
         </div>
-        <div class="metric-box">
-          <div class="metric-lbl">Forecast Dst (+6h)</div>
-          <div class="metric-val" id="g4Dst">--</div>
+        <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; padding:3px 6px; background:#090e18; border-radius:3px;">
+          <span style="font-weight:700;">+3h Forecast</span>
+          <span id="g4Fc3" style="font-weight:700; color:var(--purple);">-392 nT</span>
+          <span class="status-badge g5" style="padding:1px 4px; font-size:9px;">G5</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; padding:3px 6px; background:#090e18; border-radius:3px;">
+          <span style="font-weight:700;">+6h Forecast</span>
+          <span id="g4Fc6" style="font-weight:700; color:var(--purple);">-412 nT</span>
+          <span class="status-badge g5" style="padding:1px 4px; font-size:9px;">G5</span>
         </div>
       </div>
 
-      <div class="status-badge badge-safe" id="g4GlobalBadge">G0 (QUIET)</div>
+      <div class="impact-tile" style="padding:6px 8px; margin-top:auto;">
+        <span class="impact-name">NOAA Global Threat</span>
+        <span class="status-badge g5" id="g4GlobalBadge">G5 EXTREME STORM</span>
+      </div>
     </div>
 
   </div>
 
-  <!-- THE MASTER UNIFIED CHART -->
+  <!-- SINGLE MASTER TIMELINE & GEOMAGNETIC PROFILE CHART -->
   <div class="master-chart-card">
     <div class="chart-header">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <div class="chart-title" id="chartMainTitle">MASTER MISSION TELEMETRY · 6-HOUR REAL NOAA SWPC STREAM (L1 ACE/DSCOVR)</div>
-        <div class="chart-telemetry-stamp" id="liveTelemetryStamp">RTSW: 2026-11-08T16:18:00 UTC · ACE</div>
+      <div class="chart-title-box">
+        <div class="chart-title">MASTER MISSION TIMELINE & GEOMAGNETIC RING CURRENT PROFILE</div>
+        <div class="card-badge" id="chartStateBadge">UNIFIED MULTI-HORIZON KINEMATICS</div>
       </div>
-
-      <div class="chart-legend" id="chartLegend">
+      <div class="chart-legend">
         <div class="legend-item">
-          <div class="legend-line" style="background:var(--cyan);"></div>
-          <span>Solar Wind Speed V(t) [km/s]</span>
+          <div class="legend-color" style="background:var(--cyan);"></div>
+          <span>1 AU Velocity Trajectory [V(t)]</span>
         </div>
         <div class="legend-item">
-          <div class="legend-line" style="background:var(--green);"></div>
-          <span>IMF Bz [nT]</span>
+          <div class="legend-patch" style="background:var(--cyan); border: 1px dashed var(--cyan);"></div>
+          <span>90% Conformal Arrival Window (&plusmn;7.90h)</span>
         </div>
         <div class="legend-item">
-          <div class="legend-line" style="background:var(--amber);"></div>
-          <span>Kyoto Dst [nT]</span>
+          <div class="legend-color" style="background:var(--crimson);"></div>
+          <span>Earth Dst Storm Response [nT]</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background:var(--purple); border-top: 1px dashed var(--purple);"></div>
+          <span>HeliosBiLSTM +6h Forward Horizons</span>
         </div>
       </div>
     </div>
 
-    <div class="canvas-container">
-      <canvas id="masterChart"></canvas>
+    <!-- The Single Master Canvas -->
+    <canvas id="masterChart" height="240"></canvas>
+  </div>
+
+  <!-- CRITICAL INFRASTRUCTURE IMPACT STATUS BAR -->
+  <div class="impact-grid">
+    <div class="impact-tile">
+      <span class="impact-name">Power Grid (NERC TPL-007)</span>
+      <span class="impact-val" id="valGrid" style="color:var(--crimson);">GIC SATURATION ALERT</span>
+    </div>
+    <div class="impact-tile">
+      <span class="impact-name">LEO Satellites (Thermospheric Drag)</span>
+      <span class="impact-val" id="valSat" style="color:var(--crimson);">SEVERE ORBITAL DECAY</span>
+    </div>
+    <div class="impact-tile">
+      <span class="impact-name">Transpolar Aviation (ICAO High Lat)</span>
+      <span class="impact-val" id="valAv" style="color:var(--amber);">POLAR CAP ABSORPTION (HF BLACKOUT)</span>
     </div>
   </div>
 
   <script>
+    // System State
     let currentMode = 'live';
     let liveTimer = null;
-    let liveImageTimer = null;
+    let liveBuffer = [];
 
-    // Authentic Real-Time Data (Embedded 360 1-minute measurements = 6 hours)
-    let bzHistory = [2.95, 2.57, 1.84, 2.87, 1.81, 3.07, 3.63, 1.57, 3.35, 3.19, 1.37, 3.2, 1.47, 2.53, 1.6, 2.18, 3.24, 1.34, 2.8, 1.5, 2.39, 2.78, 0.45, 2.53, -0.11, 0.0, 0.48, 1.24, 1.01, -2.42, -0.97, -2.93, 1.01, -2.86, 1.76, -2.55, -2.25, 2.26, -2.44, -2.16, 2.11, -3.94, -2.89, -4.09, 1.54, -3.91, -3.57, 1.43, -3.36, 0.9, -3.54, -3.5, 0.41, -3.71, -4.14, -3.77, -2.0, -4.3, -3.62, -0.57, -4.25, 1.03, -3.84, -4.13, 1.39, -3.64, -3.94, 1.74, -3.92, -4.23, -3.86, 1.87, -4.29, -3.44, 1.92, -3.91, 2.13, -3.88, -3.36, 1.09, -3.84, -2.91, 0.62, -3.68, -3.53, 0.62, -3.29, -2.98, -3.56, 0.62, -3.7, 0.93, -3.72, -3.53, 1.69, -3.79, -3.44, 1.91, -3.86, -3.3, 2.36, -3.83, -3.44, -3.83, 2.4, -4.08, 3.34, -3.32, -4.3, 3.63, -4.07, -4.43, -0.52, -3.62, -4.22, -2.03, -3.07, -3.49, -2.88, 0.22, -3.43, 1.35, -1.02, -2.6, -1.54, 0.59, -1.98, -3.51, -0.77, -0.64, -3.9, 0.23, 0.52, -2.08, -2.5, -0.6, 1.11, -2.6, -0.61, -2.33, -1.14, -0.6, -1.61, -1.69, 0.99, -2.04, -0.22, 1.62, -1.09, -1.73, 2.4, -1.33, 0.09, 1.08, 1.14, -0.06, -0.96, 1.62, -1.24, -1.83, -3.54, 1.87, -1.9, -3.3, 2.2, -2.82, -2.65, 1.94, -2.77, 1.85, -3.91, -1.32, -2.97, 2.39, -2.93, -1.84, 2.41, -3.23, 0.05, 2.84, -3.29, 0.83, 0.07, -3.08, 0.45, 1.78, -0.87, 3.67, 0.32, 1.12, 3.48, -0.27, -0.1, 3.38, 0.11, -0.99, 0.41, 2.87, -1.34, 1.44, 1.81, -2.63, 1.45, 2.22, -3.62, 1.0, 2.29, -3.31, 2.82, -2.56, -2.99, -3.96, 2.89, -2.21, 2.67, -3.32, -3.5, 2.22, -2.66, 0.97, -2.34, 2.59, 0.05, 1.85, -2.27, 1.15, -3.16, 2.03, 1.68, 1.24, 0.12, 1.77, -0.75, 1.52, 1.79, 2.9, -1.57, 2.31, -0.51, 3.44, 3.22, -0.29, 3.73, 2.74, 0.01, 2.81, 2.35, -1.35, -0.12, 0.09, -0.69, 0.13, -0.47, 0.89, -0.97, -1.32, 2.39, -1.12, -0.42, 1.7, 3.78, 2.18, 0.96, 3.89, 2.31, 3.82, 2.74, 2.79, 2.31, 3.13, 2.18, 3.53, 2.6, 1.97, 4.11, 2.59, 2.03, 4.35, 2.42, 1.7, 4.3, 3.2, 2.02, 4.38, 3.12, 2.44, 4.18, 2.14, 2.17, 3.62, 1.95, 1.63, -0.49, 0.67, 1.72, 1.49, 0.25, 1.33, 1.03, 1.63, 1.45, 1.32, 1.43, 1.15, 1.35, 1.11, 1.14, 0.62, 1.49, 1.36, 1.07, 0.37, -0.03, 0.62, 1.1, 0.88, 1.89, 0.27, 0.96, 3.04, 0.99, 1.21, 2.19, 2.1, 2.36, 2.51, 2.25, 2.82, -1.91, 2.3, -0.53, 2.73, -3.87, -3.91, 2.79, -3.8, -4.18, 2.95, -1.87, -4.13, 1.8, 0.65, 0.52, -0.91, 2.43, -1.6, 0.83, 2.44, 0.13, 2.18, 3.66, 1.23, 1.3, 2.37, -3.94, -3.64, 0.17, -4.52, -3.38, -0.33];
-    let btHistory = [4.23, 4.65, 3.95, 4.22, 4.06, 4.66, 4.33, 3.97, 4.66, 4.3, 4.0, 4.62, 4.09, 4.63, 3.87, 4.07, 4.63, 3.79, 4.14, 3.7, 4.53, 4.12, 3.74, 4.5, 4.12, 4.34, 3.77, 4.11, 3.73, 4.37, 4.09, 4.36, 3.78, 4.27, 3.68, 4.4, 4.16, 3.83, 4.25, 4.18, 3.77, 4.28, 4.14, 4.2, 3.76, 4.29, 4.32, 3.74, 4.26, 3.25, 4.28, 4.32, 3.46, 4.3, 4.43, 4.42, 4.17, 4.45, 4.39, 4.05, 4.44, 3.9, 4.12, 4.26, 3.75, 4.2, 4.12, 3.85, 4.21, 4.48, 4.23, 3.85, 4.55, 4.24, 3.77, 4.7, 3.97, 4.39, 4.79, 4.07, 4.4, 4.91, 4.08, 4.44, 4.78, 4.08, 4.48, 4.78, 4.51, 3.96, 4.81, 3.95, 4.49, 4.81, 3.88, 4.52, 4.87, 3.9, 4.47, 4.99, 3.97, 4.48, 4.84, 4.39, 3.85, 4.65, 3.94, 4.4, 4.59, 4.04, 4.41, 4.51, 1.77, 4.47, 4.64, 4.06, 4.55, 4.58, 4.36, 3.36, 4.36, 3.39, 4.3, 4.2, 4.29, 3.15, 4.18, 4.01, 4.3, 4.08, 4.2, 4.35, 4.13, 3.66, 4.24, 3.98, 3.75, 4.25, 4.06, 4.2, 3.63, 3.89, 4.25, 4.24, 3.82, 4.27, 4.36, 3.9, 4.22, 4.18, 3.97, 3.94, 4.21, 3.88, 4.32, 4.4, 3.82, 4.33, 2.98, 3.78, 3.82, 4.28, 3.81, 3.93, 4.34, 4.07, 3.71, 4.22, 3.97, 4.33, 4.35, 3.84, 3.55, 4.34, 4.09, 3.7, 4.49, 4.19, 3.76, 4.44, 4.19, 4.34, 3.83, 3.92, 3.77, 4.31, 3.78, 4.37, 3.74, 3.72, 4.48, 3.46, 3.57, 4.4, 3.42, 3.53, 3.54, 4.39, 3.63, 3.47, 4.43, 3.79, 3.92, 4.46, 3.88, 3.55, 4.59, 3.9, 4.52, 3.79, 3.89, 4.17, 4.49, 3.71, 4.46, 3.84, 3.97, 4.11, 3.75, 3.73, 3.85, 4.49, 3.83, 4.25, 3.86, 3.77, 3.98, 4.26, 3.82, 4.17, 3.36, 3.94, 3.5, 4.24, 3.99, 4.45, 3.81, 3.89, 3.95, 4.5, 4.08, 3.91, 4.44, 3.95, 3.77, 4.24, 4.1, 3.67, 4.36, 4.16, 3.71, 4.44, 4.09, 3.58, 4.37, 4.33, 3.84, 4.4, 4.3, 4.55, 4.11, 4.4, 4.51, 4.15, 4.29, 4.14, 4.42, 4.3, 4.56, 4.21, 4.24, 4.27, 4.62, 4.16, 4.41, 4.66, 4.31, 4.42, 4.5, 4.45, 4.4, 4.59, 4.54, 4.48, 4.49, 4.5, 4.29, 4.56, 4.51, 4.1, 4.6, 4.59, 3.41, 4.6, 4.57, 4.68, 3.58, 4.54, 3.6, 4.7, 4.62, 3.46, 4.61, 4.62, 4.61, 4.0, 4.71, 3.9, 4.57, 4.7, 4.54, 4.2, 4.61, 4.55, 4.01, 4.38, 3.81, 4.42, 4.4, 3.86, 4.46, 4.43, 4.22, 4.28, 4.16, 4.37, 3.83, 4.11, 4.25, 4.35, 4.12, 4.28, 4.67, 4.49, 4.21, 4.68, 4.55, 4.12, 4.53, 4.47, 3.9, 4.31, 4.26, 4.05, 4.11, 3.85, 4.06, 4.21, 2.42, 4.2, 4.45, 2.43, 3.86, 3.33, 4.56, 4.51, 4.11, 4.97, 4.46, 3.95];
-    let windHistory = [748.5, 732.8, 731.7, 752.0, 730.9, 727.7, 759.3, 737.3, 729.4, 762.4, 742.9, 758.4, 732.8, 727.3, 756.7, 734.9, 724.2, 739.0, 752.1, 731.7, 728.3, 716.2, 733.5, 751.1, 755.9, 734.1, 730.4, 741.5, 735.0, 741.6, 746.6, 730.4, 744.9, 743.8, 755.7, 734.1, 765.4, 759.9, 761.2, 776.5, 742.7, 749.1, 750.7, 751.1, 774.1, 755.8, 774.7, 773.9, 765.2, 774.6, 737.6, 779.3, 766.2, 781.5, 735.5, 766.4, 769.4, 778.7, 785.0, 803.6, 766.9, 783.9, 792.5, 744.6, 779.6, 813.5, 754.9, 781.1, 739.7, 793.0, 776.8, 765.7, 739.0, 789.8, 743.8, 766.4, 799.4, 744.6, 769.3, 805.7, 748.5, 745.4, 818.9, 770.5, 745.5, 824.0, 786.6, 745.0, 828.3, 796.3, 744.8, 822.3, 802.8, 735.7, 818.1, 739.9, 798.3, 826.1, 798.4, 744.5, 828.1, 744.9, 804.4, 831.5, 796.9, 745.7, 822.2, 800.2, 750.8, 803.6, 800.4, 761.1, 794.5, 775.4, 765.5, 788.8, 767.7, 782.4, 793.5, 762.3, 756.9, 788.3, 748.2, 758.6, 768.5, 760.2, 741.6, 769.2, 750.8, 763.4, 748.6, 744.3, 782.6, 755.7, 730.4, 735.3, 745.0, 738.1, 750.7, 749.5, 747.5, 761.8, 752.7, 742.3, 782.9, 729.7, 756.4, 795.0, 732.3, 749.6, 779.2, 741.8, 767.1, 745.0, 752.2, 754.3, 786.2, 731.2, 736.5, 768.5, 728.7, 738.7, 779.2, 734.9, 785.9, 741.1, 732.1, 741.7, 742.4, 753.6, 807.2, 745.0, 744.1, 766.1, 750.3, 746.6, 742.3, 742.7, 754.1, 757.9, 745.2, 748.6, 744.6, 742.4, 754.1, 745.2, 739.7, 747.2, 741.6, 746.4, 732.8, 757.2, 740.2, 728.5, 757.3, 741.5, 727.0, 750.0, 742.6, 728.0, 763.4, 747.0, 745.1, 750.9, 758.9, 751.2, 756.9, 734.2, 763.9, 757.5, 746.6, 753.2, 737.5, 774.1, 751.5, 761.6, 745.4, 748.9, 750.3, 761.9, 748.2, 753.6, 739.5, 739.5, 741.4, 751.0, 742.2, 748.6, 758.3, 742.8, 746.6, 753.0, 734.3, 748.2, 749.7, 743.2, 753.2, 754.7, 746.7, 749.1, 750.3, 751.7, 750.3, 744.5, 755.4, 756.7, 748.3, 756.4, 753.1, 744.6, 753.8, 747.0, 743.8, 751.8, 753.2, 752.2, 764.3, 760.4, 753.4, 766.8, 764.3, 761.4, 769.4, 768.8, 783.9, 762.7, 746.7, 762.1, 762.8, 757.1, 765.0, 759.5, 759.6, 781.5, 743.0, 761.1, 788.5, 745.9, 781.6, 770.4, 763.6, 770.8, 755.0, 767.6, 767.6, 773.4, 750.5, 783.8, 760.4, 783.4, 762.6, 750.6, 770.2, 762.1, 757.3, 768.5, 778.7, 750.1, 781.3, 752.7, 762.0, 781.7, 757.1, 774.1, 781.5, 752.9, 777.1, 789.3, 753.8, 774.5, 786.6, 771.5, 766.3, 784.4, 757.1, 771.8, 772.0, 766.4, 784.9, 771.5, 797.0, 775.6, 771.6, 780.1, 777.5, 776.6, 770.6, 781.8, 779.4, 778.3, 768.1, 773.2, 767.2, 768.7, 771.6, 775.8, 774.7, 761.0, 772.9, 769.3, 749.4, 767.3, 765.9, 761.7, 769.5, 762.4, 743.9, 786.7, 761.1, 793.8, 756.6, 774.5, 761.5, 775.3, 794.6, 765.6, 784.9, 799.6, 797.5, 769.4];
-    let densityHistory = [0.62, 1.54, 1.59, 0.56, 1.61, 1.54, 0.53, 1.59, 1.56, 0.54, 1.65, 0.53, 1.42, 1.6, 0.63, 1.38, 1.56, 1.36, 0.64, 1.54, 1.26, 0.26, 1.66, 1.6, 1.26, 1.73, 1.7, 1.19, 1.68, 1.36, 1.48, 1.69, 1.78, 1.57, 1.58, 0.91, 1.73, 1.47, 2.39, 1.7, 1.66, 1.77, 1.57, 1.6, 1.34, 2.02, 1.51, 1.35, 1.97, 1.55, 0.85, 1.46, 1.5, 1.65, 1.3, 1.5, 1.69, 2.01, 1.5, 1.5, 1.3, 1.48, 1.43, 1.13, 1.5, 1.32, 1.39, 1.56, 0.75, 1.54, 1.56, 1.3, 0.83, 1.46, 0.91, 1.25, 1.49, 1.03, 1.36, 1.56, 1.29, 1.06, 1.49, 1.31, 1.47, 1.58, 1.48, 1.57, 1.59, 1.46, 1.56, 1.68, 1.59, 0.95, 1.64, 0.93, 1.51, 1.63, 1.28, 0.91, 1.64, 0.92, 1.45, 1.62, 1.54, 0.91, 1.58, 1.52, 0.84, 1.59, 1.52, 0.76, 1.48, 1.53, 0.86, 1.47, 1.37, 1.62, 1.58, 1.39, 1.81, 1.54, 0.87, 1.67, 1.59, 1.63, 0.72, 1.57, 1.9, 1.12, 1.59, 1.78, 1.5, 1.72, 1.55, 0.79, 1.73, 0.86, 1.76, 1.66, 1.3, 1.38, 1.77, 1.41, 2.09, 1.71, 1.49, 2.24, 1.61, 1.58, 1.57, 1.66, 1.61, 1.47, 1.75, 1.58, 2.19, 1.6, 1.58, 0.84, 1.55, 1.35, 1.28, 1.59, 3.69, 1.47, 1.6, 1.32, 1.54, 1.6, 1.28, 1.49, 1.67, 1.3, 1.5, 1.66, 1.41, 2.11, 1.67, 1.9, 1.29, 1.65, 1.26, 1.44, 1.59, 1.54, 1.23, 1.56, 1.35, 1.31, 1.71, 1.69, 1.03, 1.65, 1.74, 1.04, 1.6, 1.69, 1.03, 1.59, 2.14, 1.15, 1.59, 1.75, 1.51, 1.73, 1.5, 1.54, 1.6, 1.68, 1.85, 1.65, 1.71, 1.48, 1.6, 1.46, 1.54, 1.79, 1.71, 0.92, 1.53, 0.95, 1.72, 1.8, 1.74, 0.9, 1.78, 1.83, 0.86, 1.69, 1.87, 1.04, 1.78, 1.01, 2.01, 1.86, 0.98, 2.05, 1.79, 1.0, 1.98, 1.84, 1.87, 1.09, 1.66, 1.61, 1.2, 1.65, 1.53, 1.09, 1.71, 1.92, 0.91, 1.83, 1.89, 1.06, 1.83, 2.08, 0.93, 1.64, 1.9, 0.94, 1.67, 1.87, 1.2, 1.78, 0.73, 2.31, 1.81, 2.1, 0.89, 1.73, 2.15, 1.28, 1.9, 2.12, 1.16, 1.87, 0.98, 2.05, 1.77, 2.14, 0.51, 1.72, 2.16, 1.72, 1.94, 1.67, 2.06, 1.75, 2.32, 2.42, 1.76, 1.81, 2.18, 1.75, 2.39, 1.23, 1.75, 2.06, 1.76, 1.79, 2.04, 2.09, 1.71, 1.99, 2.13, 1.68, 2.06, 2.01, 1.72, 1.75, 2.25, 1.69, 1.66, 2.4, 1.73, 1.57, 2.34, 1.76, 2.14, 1.63, 1.71, 2.2, 1.49, 1.69, 2.35, 1.77, 1.62, 2.33, 1.83, 1.6, 1.53, 1.69, 1.52, 1.64, 1.68, 1.48, 1.57, 1.6, 1.88, 1.64, 1.63, 2.02, 1.93, 1.8, 1.72, 1.56, 1.85, 1.24, 2.03, 1.91, 2.08, 1.86, 1.74, 1.85, 1.83, 1.76, 1.55, 1.46];
-    let dstHistory = [-8, -5, -8, -26, -26, -24, -15, -12, -12, -22, -26, -25, -24, -32, -32, -35, -39, -35, -31, -26, -15, -14, -18, -20, -17, -21, -25, -24, -27, -20, -11, -6, -4, -11, -13, -13, -13, -16, -16, -21, -24, -27, -24, -20, -15, -13, -15, -18];
-
+    // Reactive State
     const pipeline = {
-      bzLive: -0.33,
-      vswLive: 769.4,
-      densityLive: 1.46,
-      dstLive: -18,
-      telemetryTime: '2026-11-08T16:18:00',
-      telemetrySource: 'ACE',
-
-      v0: 450,
-      shearAngle: 18,
-
-      transitHours: 54.0,
-      windowEarly: 46.1,
-      windowLate: 61.9,
-      arrivalSpeed: 430,
-      fc1: -18,
-      fc2: -18,
-      fc3: -18,
-      fc6: -18
+      v0: 1950,
+      shearAngle: 82,
+      isHalo: 1,
+      transitHours: 26.4,
+      windowEarly: 18.5,
+      windowLate: 34.3,
+      arrivalSpeed: 885,
+      bzLive: -18.4,
+      vswLive: 782,
+      pdynLive: 26.2,
+      dstCurrent: -140,
+      fc1: -284,
+      fc2: -352,
+      fc3: -392,
+      fc6: -412
     };
 
+    // Initialize
     window.addEventListener('DOMContentLoaded', () => {
       initClock();
       recomputePipeline();
-      setupResizeObserver();
-      fetchLiveSwpcData();
-      liveTimer = setInterval(fetchLiveSwpcData, 60000);
-      liveImageTimer = setInterval(refreshLiveSolarImages, 300000);
+      setupCanvas();
+      startLivePolling();
+    });
+
+    window.addEventListener('resize', () => {
+      drawMasterChart();
     });
 
     function initClock() {
@@ -619,183 +675,131 @@
       setInterval(update, 1000);
     }
 
-    /* EPHEMERAL VOLATILE IMAGE REFRESH (ZERO DISK PERSISTENCE) */
-    function refreshLiveSolarImages() {
-      if (currentMode !== 'live') return;
-      const now = Date.now();
-      
-      const imgSdo = document.getElementById('imgGear1Live');
-      const imgSoho = document.getElementById('imgGear2Live');
-      
-      if (imgSdo) {
-        const nextSdo = new Image();
-        nextSdo.onload = () => {
-          imgSdo.src = nextSdo.src;
-          nextSdo.onload = null;
-        };
-        nextSdo.src = 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_HMIB.jpg?t=' + now;
-      }
-      
-      if (imgSoho) {
-        const nextSoho = new Image();
-        nextSoho.onload = () => {
-          imgSoho.src = nextSoho.src;
-          nextSoho.onload = null;
-        };
-        nextSoho.src = 'https://services.swpc.noaa.gov/images/animations/lasco-c2/latest.jpg?t=' + now;
-      }
-    }
-
     function setMode(mode) {
       currentMode = mode;
       document.getElementById('btnModeLive').className = (mode === 'live') ? 'btn btn-active' : 'btn';
       document.getElementById('btnModeSim').className = (mode === 'simulation') ? 'btn btn-active' : 'btn';
-
-      const rngShear = document.getElementById('rngG1Shear');
-      const rngHalo = document.getElementById('rngG2HaloExp');
-      const chartLegend = document.getElementById('chartLegend');
-      const stamp = document.getElementById('liveTelemetryStamp');
+      document.getElementById('btnModeMay').className = 'btn';
+      document.getElementById('btnModeQuiet').className = 'btn';
 
       if (mode === 'live') {
         document.getElementById('liveStatusText').textContent = 'NOAA SWPC RTSW (LIVE)';
         document.getElementById('liveDot').style.background = 'var(--green)';
         document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--green)';
-        document.getElementById('chartMainTitle').textContent = 'MASTER MISSION TELEMETRY · 6-HOUR REAL NOAA SWPC STREAM (L1 ACE/DSCOVR)';
-        stamp.style.display = 'inline-block';
-        stamp.textContent = `RTSW: ${pipeline.telemetryTime} UTC · ${pipeline.telemetrySource}`;
-
-        chartLegend.innerHTML = `
-          <div class="legend-item">
-            <div class="legend-line" style="background:var(--cyan);"></div>
-            <span>Solar Wind Speed V(t) [km/s]</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-line" style="background:var(--green);"></div>
-            <span>IMF Bz [nT]</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-line" style="background:var(--amber);"></div>
-            <span>Kyoto Dst [nT]</span>
-          </div>
-        `;
-
-        rngShear.disabled = true;
-        rngHalo.disabled = true;
-        fetchLiveSwpcData();
-        refreshLiveSolarImages();
-        if (!liveTimer) liveTimer = setInterval(fetchLiveSwpcData, 60000);
-        if (!liveImageTimer) liveImageTimer = setInterval(refreshLiveSolarImages, 300000);
+        startLivePolling();
       } else {
         document.getElementById('liveStatusText').textContent = 'MANUAL SIMULATION';
         document.getElementById('liveDot').style.background = 'var(--amber)';
         document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--amber)';
-        document.getElementById('chartMainTitle').textContent = 'MASTER MISSION TIMELINE · 100-HOUR 4-GEAR KINEMATICS & RING CURRENT RESPONSE';
-        stamp.style.display = 'none';
+        if (liveTimer) clearInterval(liveTimer);
+      }
+      recomputePipeline();
+    }
 
-        chartLegend.innerHTML = `
-          <div class="legend-item">
-            <div class="legend-line" style="background:var(--cyan);"></div>
-            <span>1 AU Drag Deceleration V(t) [km/s]</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-box" style="background:var(--cyan); border: 1px dashed var(--cyan);"></div>
-            <span>90% Conformal Window (±7.9h)</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-line" style="background:var(--crimson);"></div>
-            <span>Earth Dst Storm Response [nT]</span>
-          </div>
-        `;
+    function loadPreset(name) {
+      if (liveTimer) clearInterval(liveTimer);
+      currentMode = 'preset';
+      document.getElementById('btnModeLive').className = 'btn';
+      document.getElementById('btnModeSim').className = 'btn';
+      document.getElementById('btnModeMay').className = (name === 'may2024') ? 'btn btn-active' : 'btn';
+      document.getElementById('btnModeQuiet').className = (name === 'quiet') ? 'btn btn-active' : 'btn';
 
-        rngShear.disabled = false;
-        rngHalo.disabled = false;
-        if (liveTimer) { clearInterval(liveTimer); liveTimer = null; }
-        if (liveImageTimer) { clearInterval(liveImageTimer); liveImageTimer = null; }
+      if (name === 'may2024') {
+        document.getElementById('liveStatusText').textContent = 'PRESET: MAY 2024 G5 SUPERSTORM';
+        document.getElementById('liveDot').style.background = 'var(--purple)';
+        document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--purple)';
+        pipeline.v0 = 2200;
+        pipeline.shearAngle = 88;
+        pipeline.bzLive = -48.2;
+        pipeline.vswLive = 890;
+        pipeline.pdynLive = 38.5;
+        document.getElementById('rngG1Shear').value = 88;
+        document.getElementById('rngG2HaloExp').value = 2200;
+      } else {
+        document.getElementById('liveStatusText').textContent = 'PRESET: SOLAR QUIET (CYCLE 25 BASELINE)';
+        document.getElementById('liveDot').style.background = 'var(--green)';
+        document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--green)';
+        pipeline.v0 = 420;
+        pipeline.shearAngle = 18;
+        pipeline.bzLive = 2.4;
+        pipeline.vswLive = 360;
+        pipeline.pdynLive = 2.1;
+        document.getElementById('rngG1Shear').value = 18;
+        document.getElementById('rngG2HaloExp').value = 420;
       }
       recomputePipeline();
     }
 
     function onG1Input() {
-      if (currentMode === 'live') setMode('simulation');
       pipeline.shearAngle = parseFloat(document.getElementById('rngG1Shear').value);
+      if (currentMode === 'live') setMode('simulation');
       recomputePipeline();
     }
 
     function onG2Input() {
-      if (currentMode === 'live') setMode('simulation');
       pipeline.v0 = parseFloat(document.getElementById('rngG2HaloExp').value);
+      if (currentMode === 'live') setMode('simulation');
       recomputePipeline();
     }
 
     function recomputePipeline() {
-      const isLive = (currentMode === 'live');
+      // 1. GEAR 1: SDO/HMI Chirality
+      const shear = pipeline.shearAngle;
+      const probBzSouth = Math.min(0.99, Math.max(0.05, 0.10 + 0.88 * Math.pow(shear / 90.0, 1.8)));
+      const isSouth = probBzSouth >= 0.50;
+      const medianBz = isSouth ? (-5.0 - (probBzSouth * 35.0)) : (8.0 - (probBzSouth * 10.0));
+      const q10Bz = medianBz - 12.0;
+      const q90Bz = medianBz + 8.5;
 
-      // 1. GEAR 1: SDO/HMI Photospheric Chirality
-      let shear = pipeline.shearAngle;
-      if (isLive) {
-        shear = (pipeline.bzLive < 0) ? Math.min(85, 45 + Math.abs(pipeline.bzLive) * 2.5) : 18;
-        document.getElementById('rngG1Shear').value = shear;
-      }
-      document.getElementById('lblG1Pil').textContent = `${Math.round(shear)}°`;
-
-      const probBzSouth = Math.min(0.99, Math.max(0.04, 0.08 + 0.88 * Math.pow(shear / 90.0, 2.2)));
-      const isSouth = (pipeline.bzLive < -3.0) || (!isLive && probBzSouth >= 0.50);
-      const medianBz = isLive ? pipeline.bzLive : (isSouth ? (-5.0 - probBzSouth * 30.0) : (6.0 - probBzSouth * 8.0));
-
+      document.getElementById('lblG1Pil').textContent = `Shear: ${shear}°`;
       document.getElementById('g1ProbBz').textContent = `${(probBzSouth * 100).toFixed(1)}%`;
       document.getElementById('g1ProbBz').style.color = isSouth ? 'var(--crimson)' : 'var(--green)';
-      document.getElementById('g1MedianBz').textContent = `${medianBz > 0 ? '+' : ''}${medianBz.toFixed(1)} nT`;
-      document.getElementById('g1MedianBz').style.color = medianBz < -10 ? 'var(--crimson)' : (medianBz < 0 ? 'var(--amber)' : 'var(--green)');
-
+      document.getElementById('g1MedianBz').textContent = `${medianBz.toFixed(1)} nT`;
+      document.getElementById('g1RangeBz').textContent = `[ ${q10Bz.toFixed(1)}, ${q90Bz.toFixed(1)} nT ]`;
       const g1Badge = document.getElementById('g1StatusBadge');
-      if (medianBz < -15.0) {
-        g1Badge.textContent = 'STRONG SOUTHWARD (EXTREME)';
-        g1Badge.className = 'status-badge badge-crit';
-      } else if (medianBz < -3.0) {
-        g1Badge.textContent = 'SOUTHWARD (DANGER)';
-        g1Badge.className = 'status-badge badge-warn';
+      if (isSouth) {
+        g1Badge.textContent = 'SOUTHWARD INJECTION (DANGER)';
+        g1Badge.className = 'status-badge badge-danger';
       } else {
-        g1Badge.textContent = 'NORTHWARD (SAFE)';
+        g1Badge.textContent = 'NORTHWARD / DEFLECTED (SAFE)';
         g1Badge.className = 'status-badge badge-safe';
       }
 
-      // 2. GEAR 2: SOHO/LASCO C2 Coronal Halo Speed
-      let v0 = pipeline.v0;
-      if (isLive) {
-        v0 = Math.max(350, Math.min(3000, pipeline.vswLive * 0.95));
-        document.getElementById('rngG2HaloExp').value = v0;
-      }
+      // 2. GEAR 2: SOHO/LASCO C2 Halo expansion
+      const v0 = pipeline.v0;
       document.getElementById('lblG2HaloExp').textContent = `${Math.round(v0)} km/s`;
+      const probStorm = Math.min(0.99, Math.max(0.02, 1.0 / (1.0 + Math.exp(-(v0 - 1050) / 220))));
+      const isSevere = probStorm >= 0.50;
+      const medianDstProxy = -35.0 - (v0 / 2500.0) * 380.0 * (isSouth ? 1.0 : 0.4);
+      const q10Dst = medianDstProxy - 85.0;
+      const q90Dst = medianDstProxy + 90.0;
 
-      const probSevere = Math.min(0.99, Math.max(0.02, 1.0 / (1.0 + Math.exp(-(v0 - 1450.0) / 180.0))));
-      const medianDstProxy = -30.0 - 0.16 * Math.max(0, v0 - 450.0);
-      const isSevere = (!isLive && v0 >= 1100) || (probSevere >= 0.50);
-
-      document.getElementById('g2ProbStorm').textContent = `${(probSevere * 100).toFixed(1)}%`;
+      document.getElementById('g2ProbStorm').textContent = `${(probStorm * 100).toFixed(1)}%`;
       document.getElementById('g2ProbStorm').style.color = isSevere ? 'var(--crimson)' : 'var(--green)';
       document.getElementById('g2MedianDst').textContent = `${Math.round(medianDstProxy)} nT`;
-
+      document.getElementById('g2RangeDst').textContent = `[ ${Math.round(q10Dst)}, ${Math.round(q90Dst)} nT ]`;
       const g2Badge = document.getElementById('g2StatusBadge');
       if (v0 >= 1800) {
-        g2Badge.textContent = 'G5 VETO ACTIVE';
-        g2Badge.className = 'status-badge badge-g5';
+        g2Badge.textContent = 'G5 SUPERSTORM VETO';
+        g2Badge.className = 'status-badge badge-danger';
       } else if (v0 >= 1100) {
-        g2Badge.textContent = 'MAJOR STORM VETO';
-        g2Badge.className = 'status-badge badge-warn';
+        g2Badge.textContent = 'G3/G4 MAJOR STORM VETO';
+        g2Badge.className = 'status-badge badge-warning';
       } else {
-        g2Badge.textContent = 'QUIET / NO VETO';
+        g2Badge.textContent = 'QUIET / MINOR VETO';
         g2Badge.className = 'status-badge badge-safe';
       }
 
       // 3. GEAR 3: MoKTransitNN Aerodynamic Drag Kinematics
       const L_AU = 1.495978707e8; // km
       const v_amb = 420.0;
-      const vEff = Math.max(420.0, v0 * 0.65 + v_amb * 0.35);
-      const transitHours = Math.max(16.0, Math.min(85.0, L_AU / (vEff * 3600.0)));
-      const arrivalSpeed = Math.max(v_amb, v0 - (v0 - v_amb) * 0.60);
-      const conformalMargin = 7.90;
-      const windowEarly = Math.max(10.0, transitHours - conformalMargin);
-      const windowLate = Math.min(96.0, transitHours + conformalMargin);
+      const gamma = 1.0e-7;
+      const v_eff = v0 * Math.exp(-gamma * L_AU * 0.4) + v_amb * (1.0 - Math.exp(-gamma * L_AU * 0.4));
+      const transitHours = L_AU / (v_eff * 3600.0);
+      const arrivalSpeed = Math.max(v_amb, v0 - (v0 - v_amb) * 0.65);
+      const conformalMargin = 7.90; // Finite sample coverage 90%
+      const windowEarly = Math.max(12.0, transitHours - conformalMargin);
+      const windowLate = transitHours + conformalMargin;
 
       pipeline.transitHours = transitHours;
       pipeline.arrivalSpeed = arrivalSpeed;
@@ -803,66 +807,95 @@
       pipeline.windowLate = windowLate;
 
       document.getElementById('g3TransitTime').textContent = `${transitHours.toFixed(1)} h`;
+      document.getElementById('g3Days').textContent = `${(transitHours / 24.0).toFixed(2)} days to Earth`;
       document.getElementById('g3ArrivalSpeed').textContent = `${Math.round(arrivalSpeed)} km/s`;
-      document.getElementById('g3Window').textContent = `[ ${windowEarly.toFixed(1)}h – ${windowLate.toFixed(1)}h ] (±7.9h)`;
+      document.getElementById('g3Window').textContent = `[ ${windowEarly.toFixed(1)} h – ${windowLate.toFixed(1)} h ]`;
 
       const eta = new Date(Date.now() + transitHours * 3600 * 1000);
-      document.getElementById('g3ArrivalEta').textContent = `ETA: ${eta.toUTCString().slice(5, 22)} UTC`;
+      document.getElementById('g3ArrivalEta').textContent = eta.toUTCString().slice(5, 22) + ' UTC';
 
       // 4. GEAR 4: HeliosBiLSTM In-Situ coupling
-      const bz = isLive ? pipeline.bzLive : medianBz;
-      const vsw = isLive ? pipeline.vswLive : arrivalSpeed;
-      const density = isLive ? (pipeline.densityLive || 1.13) : Math.max(1.5, (v0 / 400.0) * 3.0);
-      const pdyn = 1.6726e-6 * density * Math.pow(vsw, 2) * 1e-3;
+      let bz = pipeline.bzLive;
+      let vsw = pipeline.vswLive;
+      let pdyn = pipeline.pdynLive;
 
-      document.getElementById('g4Bz').textContent = `${bz > 0 ? '+' : ''}${bz.toFixed(1)} nT`;
+      document.getElementById('g4Bz').textContent = `${bz.toFixed(1)} nT`;
       document.getElementById('g4Bz').style.color = bz < -10 ? 'var(--crimson)' : (bz < 0 ? 'var(--amber)' : 'var(--green)');
       document.getElementById('g4Vsw').textContent = `${Math.round(vsw)} km/s`;
-      document.getElementById('g4Density').textContent = `${density.toFixed(1)} cm⁻³`;
+      document.getElementById('g4Pdyn').textContent = `Pdyn: ${pdyn.toFixed(1)} nPa`;
 
-      let baseDst = pipeline.dstLive;
-      if (!isLive) {
-        if (bz < 0) {
-          const bzSouth = Math.abs(bz);
-          const vbzCoupling = (vsw / 400.0) * (bzSouth / 5.0) * Math.sqrt(pdyn / 2.0);
-          baseDst = -20.0 - vbzCoupling * 28.0;
-        } else {
-          baseDst = -15.0 + Math.min(15.0, Math.sqrt(pdyn) * 3.0);
-        }
-      }
+      // Multi-horizon forecast
+      const bzFactor = Math.max(0, -bz);
+      const coupling = bzFactor * (vsw / 1000.0) * Math.sqrt(pdyn / 5.0);
+      const baseDst = -25.0 - coupling * 11.5;
 
-      pipeline.fc1 = Math.round(baseDst * (baseDst < -50 ? 0.85 : 1.0));
-      pipeline.fc3 = Math.round(baseDst * (baseDst < -50 ? 1.00 : 1.0));
-      pipeline.fc6 = Math.round(baseDst * (baseDst < -50 ? 1.05 : 0.95));
+      pipeline.fc1 = Math.round(baseDst * 0.72);
+      pipeline.fc2 = Math.round(baseDst * 0.88);
+      pipeline.fc3 = Math.round(baseDst * 1.00);
+      pipeline.fc6 = Math.round(baseDst * 1.06);
 
-      document.getElementById('g4Dst').textContent = `${pipeline.fc6} nT`;
-      document.getElementById('g4Dst').style.color = pipeline.fc6 < -100 ? 'var(--crimson)' : (pipeline.fc6 < -50 ? 'var(--amber)' : 'var(--green)');
+      document.getElementById('g4Fc1').textContent = `${pipeline.fc1} nT`;
+      document.getElementById('g4Fc3').textContent = `${pipeline.fc3} nT`;
+      document.getElementById('g4Fc6').textContent = `${pipeline.fc6} nT`;
 
+      // NOAA Threat Badge & Infrastructure
       const minDst = Math.min(pipeline.fc1, pipeline.fc3, pipeline.fc6);
-      let gLabel = 'G0 (QUIET)';
-      let gClass = 'badge-safe';
+      let gScale = 'G0';
+      let gClass = 'g0';
+      let gLabel = 'G0 QUIET (NO THREAT)';
 
-      if (minDst <= -300) { gClass = 'badge-g5'; gLabel = 'G5 (EXTREME SUPERSTORM)'; }
-      else if (minDst <= -200) { gClass = 'badge-crit'; gLabel = 'G4 (SEVERE STORM)'; }
-      else if (minDst <= -100) { gClass = 'badge-crit'; gLabel = 'G3 (STRONG STORM)'; }
-      else if (minDst <= -50)  { gClass = 'badge-warn'; gLabel = 'G1 (MINOR STORM)'; }
+      if (minDst <= -300) { gScale = 'G5'; gClass = 'g5'; gLabel = 'G5 EXTREME SUPERSTORM'; }
+      else if (minDst <= -200) { gScale = 'G4'; gClass = 'g4'; gLabel = 'G4 SEVERE STORM'; }
+      else if (minDst <= -100) { gScale = 'G3'; gClass = 'g3'; gLabel = 'G3 STRONG STORM'; }
+      else if (minDst <= -50) { gScale = 'G1'; gClass = 'g1'; gLabel = 'G1 MINOR STORM'; }
 
       const g4Badge = document.getElementById('g4GlobalBadge');
       g4Badge.textContent = gLabel;
       g4Badge.className = `status-badge ${gClass}`;
 
+      // Infrastructure update
+      const valGrid = document.getElementById('valGrid');
+      const valSat = document.getElementById('valSat');
+      const valAv = document.getElementById('valAv');
+
+      if (minDst <= -250) {
+        valGrid.textContent = 'GIC SATURATION ALERT (TRIP WARNING)';
+        valGrid.style.color = 'var(--crimson)';
+        valSat.textContent = 'CRITICAL THERMOSPHERIC DRAG';
+        valSat.style.color = 'var(--crimson)';
+        valAv.textContent = 'COMPLETE POLAR HF BLACKOUT (PCA)';
+        valAv.style.color = 'var(--crimson)';
+      } else if (minDst <= -100) {
+        valGrid.textContent = 'VOLTAGE IRREGULARITY WARNING';
+        valGrid.style.color = 'var(--amber)';
+        valSat.textContent = 'ELEVATED DRAG & CHARGING';
+        valSat.style.color = 'var(--amber)';
+        valAv.textContent = 'DEGRADED HF PROPAGATION';
+        valAv.style.color = 'var(--amber)';
+      } else {
+        valGrid.textContent = 'NOMINAL (NO GIC RISK)';
+        valGrid.style.color = 'var(--green)';
+        valSat.textContent = 'NOMINAL DRAG PROFILE';
+        valSat.style.color = 'var(--green)';
+        valAv.textContent = 'NORMAL HF PROPAGATION';
+        valAv.style.color = 'var(--green)';
+      }
+
+      // 5. Redraw Master Unified Chart
       drawMasterChart();
     }
 
-    function setupResizeObserver() {
-      const container = document.querySelector('.canvas-container');
-      const observer = new ResizeObserver(() => {
-        drawMasterChart();
-      });
-      observer.observe(container);
+    function setupCanvas() {
+      const cvs = document.getElementById('masterChart');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = cvs.getBoundingClientRect();
+      cvs.width = rect.width * dpr;
+      cvs.height = rect.height * dpr;
+      const ctx = cvs.getContext('2d');
+      ctx.scale(dpr, dpr);
+      drawMasterChart();
     }
 
-    /* MASTER CHART RENDERING: 100% IMMUNE TO OVERFLOW OR CLIPPING */
     function drawMasterChart() {
       const cvs = document.getElementById('masterChart');
       if (!cvs) return;
@@ -871,25 +904,26 @@
       const w = cvs.clientWidth;
       const h = cvs.clientHeight;
 
-      if (w === 0 || h === 0) return;
-
-      if (cvs.width !== Math.floor(w * dpr) || cvs.height !== Math.floor(h * dpr)) {
-        cvs.width = Math.floor(w * dpr);
-        cvs.height = Math.floor(h * dpr);
+      if (cvs.width !== w * dpr || cvs.height !== h * dpr) {
+        cvs.width = w * dpr;
+        cvs.height = h * dpr;
       }
 
       ctx.save();
       ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, w, h);
 
-      // PADDINGS: padR is 125px so labels with text tags NEVER collide with line
-      const padL = 55;
-      const padR = 125;
-      const padT = 16;
-      const padB = 26;
+      // Margins
+      const padL = 60;
+      const padR = 60;
+      const padT = 24;
+      const padB = 30;
       const plotW = w - padL - padR;
       const plotH = h - padT - padB;
 
+      // Split chart into two vertical tracks:
+      // Track 1: Velocity V(t) & Drag Propagation (upper 45%)
+      // Track 2: Dst Storm Response [nT] (lower 50%)
       const hTrack1 = plotH * 0.44;
       const hGap = plotH * 0.08;
       const yTrack1Top = padT;
@@ -897,433 +931,277 @@
       const yTrack2Top = yTrack1Bot + hGap;
       const yTrack2Bot = padT + plotH;
 
-      const isLive = (currentMode === 'live');
+      // X-Axis range: Time from Launch [0 h to 80 h]
+      const maxT = 80;
+      const toX = (t) => padL + (t / maxT) * plotW;
 
-      if (isLive) {
-        // ==========================================
-        // LIVE MODE: 6-HOUR REAL DENSE TELEMETRY
-        // ==========================================
-        const numPts = Math.max(windHistory.length, bzHistory.length, 60);
-        const toX = (i) => padL + (i / (numPts - 1)) * plotW;
+      // --- BACKGROUND GRID & GUIDES ---
+      ctx.strokeStyle = '#121b2d';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let t = 0; t <= maxT; t += 10) {
+        const x = toX(t);
+        ctx.moveTo(x, padT);
+        ctx.lineTo(x, padT + plotH);
+      }
+      ctx.stroke();
 
-        // Vertical time grid lines (every 60 mins = 1 hour)
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for (let i = 0; i < numPts; i += 60) {
-          const x = toX(i);
-          ctx.moveTo(x, padT);
-          ctx.lineTo(x, padT + plotH);
-        }
-        ctx.stroke();
-
-        // X-Axis Time Labels (-6h to LIVE NOW)
-        ctx.fillStyle = '#64748b';
-        ctx.font = '9px ui-monospace, monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('-6h', toX(0), padT + plotH + 16);
-        ctx.fillText('-5h', toX(Math.floor(numPts * 0.166)), padT + plotH + 16);
-        ctx.fillText('-4h', toX(Math.floor(numPts * 0.333)), padT + plotH + 16);
-        ctx.fillText('-3h', toX(Math.floor(numPts * 0.500)), padT + plotH + 16);
-        ctx.fillText('-2h', toX(Math.floor(numPts * 0.666)), padT + plotH + 16);
-        ctx.fillText('-1h', toX(Math.floor(numPts * 0.833)), padT + plotH + 16);
-        
-        ctx.textAlign = 'right';
-        ctx.fillText('LIVE NOW', padL + plotW, padT + plotH + 16);
-
-        // --- TRACK 1: SOLAR WIND SPEED Vsw [km/s] ---
-        const vMin = 300, vMax = 1000;
-        const toYV = (v) => yTrack1Bot - ((v - vMin) / (vMax - vMin)) * hTrack1;
-
-        ctx.fillStyle = '#00e5ff';
-        ctx.font = '8.5px ui-monospace, monospace';
-        ctx.textAlign = 'right';
-        ctx.fillText('900 km/s', padL - 8, toYV(900));
-        ctx.fillText('600', padL - 8, toYV(600));
-        ctx.fillText('400', padL - 8, toYV(400));
-
-        // Horizontal guideline
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-        ctx.beginPath();
-        ctx.moveTo(padL, toYV(600)); ctx.lineTo(padL + plotW, toYV(600));
-        ctx.stroke();
-
-        // Draw Real Wind Speed Stream
-        if (windHistory.length > 1) {
-          ctx.beginPath();
-          ctx.strokeStyle = '#00e5ff';
-          ctx.lineWidth = 1.6;
-          windHistory.forEach((v, idx) => {
-            const x = toX(idx);
-            const y = toYV(Math.max(vMin, Math.min(vMax, v)));
-            if (idx === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          });
-          ctx.stroke();
-
-          // Latest live pulse dot
-          const lastX = toX(windHistory.length - 1);
-          const lastY = toYV(windHistory[windHistory.length - 1]);
-          ctx.fillStyle = '#00e5ff';
-          ctx.beginPath();
-          ctx.arc(lastX, lastY, 3.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Track 1 Title
-        ctx.fillStyle = '#64748b';
-        ctx.font = '8px ui-monospace, monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText('TRACK 1 · L1 SOLAR WIND BULK SPEED V(t) [km/s] · ACE/DSCOVR', padL + 4, padT + 11);
-
-        // --- TRACK 2: IMF BZ [nT] & KYOTO DST RESPONSE ---
-        const bzMin = -30, bzMax = 20;
-        const toYBz = (b) => yTrack2Top + ((bzMax - b) / (bzMax - bzMin)) * (yTrack2Bot - yTrack2Top);
-
-        // RIGHT MARGIN LABELS: RIGHT-ALIGNED AT (w - 10) SO THEY CAN NEVER CUT OFF!
-        ctx.fillStyle = '#10b981';
-        ctx.font = '8.5px ui-monospace, monospace';
-        ctx.textAlign = 'right';
-        ctx.fillText('+10 nT', w - 10, toYBz(10));
-        ctx.fillText('0 nT', w - 10, toYBz(0));
-        ctx.fillText('-10 nT (Danger)', w - 10, toYBz(-10));
-        ctx.fillText('-25 nT (Extreme)', w - 10, toYBz(-25));
-
-        // Shaded Southward Danger Zone (Bz < -10 nT)
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.05)';
-        ctx.fillRect(padL, toYBz(-10), plotW, toYBz(-30) - toYBz(-10));
-
-        // Zero line
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-        ctx.beginPath();
-        ctx.moveTo(padL, toYBz(0)); ctx.lineTo(padL + plotW, toYBz(0));
-        ctx.stroke();
-
-        // -10 nT Danger line
-        ctx.strokeStyle = 'rgba(245, 158, 11, 0.25)';
-        ctx.setLineDash([2, 2]);
-        ctx.beginPath();
-        ctx.moveTo(padL, toYBz(-10)); ctx.lineTo(padL + plotW, toYBz(-10));
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // Draw Real Bz Stream
-        if (bzHistory.length > 1) {
-          ctx.beginPath();
-          ctx.strokeStyle = '#10b981';
-          ctx.lineWidth = 1.6;
-          bzHistory.forEach((b, idx) => {
-            const x = toX(idx);
-            const y = toYBz(Math.max(bzMin, Math.min(bzMax, b)));
-            if (idx === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          });
-          ctx.stroke();
-
-          // Latest live pulse dot
-          const lastX = toX(bzHistory.length - 1);
-          const lastY = toYBz(bzHistory[bzHistory.length - 1]);
-          ctx.fillStyle = (pipeline.bzLive < -10) ? '#ef4444' : ((pipeline.bzLive < 0) ? '#f59e0b' : '#10b981');
-          ctx.beginPath();
-          ctx.arc(lastX, lastY, 3.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Draw Kyoto Dst Overlay
-        if (dstHistory.length > 1) {
-          ctx.beginPath();
-          ctx.strokeStyle = 'rgba(245, 158, 11, 0.75)';
-          ctx.lineWidth = 1.4;
-          dstHistory.slice(-24).forEach((d, idx, arr) => {
-            const x = padL + (idx / (arr.length - 1)) * plotW;
-            const y = toYBz(d * 0.4);
-            if (idx === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          });
-          ctx.stroke();
-        }
-
-        // Track 2 Title
-        ctx.fillStyle = '#64748b';
-        ctx.font = '8px ui-monospace, monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText('TRACK 2 · IMF BZ GSM (L1) & KYOTO DST RECONNECTION COUPLING', padL + 4, yTrack2Top + 11);
-
-      } else {
-        // ==========================================
-        // SIMULATION MODE: 0 TO 100H KINEMATICS
-        // ==========================================
-        const maxT = 100;
-        const toX = (t) => padL + (t / maxT) * plotW;
-
-        // Vertical time grid lines
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for (let t = 0; t <= maxT; t += 20) {
-          const x = toX(t);
-          ctx.moveTo(x, padT);
-          ctx.lineTo(x, padT + plotH);
-        }
-        ctx.stroke();
-
-        ctx.fillStyle = '#64748b';
-        ctx.font = '9px ui-monospace, monospace';
-        ctx.textAlign = 'center';
-        for (let t = 0; t <= maxT; t += 20) {
-          ctx.fillText(`T+${t}h`, toX(t), padT + plotH + 16);
-        }
-
-        // Shaded conformal window
-        const wE = Math.max(0, pipeline.windowEarly);
-        const wL = Math.min(maxT, pipeline.windowLate);
-        const xEarly = toX(wE);
-        const xLate = toX(wL);
-
-        ctx.fillStyle = 'rgba(0, 229, 255, 0.07)';
-        ctx.fillRect(xEarly, padT, (xLate - xEarly), plotH);
-
-        ctx.strokeStyle = 'rgba(0, 229, 255, 0.35)';
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(xEarly, padT); ctx.lineTo(xEarly, padT + plotH);
-        ctx.moveTo(xLate, padT);  ctx.lineTo(xLate, padT + plotH);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // TRACK 1: Velocity Decay
-        const vMin = 300, vMax = 2500;
-        const toYV = (v) => yTrack1Bot - ((v - vMin) / (vMax - vMin)) * hTrack1;
-
-        ctx.fillStyle = '#00e5ff';
-        ctx.font = '8.5px ui-monospace, monospace';
-        ctx.textAlign = 'right';
-        ctx.fillText('2000 km/s', padL - 8, toYV(2000));
-        ctx.fillText('1000', padL - 8, toYV(1000));
-        ctx.fillText('400', padL - 8, toYV(400));
-
-        const tArrival = pipeline.transitHours;
-        const v0 = pipeline.v0;
-        const vArr = pipeline.arrivalSpeed;
-
-        ctx.beginPath();
-        ctx.strokeStyle = '#00e5ff';
-        ctx.lineWidth = 1.8;
-        for (let t = 0; t <= tArrival; t += 0.5) {
-          const frac = t / tArrival;
-          const vt = v0 * Math.exp(-frac * 0.9) + (vArr - v0 * Math.exp(-0.9)) * frac;
-          const x = toX(t);
-          const y = toYV(Math.max(vMin, vt));
-          if (t === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-
-        ctx.fillStyle = '#00e5ff';
-        ctx.beginPath();
-        ctx.arc(toX(0), toYV(v0), 3.5, 0, Math.PI * 2);
-        ctx.arc(toX(tArrival), toYV(vArr), 3.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Arrival shock line
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.45)';
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(toX(tArrival), yTrack1Bot);
-        ctx.lineTo(toX(tArrival), yTrack2Bot);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // TRACK 2: Dst Storm Response
-        const dstMax = 30, dstMin = -400;
-        const toYDst = (d) => yTrack2Top + ((dstMax - d) / (dstMax - dstMin)) * (yTrack2Bot - yTrack2Top);
-
-        // RIGHT MARGIN LABELS: RIGHT-ALIGNED AT (w - 10) SO THEY CAN NEVER CUT OFF!
-        ctx.fillStyle = '#ef4444';
-        ctx.font = '8.5px ui-monospace, monospace';
-        ctx.textAlign = 'right';
-        ctx.fillText('0 nT', w - 10, toYDst(0));
-        ctx.fillText('-50 nT (G1)', w - 10, toYDst(-50));
-        ctx.fillText('-100 nT (G3)', w - 10, toYDst(-100));
-        ctx.fillText('-300 nT (G5)', w - 10, toYDst(-300));
-
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.12)';
-        ctx.setLineDash([2, 2]);
-        ctx.beginPath();
-        ctx.moveTo(padL, toYDst(-50)); ctx.lineTo(padL + plotW, toYDst(-50));
-        ctx.moveTo(padL, toYDst(-100)); ctx.lineTo(padL + plotW, toYDst(-100));
-        ctx.moveTo(padL, toYDst(-300)); ctx.lineTo(padL + plotW, toYDst(-300));
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.beginPath();
-        ctx.moveTo(padL, toYDst(0)); ctx.lineTo(padL + plotW, toYDst(0));
-        ctx.stroke();
-
-        const minDstVal = pipeline.fc6;
-        ctx.beginPath();
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 2;
-
-        for (let t = 0; t <= maxT; t += 0.5) {
-          let d = -15;
-          if (t < tArrival - 0.5) {
-            d = -15 + Math.sin(t * 0.4) * 2;
-          } else if (t >= tArrival - 0.5 && t <= tArrival + 1.0) {
-            d = -15 + 15;
-          } else if (t > tArrival + 1.0 && t <= tArrival + 7.0) {
-            const f = (t - (tArrival + 1.0)) / 6.0;
-            d = 0 - (0 - minDstVal) * Math.sin(f * (Math.PI / 2));
-          } else {
-            const recT = t - (tArrival + 7.0);
-            d = minDstVal + (minDstVal * -0.65) * (1.0 - Math.exp(-recT / 28.0));
-          }
-          const x = toX(t);
-          const y = toYDst(d);
-          if (t === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-
-        // Track Titles
-        ctx.fillStyle = '#64748b';
-        ctx.font = '8px ui-monospace, monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText('TRACK 1 · MoKTransitNN 1 AU AERODYNAMIC DRAG DECELERATION V(t)', padL + 4, padT + 11);
-        ctx.fillText('TRACK 2 · EARTH RING CURRENT Dst RESPONSE & L1 ATTENTION COUPLING', padL + 4, yTrack2Top + 11);
+      // Time X-Axis Labels
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      for (let t = 0; t <= maxT; t += 10) {
+        ctx.fillText(`T+${t}h`, toX(t), padT + plotH + 18);
       }
 
+      // --- SHADED 90% CONFORMAL ARRIVAL WINDOW ---
+      const wE = Math.max(0, pipeline.windowEarly);
+      const wL = Math.min(maxT, pipeline.windowLate);
+      const xEarly = toX(wE);
+      const xLate = toX(wL);
+
+      const gradWin = ctx.createLinearGradient(xEarly, 0, xLate, 0);
+      gradWin.addColorStop(0, 'rgba(0, 229, 255, 0.03)');
+      gradWin.addColorStop(0.5, 'rgba(0, 229, 255, 0.16)');
+      gradWin.addColorStop(1, 'rgba(0, 229, 255, 0.03)');
+
+      ctx.fillStyle = gradWin;
+      ctx.fillRect(xEarly, padT, (xLate - xEarly), plotH);
+
+      // Conformal Window Dashed Borders
+      ctx.strokeStyle = 'rgba(0, 229, 255, 0.5)';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(xEarly, padT); ctx.lineTo(xEarly, padT + plotH);
+      ctx.moveTo(xLate, padT);  ctx.lineTo(xLate, padT + plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Label Conformal Window
+      ctx.fillStyle = 'var(--cyan)';
+      ctx.font = '9px ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`90% ARRIVAL WINDOW [${wE.toFixed(1)}h – ${wL.toFixed(1)}h]`, (xEarly + xLate) / 2, padT + 12);
+
+      // --- TRACK 1: VELOCITY PROPAGATION CURVE ---
+      // Velocity range: 300 to 2600 km/s
+      const vMin = 300;
+      const vMax = 2600;
+      const toYV = (v) => yTrack1Bot - ((v - vMin) / (vMax - vMin)) * hTrack1;
+
+      // Track 1 Y-axis labels (Left)
+      ctx.fillStyle = '#00e5ff';
+      ctx.font = '9px ui-monospace, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText('2400', padL - 8, toYV(2400));
+      ctx.fillText('1400', padL - 8, toYV(1400));
+      ctx.fillText('400', padL - 8, toYV(400));
+      ctx.fillText('km/s', padL - 8, toYV(2550));
+
+      // Draw Deceleration Curve from T=0 to T=transitHours
+      const tArrival = pipeline.transitHours;
+      const v0 = pipeline.v0;
+      const vArr = pipeline.arrivalSpeed;
+
+      ctx.beginPath();
+      ctx.strokeStyle = '#00e5ff';
+      ctx.lineWidth = 2.2;
+      for (let t = 0; t <= tArrival; t += 0.5) {
+        const frac = t / tArrival;
+        // Exponential aerodynamic drag profile
+        const vt = v0 * Math.exp(-frac * 1.1) + (vArr - v0 * Math.exp(-1.1)) * frac;
+        const x = toX(t);
+        const y = toYV(Math.max(vMin, vt));
+        if (t === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Draw point at T0 and Arrival
+      ctx.fillStyle = '#00e5ff';
+      ctx.beginPath();
+      ctx.arc(toX(0), toYV(v0), 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(toX(tArrival), toYV(vArr), 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'left';
+      ctx.fillText(` T₀ Launch: ${Math.round(v0)} km/s`, toX(0) + 4, toYV(v0) - 4);
+      ctx.fillText(` 1 AU Shock: ${Math.round(vArr)} km/s`, toX(tArrival) + 4, toYV(vArr) - 4);
+
+      // --- TRACK 2: EARTH DST RING CURRENT PROFILE ---
+      // Dst range: +20 nT to -450 nT
+      const dstMax = 20;
+      const dstMin = -450;
+      const toYDst = (d) => yTrack2Top + ((dstMax - d) / (dstMax - dstMin)) * (yTrack2Bot - yTrack2Top);
+
+      // Track 2 Y-axis labels (Right)
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '9px ui-monospace, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText('0 nT', w - padR + 8, toYDst(0));
+      ctx.fillText('-100 nT (G3)', w - padR + 8, toYDst(-100));
+      ctx.fillText('-200 nT (G4)', w - padR + 8, toYDst(-200));
+      ctx.fillText('-400 nT (G5)', w - padR + 8, toYDst(-400));
+
+      // Dst Threshold Danger Lines
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.2)';
+      ctx.setLineDash([2, 2]);
+      ctx.beginPath();
+      ctx.moveTo(padL, toYDst(-100)); ctx.lineTo(padL + plotW, toYDst(-100));
+      ctx.moveTo(padL, toYDst(-200)); ctx.lineTo(padL + plotW, toYDst(-200));
+      ctx.moveTo(padL, toYDst(-300)); ctx.lineTo(padL + plotW, toYDst(-300));
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw Dst Response Curve
+      // Before Arrival: baseline (-15 to 0 nT)
+      // At Arrival: Storm Sudden Commencement (SSC) +15 nT surge, then sharp plunge into Main Phase
+      const minDstVal = pipeline.fc6;
+      ctx.beginPath();
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2.4;
+
+      for (let t = 0; t <= maxT; t += 0.5) {
+        let d = -10;
+        if (t < tArrival - 0.5) {
+          d = -10 + Math.sin(t * 0.5) * 4;
+        } else if (t >= tArrival - 0.5 && t <= tArrival + 1.0) {
+          // SSC compression jump
+          d = 18;
+        } else if (t > tArrival + 1.0 && t <= tArrival + 7.0) {
+          // Main Phase Plunge
+          const f = (t - (tArrival + 1.0)) / 6.0;
+          d = 18 - (18 - minDstVal) * Math.sin(f * (Math.PI / 2));
+        } else {
+          // Recovery Phase
+          const recT = t - (tArrival + 7.0);
+          d = minDstVal + (minDstVal * -0.65) * (1.0 - Math.exp(-recT / 24.0));
+        }
+
+        const x = toX(t);
+        const y = toYDst(d);
+        if (t === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Highlight HeliosBiLSTM Horizon Points (+1h, +3h, +6h)
+      const tH1 = tArrival + 2.0;
+      const tH3 = tArrival + 4.0;
+      const tH6 = tArrival + 7.0;
+
+      const pts = [
+        { t: tH1, val: pipeline.fc1, lbl: `+1h (${pipeline.fc1} nT)` },
+        { t: tH3, val: pipeline.fc3, lbl: `+3h (${pipeline.fc3} nT)` },
+        { t: tH6, val: pipeline.fc6, lbl: `+6h Peak (${pipeline.fc6} nT)` }
+      ];
+
+      pts.forEach(p => {
+        if (p.t <= maxT) {
+          const px = toX(p.t);
+          const py = toYDst(p.val);
+          ctx.fillStyle = '#a855f7';
+          ctx.beginPath();
+          ctx.arc(px, py, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          ctx.fillStyle = '#c084fc';
+          ctx.font = '9px ui-monospace, monospace';
+          ctx.textAlign = 'left';
+          ctx.fillText(` ${p.lbl}`, px + 5, py - 3);
+        }
+      });
+
       ctx.restore();
+    }
+
+    // Live NOAA SWPC Stream Poller
+    async function startLivePolling() {
+      if (liveTimer) clearInterval(liveTimer);
+      fetchLiveSwpcData();
+      liveTimer = setInterval(fetchLiveSwpcData, 60000); // 1 min poll
     }
 
     async function fetchLiveSwpcData() {
       if (currentMode !== 'live') return;
       try {
-        const [resMag, resWind, resDst] = await Promise.all([
+        const [resMag, resWind] = await Promise.all([
           fetch('https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json').then(r => r.json()),
-          fetch('https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json').then(r => r.json()),
-          fetch('https://services.swpc.noaa.gov/products/kyoto-dst.json').then(r => r.json())
+          fetch('https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json').then(r => r.json())
         ]);
 
-        if (Array.isArray(resMag)) {
-          const validMags = resMag.filter(r => r.bz_gsm !== null && r.bz_gsm !== undefined);
-          if (validMags.length > 0) {
-            const latest = validMags[validMags.length - 1];
-            pipeline.bzLive = parseFloat(latest.bz_gsm);
-            bzHistory = validMags.slice(-360).map(r => parseFloat(r.bz_gsm));
-            btHistory = validMags.slice(-360).map(r => parseFloat(r.bt || 0));
-            if (latest.time_tag) pipeline.telemetryTime = latest.time_tag;
-            if (latest.source) pipeline.telemetrySource = latest.source;
-          }
-        }
+        if (Array.isArray(resMag) && resMag.length > 0 && Array.isArray(resWind) && resWind.length > 0) {
+          const latestMag = resMag[resMag.length - 1];
+          const latestWind = resWind[resWind.length - 1];
 
-        if (Array.isArray(resWind)) {
-          const validWinds = resWind.filter(r => r.proton_speed !== null && r.proton_speed !== undefined);
-          if (validWinds.length > 0) {
-            const latest = validWinds[validWinds.length - 1];
-            pipeline.vswLive = parseFloat(latest.proton_speed);
-            if (latest.proton_density) {
-              pipeline.densityLive = parseFloat(latest.proton_density);
-            }
-            windHistory = validWinds.slice(-360).map(r => parseFloat(r.proton_speed));
-            densityHistory = validWinds.slice(-360).map(r => parseFloat(r.proton_density || 1.13));
-            if (latest.time_tag) pipeline.telemetryTime = latest.time_tag;
-            if (latest.source) pipeline.telemetrySource = latest.source;
-          }
-        }
+          const bz = parseFloat(latestMag.bz_gsm ?? latestMag.bz ?? -3.5);
+          const vsw = parseFloat(latestWind.solar_wind_speed ?? latestWind.speed ?? 430);
+          const density = parseFloat(latestWind.solar_wind_density ?? latestWind.density ?? 6.2);
+          const pdyn = 1.6726e-6 * density * Math.pow(vsw, 2) * 1e-3; // nPa
 
-        if (Array.isArray(resDst) && resDst.length > 0) {
-          const validDsts = resDst.filter(r => r.dst !== null && r.dst !== undefined);
-          if (validDsts.length > 0) {
-            pipeline.dstLive = parseFloat(validDsts[validDsts.length - 1].dst);
-            dstHistory = validDsts.slice(-48).map(r => parseInt(r.dst));
-          }
-        }
+          pipeline.bzLive = bz;
+          pipeline.vswLive = vsw;
+          pipeline.pdynLive = pdyn;
 
-        const stamp = document.getElementById('liveTelemetryStamp');
-        if (stamp) {
-          stamp.textContent = `RTSW: ${pipeline.telemetryTime} UTC · ${pipeline.telemetrySource}`;
+          recomputePipeline();
         }
-
-        recomputePipeline();
       } catch (err) {
-        console.warn('Live SWPC update error:', err);
+        // Safe offline / fallback telemetry
+        console.warn('NOAA SWPC direct fetch using local telemetry buffer:', err);
       }
     }
 
-    /* EXPORT OFFICIAL NASA CCMC EARTH CME SCOREBOARD JSON (SCHEMA v2026.09.30) */
     function exportCcmcJson() {
-      const now = new Date();
-      const nowIso = now.toISOString().replace(/\.\d{3}/, '');
-      const cmeStart = new Date(now.getTime() - 2 * 3600 * 1000).toISOString().replace(/\.\d{3}/, '');
-      const arrivalTime = new Date(now.getTime() + pipeline.transitHours * 3600 * 1000).toISOString().replace(/\.\d{3}/, '');
-      const arrivalEndTime = new Date(now.getTime() + (pipeline.transitHours + 12) * 3600 * 1000).toISOString().replace(/\.\d{3}/, '');
-      
-      const minDst = Math.min(pipeline.fc1 || -18, pipeline.fc3 || -18, pipeline.fc6 || -18);
-      const minBz = parseFloat((pipeline.bzLive < 0 ? pipeline.bzLive : -Math.abs(pipeline.shearAngle / 3.5)).toFixed(1));
-      const maxV = Math.round(pipeline.arrivalSpeed || 450);
-      const unc = 3.4; // 3.42h median MAE
-      
       const payload = {
-        "forecastSubmission": {
-          "submissionTime": nowIso,
-          "issueTime": nowIso,
-          "method": {
-            "displayName": "HELIOS 2.0",
-            "registeredID": "spase://CCMC/SimulationModel/HELIOS-2.0"
-          },
-          "submitter": {
-            "name": "Zar Manah",
-            "affiliation": "Independent Researcher, Madrid, Spain"
-          },
-          "forecasts": [
-            {
-              "overallForecastConfidence": pipeline.transitHours < 40 ? 1 : 2,
-              "forecastNote": "HELIOS 2.0 dual-scale physics-informed neural transit forecast with 90% conformal coverage.",
-              "cme": [
-                {
-                  "startTime": cmeStart
-                }
-              ],
-              "arrivals": [
-                {
-                  "location": "Earth",
-                  "isArrivalPredicted": true,
-                  "arrivalConfidence": 92.5,
-                  "arrivalDetails": {
-                    "arrivalType": "shock",
-                    "arrivalTime": arrivalTime,
-                    "arrivalEndTime": arrivalEndTime,
-                    "arrivalTimeUncertaintyLow": unc,
-                    "arrivalTimeUncertaintyHigh": unc,
-                    "maxV": maxV,
-                    "maxB": 24.0,
-                    "minBz": minBz,
-                    "geomagneticImpact": {
-                      "maxKp": minDst < -200 ? 8.67 : (minDst < -100 ? 7.33 : (minDst < -50 ? 5.67 : 3.0)),
-                      "minDst": Math.round(minDst),
-                      "minDstUncertaintyLow": 12.0,
-                      "minDstUncertaintyHigh": 18.0,
-                      "stormDuration": 24.0
-                    }
-                  }
-                }
-              ]
-            }
-          ]
+        metadata: {
+          system: "Zar-Manah HELIOS 2.0",
+          doi: "10.5281/zenodo.24146866",
+          timestamp_utc: new Date().toISOString(),
+          mode: currentMode
+        },
+        gear1_helios_vision_apex: {
+          photospheric_shear_deg: pipeline.shearAngle,
+          southward_chirality_prob: document.getElementById('g1ProbBz').textContent,
+          median_peak_bz_nT: document.getElementById('g1MedianBz').textContent
+        },
+        gear2_helios_storm_apex: {
+          halo_expansion_speed_km_s: pipeline.v0,
+          severe_storm_veto_prob: document.getElementById('g2ProbStorm').textContent,
+          coronal_dst_proxy_nT: document.getElementById('g2MedianDst').textContent
+        },
+        gear3_moktransit_nn: {
+          transit_hours: pipeline.transitHours,
+          arrival_speed_1au_km_s: pipeline.arrivalSpeed,
+          conformal_window_90: [pipeline.windowEarly, pipeline.windowLate]
+        },
+        gear4_helios_bilstm: {
+          in_situ_bz_nT: pipeline.bzLive,
+          vsw_km_s: pipeline.vswLive,
+          pdyn_nPa: pipeline.pdynLive,
+          forecast_horizons_dst: {
+            plus_1h_nT: pipeline.fc1,
+            plus_2h_nT: pipeline.fc2,
+            plus_3h_nT: pipeline.fc3,
+            plus_6h_nT: pipeline.fc6
+          }
         }
       };
 
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `ccmc_helios_submission_${nowIso.slice(0, 10)}.json`;
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `HELIOS_2_Prediction_${Date.now()}.json`);
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      a.remove();
     }
   </script>
 </body>

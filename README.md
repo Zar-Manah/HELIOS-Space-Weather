@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
-[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24139947-blue.svg)](https://doi.org/10.5281/zenodo.24139947)
+[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24146866-blue.svg)](https://doi.org/10.5281/zenodo.24146866)
 [![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
@@ -164,15 +164,15 @@ If you utilize HELIOS 2.0 in academic research, space operations, or utility gri
 
 ```bibtex
 @article{ZarManah2026HELIOS2,
-  title={{Zar-Manah HELIOS 2.0: Solar Vision \& Swiss Watch Early Warning System Coupling Coronal Chirality, Planetary CME Shock Transit, and L1 In-Situ Conformal Forecasting across Solar Cycles 23--25}},
+  title={{Zar-Manah HELIOS 2.0: Single-File Plug-and-Play 4 AI Models for Real-Time Solar Storm Impact \& CME Arrival Prediction}},
   author={{Zar Manah}},
   affiliation={Independent Researcher, Madrid, Spain},
   orcid={0009-0007-8443-8999},
   journal={Zenodo Preprints},
   year={2026},
   publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24139947},
-  url={https://doi.org/10.5281/zenodo.24139947}
+  doi={10.5281/zenodo.24146866},
+  url={https://doi.org/10.5281/zenodo.24146866}
 }
 ```
 
