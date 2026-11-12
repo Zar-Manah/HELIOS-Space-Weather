@@ -1192,37 +1192,88 @@
     }
 
     function exportCcmcJson() {
+      const now = new Date();
+      const eta = new Date(now.getTime() + pipeline.transitHours * 3600 * 1000);
+      const minDst = Math.min(pipeline.fc1, pipeline.fc3, pipeline.fc6);
+      const estKp = Math.min(9.0, Math.max(1.0, 1.0 + Math.abs(Math.min(0, minDst)) / 45.0));
+
       const payload = {
-        metadata: {
+        forecastSubmission: {
+          submissionTime: now.toISOString(),
+          issueTime: now.toISOString(),
+          method: {
+            displayName: "HELIOS 2.0",
+            registeredID: "spase://CCMC/SimulationModel/HELIOS-2.0"
+          },
+          submitter: {
+            name: "Zar Manah",
+            affiliation: "Independent Researcher, Madrid, Spain"
+          },
+          forecasts: [
+            {
+              overallForecastConfidence: pipeline.v0 >= 1000 ? 1 : 2,
+              forecastNote: `HELIOS 2.0 4-tier Swiss Watch multi-horizon space weather forecast (${currentMode.toUpperCase()} mode). DOI: 10.5281/zenodo.24147610`,
+              cme: [
+                {
+                  startTime: new Date(now.getTime() - 2 * 3600 * 1000).toISOString()
+                }
+              ],
+              arrivals: [
+                {
+                  location: "Earth",
+                  isArrivalPredicted: true,
+                  arrivalConfidence: Math.round(Math.min(99.0, Math.max(50.0, 50.0 + (pipeline.v0 / 2500.0) * 45.0)) * 10) / 10,
+                  arrivalDetails: {
+                    arrivalType: "shock",
+                    arrivalTime: eta.toISOString(),
+                    arrivalTimeUncertaintyLow: 7.9,
+                    arrivalTimeUncertaintyHigh: 7.9,
+                    maxV: Math.round(pipeline.arrivalSpeed),
+                    maxB: Math.round(Math.max(5.0, Math.abs(pipeline.bzLive) * 1.5 + 4.0) * 10) / 10,
+                    minBz: Math.round(parseFloat(document.getElementById('g1MedianBz').textContent) * 10) / 10,
+                    geomagneticImpact: {
+                      maxKp: Math.round(estKp * 100) / 100,
+                      minDst: Math.round(minDst),
+                      minDstUncertaintyLow: 12.0,
+                      minDstUncertaintyHigh: 18.0,
+                      stormDuration: 24.0
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        helios_pipeline_state: {
           system: "Zar-Manah HELIOS 2.0",
           doi: "10.5281/zenodo.24147610",
-          timestamp_utc: new Date().toISOString(),
-          mode: currentMode
-        },
-        gear1_helios_vision_apex: {
-          photospheric_shear_deg: pipeline.shearAngle,
-          southward_chirality_prob: document.getElementById('g1ProbBz').textContent,
-          median_peak_bz_nT: document.getElementById('g1MedianBz').textContent
-        },
-        gear2_helios_storm_apex: {
-          halo_expansion_speed_km_s: pipeline.v0,
-          severe_storm_veto_prob: document.getElementById('g2ProbStorm').textContent,
-          coronal_dst_proxy_nT: document.getElementById('g2MedianDst').textContent
-        },
-        gear3_moktransit_nn: {
-          transit_hours: pipeline.transitHours,
-          arrival_speed_1au_km_s: pipeline.arrivalSpeed,
-          conformal_window_90: [pipeline.windowEarly, pipeline.windowLate]
-        },
-        gear4_helios_bilstm: {
-          in_situ_bz_nT: pipeline.bzLive,
-          vsw_km_s: pipeline.vswLive,
-          pdyn_nPa: pipeline.pdynLive,
-          forecast_horizons_dst: {
-            plus_1h_nT: pipeline.fc1,
-            plus_2h_nT: pipeline.fc2,
-            plus_3h_nT: pipeline.fc3,
-            plus_6h_nT: pipeline.fc6
+          timestamp_utc: now.toISOString(),
+          mode: currentMode,
+          gear1_helios_vision_apex: {
+            photospheric_shear_deg: pipeline.shearAngle,
+            southward_chirality_prob: document.getElementById('g1ProbBz').textContent,
+            median_peak_bz_nT: document.getElementById('g1MedianBz').textContent
+          },
+          gear2_helios_storm_apex: {
+            halo_expansion_speed_km_s: pipeline.v0,
+            severe_storm_veto_prob: document.getElementById('g2ProbStorm').textContent,
+            coronal_dst_proxy_nT: document.getElementById('g2MedianDst').textContent
+          },
+          gear3_moktransit_nn: {
+            transit_hours: Math.round(pipeline.transitHours * 10) / 10,
+            arrival_speed_1au_km_s: Math.round(pipeline.arrivalSpeed),
+            conformal_window_90_hours: [Math.round(pipeline.windowEarly * 10) / 10, Math.round(pipeline.windowLate * 10) / 10]
+          },
+          gear4_helios_bilstm: {
+            in_situ_bz_nT: pipeline.bzLive,
+            vsw_km_s: pipeline.vswLive,
+            pdyn_nPa: Math.round(pipeline.pdynLive * 100) / 100,
+            forecast_horizons_dst: {
+              plus_1h_nT: pipeline.fc1,
+              plus_2h_nT: pipeline.fc2,
+              plus_3h_nT: pipeline.fc3,
+              plus_6h_nT: pipeline.fc6
+            }
           }
         }
       };
@@ -1230,7 +1281,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
       const a = document.createElement('a');
       a.setAttribute("href", dataStr);
-      a.setAttribute("download", `HELIOS_2_Prediction_${Date.now()}.json`);
+      a.setAttribute("download", `NASA_CCMC_HELIOS_Submission_${Date.now()}.json`);
       document.body.appendChild(a);
       a.click();
       a.remove();
