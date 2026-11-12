@@ -208,7 +208,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, as_json=False)
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.5",
-            "doi": "10.5281/zenodo.24148612",
+            "doi": "10.5281/zenodo.24148695",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "transit_cme_forecast",
             "speed_km_s": float(speed),
@@ -524,7 +524,7 @@ def main():
     if args.json:
         out = {
             "system": "Zar-Manah HELIOS 2.5",
-            "doi": "10.5281/zenodo.24148612",
+            "doi": "10.5281/zenodo.24148695",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "tactical_dst_forecast",
             "horizons": {}
