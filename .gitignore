@@ -6,3 +6,4 @@ data/processed/*.parquet
 *.pt.cache
 *.tar.gz
 data/raw/
+models/_*.pt

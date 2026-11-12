@@ -402,7 +402,7 @@
   <header>
     <div class="brand">
       <div class="brand-title">ZAR-MANAH HELIOS 2.0</div>
-      <div class="brand-tag">4-Tier Swiss Watch Pipeline</div>
+      <div class="brand-tag">Real-Time Interactive Cockpit (Companion Dashboard to Python Pipeline)</div>
     </div>
 
     <div class="header-controls">
@@ -761,7 +761,7 @@
       const v_eff = v0 * Math.exp(-gamma * L_AU * 0.4) + v_amb * (1.0 - Math.exp(-gamma * L_AU * 0.4));
       const transitHours = L_AU / (v_eff * 3600.0);
       const arrivalSpeed = Math.max(v_amb, v0 - (v0 - v_amb) * 0.65);
-      const conformalMargin = 7.90; // Finite sample coverage 90%
+      const conformalMargin = 18.8; // Calibrated empirical coverage window on OOD Cycle 25 (±18.8h)
       const windowEarly = Math.max(12.0, transitHours - conformalMargin);
       const windowLate = transitHours + conformalMargin;
 

@@ -75,11 +75,11 @@ def run_battery():
             "desc": "Extreme event with Dst -422 nT and 47h transit. Must trigger G5 ALERT."
         },
         {
-            "name": "3. Hypersonic CME Oct 29, 2003 (2461 km/s - False Alarm)",
+            "name": "3. Halloween Superstorm Oct 29, 2003 (G5 - Dst -383 nT)",
             "idx": 99,
-            "expected_storm": False,
-            "expected_bz_south": False,
-            "desc": "Record speed CME with benign northward field. MUST FILTER FALSE ALARM."
+            "expected_storm": True,
+            "expected_bz_south": True,
+            "desc": "Hypersonic CME with severe southward field. Must trigger G5 SEVERE STORM ALERT."
         },
         {
             "name": "4. Moderate CME May 14, 2024 (Cycle 25 OOD - Dst -88 nT)",

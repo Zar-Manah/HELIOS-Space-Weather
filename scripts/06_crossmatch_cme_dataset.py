@@ -53,7 +53,7 @@ print(f"Parsing SOHO/LASCO CDAW Catalog: {CDAW_FILE}...")
 cdaw_events = []
 with open(CDAW_FILE, "r", encoding="utf-8", errors="ignore") as f:
     for line in f:
-        m = re.match(r"^(\d{4}/\d{2}/\d{2})\s+(\d{2}:\d{2}:\d{2})\s+([0-9\-\*]+)\s+([0-9\-\*]+)\s+([0-9\-\*]+)\s+([0-9\-\*]+)\s+([0-9\-\*]+)\s+([0-9\-\*]+)\s+([0-9\.\-\+\*\w]+)", line)
+        m = re.match(r"^(\d{4}/\d{2}/\d{2})\s+(\d{2}:\d{2}:\d{2})\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)", line)
         if not m:
             continue
 
@@ -76,6 +76,10 @@ with open(CDAW_FILE, "r", encoding="utf-8", errors="ignore") as f:
         if np.isnan(speed):
             continue
 
+        is_halo = 1 if (cpa_str.lower() == "halo" or (not np.isnan(width) and width >= 360.0)) else 0
+        if np.isnan(width) and is_halo:
+            width = 360.0
+
         p = line.split()
         mass = np.nan
         energy = np.nan
@@ -96,7 +100,7 @@ with open(CDAW_FILE, "r", encoding="utf-8", errors="ignore") as f:
             "accel": accel if not np.isnan(accel) else 0.0,
             "mass": mass,
             "energy": energy,
-            "is_halo": 1 if (width is not None and width >= 360) else 0
+            "is_halo": is_halo
         })
 
 df_cdaw = pd.DataFrame(cdaw_events).sort_values("dt").reset_index(drop=True)
@@ -150,28 +154,26 @@ for r in rows:
 df_icme = pd.DataFrame(icme_events)
 print(f"Loaded {len(df_icme)} verified ICMEs with launch and arrival timestamps.")
 
-# 3. Cross-Match with CDAW Kinematics & Pre-Conditioning
+# 3. Cross-Match with CDAW Kinematics & Pre-Conditioning (100% Empirical, Zero Synthetic Leakage)
 print("Cross-matching launch events and computing heliospheric clearing...")
 matched = []
+dropped_count = 0
 for _, row in df_icme.iterrows():
     t_rc = row["t_launch_rc"]
-    window = df_cdaw[(df_cdaw["dt"] >= t_rc - timedelta(hours=4)) & (df_cdaw["dt"] <= t_rc + timedelta(hours=4))]
+    window = df_cdaw[(df_cdaw["dt"] >= t_rc - timedelta(hours=6)) & (df_cdaw["dt"] <= t_rc + timedelta(hours=6))]
 
     if len(window) > 0:
         best_cme = window.sort_values("speed", ascending=False).iloc[0]
-        cme_speed = best_cme["speed"]
-        cme_width = best_cme["width"]
-        cme_accel = best_cme["accel"]
-        cme_mass  = best_cme["mass"]
-        cme_energy = best_cme["energy"]
-        is_halo = max(row["is_halo_rc"], best_cme["is_halo"])
+        cme_speed = float(best_cme["speed"])
+        cme_width = float(best_cme["width"])
+        cme_accel = float(best_cme["accel"])
+        cme_mass  = float(best_cme["mass"]) if pd.notna(best_cme["mass"]) else np.nan
+        cme_energy = float(best_cme["energy"]) if pd.notna(best_cme["energy"]) else np.nan
+        is_halo = int(max(row["is_halo_rc"], best_cme["is_halo"]))
     else:
-        cme_speed = (1.496e8 / (row["transit_hours"] * 3600.0)) * 1.15
-        cme_width = 360.0 if row["is_halo_rc"] else 90.0
-        cme_accel = 0.0
-        cme_mass = np.nan
-        cme_energy = np.nan
-        is_halo = row["is_halo_rc"]
+        # PURE ZERO-LEAKAGE AUDIT: Drop unobserved CMEs rather than synthesizing circular speeds!
+        dropped_count += 1
+        continue
 
     # Pre-conditioning: CMEs in preceding 36 hours (cannibalism)
     prior = df_cdaw[(df_cdaw["dt"] < t_rc) & (df_cdaw["dt"] >= t_rc - timedelta(hours=36))]

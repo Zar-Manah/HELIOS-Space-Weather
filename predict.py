@@ -93,7 +93,54 @@ def predict_tactical_storm(features_df, models, metrics):
     return results
 
 
-def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, as_json=False):
+def check_cme_earth_trajectory(lat, lon, width):
+    """
+    Deterministic 3D Cone Trajectory Filter.
+    Calculates great-circle angular distance from the Sun-Earth subsolar point (0°, 0°)
+    to the eruption coordinates (lat, lon) and verifies cone intersection.
+    """
+    rad_lat = np.radians(lat)
+    rad_lon = np.radians(lon)
+    cos_alpha = np.cos(rad_lat) * np.cos(rad_lon)
+    delta_alpha = np.degrees(np.arccos(np.clip(cos_alpha, -1.0, 1.0)))
+    half_width = width / 2.0
+    is_impact = delta_alpha <= half_width
+    return is_impact, delta_alpha, half_width
+
+
+def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0.0, as_json=False):
+    # 0. Deterministic Geometric Impact Verification
+    is_impact, delta_alpha, half_width = check_cme_earth_trajectory(lat, lon, width)
+    if not is_impact:
+        if as_json:
+            out = {
+                "system": "Zar-Manah HELIOS 2.0",
+                "version": "2.5.5",
+                "doi": "10.5281/zenodo.24148695",
+                "concept_doi": "10.5281/zenodo.24061451",
+                "type": "cme_trajectory_assessment",
+                "status": "ALL-CLEAR / MISS",
+                "earth_impact": False,
+                "source_lat": float(lat),
+                "source_lon": float(lon),
+                "angular_separation_deg": round(float(delta_alpha), 2),
+                "cone_half_width_deg": round(float(half_width), 2),
+                "message": "CME expansion cone does not intercept the Sun-Earth line of sight."
+            }
+            print(json.dumps(out, indent=2))
+            return out
+
+        print("\n" + "=" * 78)
+        print("🛡️  ZAR-MANAH HELIOS-TRANSIT: GEOMETRIC TRAJECTORY FILTER")
+        print("=" * 78)
+        print(f"• Solar Source Coordinates:   Lat {lat:+.1f}°, Lon {lon:+.1f}° (Angular Offset: {delta_alpha:.1f}°)")
+        print(f"• CME Angular Width:          {width:.1f}° (Cone Half-Width: {half_width:.1f}°)")
+        print(f"• Trajectory Evaluation:      🟢 ALL-CLEAR / MISS (No Earth Impact Expected)")
+        print(f"• Physics Assessment:         The expansion cone does not intercept the Earth line-of-sight.")
+        print(f"                              Zero false alarm: no transit time will be calculated.")
+        print("=" * 78)
+        return None
+
     L_AU = 1.495978707e8
     v_amb = 420.0
     gamma = 1.0e-7
@@ -198,24 +245,27 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, as_json=False)
     w_dyn = 0.45 + 0.45 / (1.0 + np.exp(-(speed - 950.0) / 100.0))
     pred_h = max(16.0, w_dyn * pred_h_mok + (1.0 - w_dyn) * pred_h_tree)
     
-    # 5. Conformal Coverage Window
-    q_margin = 16.0
-    low_h = max(14.0, min(q_low_tree, pred_h - q_margin))
-    high_h = max(pred_h + q_margin, q_high_tree)
+    # 5. Conformal Coverage Window (Honest calibration without hardcoded padding)
+    low_h = max(14.0, float(q_low_tree))
+    high_h = max(low_h + 4.0, float(q_high_tree))
     
     arrival_dt = now + timedelta(hours=pred_h)
 
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.4",
+            "version": "2.5.5",
             "doi": "10.5281/zenodo.24148695",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "transit_cme_forecast",
             "speed_km_s": float(speed),
+            "angular_width_deg": float(width),
+            "source_lat": float(lat),
+            "source_lon": float(lon),
             "is_halo": bool(is_halo),
+            "earth_impact": True,
             "transit_hours": round(float(pred_h), 2),
-            "conformal_window_90_hours": [round(float(low_h), 2), round(float(high_h), 2)],
+            "conformal_window_81_hours": [round(float(low_h), 2), round(float(high_h), 2)],
             "arrival_time_utc": arrival_dt.strftime("%Y-%m-%d %H:%M UTC"),
             "predicted_shock_dst_nT": round(float(pred_dst), 2)
         }
@@ -226,10 +276,11 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, as_json=False)
     print("🚀 ZAR-MANAH HELIOS-TRANSIT v2.5: 24–72H DYNAMIC REGIME ENSEMBLE FORECAST")
     print("=" * 78)
     print(f"Observed Solar Launch: Speed = {speed:.1f} km/s | Halo CME: {'YES (360°)' if is_halo else 'NO'}")
+    print(f"Solar Source: Lat {lat:+.1f}°, Lon {lon:+.1f}° | Trajectory: DIRECT IMPACT (Offset: {delta_alpha:.1f}° <= Half-Width: {half_width:.1f}°)")
     print("-" * 78)
     print(f"• Dynamic Hybrid Transit Time: {pred_h:.1f} hours ({pred_h/24.0:.1f} days)")
     print(f"• Kinematic Decomposition:    MoK Neural: {pred_h_mok:.1f}h ({w_dyn*100:.0f}%) | GBDT: {pred_h_tree:.1f}h ({(1-w_dyn)*100:.0f}%)")
-    print(f"• 90% Conformal Window:       [{low_h:.1f}h, {high_h:.1f}h] (Margin: ±{(high_h-low_h)/2.0:.1f}h)")
+    print(f"• 81% Conformal Window:       [{low_h:.1f}h, {high_h:.1f}h] (Margin: ±{(high_h-low_h)/2.0:.1f}h)")
     print(f"• Expected Earth Impact:      {arrival_dt.strftime('%Y-%m-%d %H:%M UTC')}")
     print(f"• Expected Storm Shock (Dst): {pred_dst:.1f} nT")
     
@@ -242,8 +293,9 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, as_json=False)
     else:
         print("• Threat Level:               🟢 MINOR / GLANCING BLOW")
     print("-" * 78)
-    print("Note: Validated on unseen Solar Cycle 25 OOD. Fast CME error (≥1000 km/s) is ±7.90h")
-    print("      (outperforming NASA WSA-ENLIL standard of ±9.2h by +1.3h).")
+    print("Note: Validated on unseen Solar Cycle 25 OOD with zero synthetic leakage.")
+    print("      Global MAE: ±11.69h (GBDT: ±10.63h, Median: ±8.34h) vs DBM: ±28.95h.")
+    print("      Operational edge-computing model within ~1.2h of NASA WSA-ENLIL (10.4h at Earth).")
 
 
 def fetch_noaa_live(as_json=False):
@@ -474,12 +526,14 @@ def run_synthetic_sample(scenario="extreme", as_json=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.4)")
-    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.4)")
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.5)")
+    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.5)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
     parser.add_argument("--cme_width", "--cme-width", "--width", dest="cme_width", type=float, default=360.0, help="Angular width of CME in degrees (default 360 for halo)")
+    parser.add_argument("--cme_lat", "--lat", dest="cme_lat", type=float, default=0.0, help="Eruption solar latitude in degrees (-90 to +90, default 0)")
+    parser.add_argument("--cme_lon", "--lon", dest="cme_lon", type=float, default=0.0, help="Eruption solar longitude in degrees (-180 to +180, Stonyhurst, default 0)")
     parser.add_argument("--cme_accel", "--cme-accel", "--accel", dest="cme_accel", type=float, default=0.0, help="Initial acceleration in m/s^2")
     parser.add_argument("--halo", action="store_true", help="Flag as full 360-degree Halo CME")
     parser.add_argument("--cme", action="store_true", help="Activate 24-72h CME transit forecast route")
@@ -500,7 +554,7 @@ def main():
     if args.cme_speed is not None or args.cme:
         speed_val = args.cme_speed if args.cme_speed is not None else 1000.0
         is_halo = 1 if (args.halo or args.cme_width >= 360.0) else 0
-        predict_transit_cme(speed_val, args.cme_width, args.cme_accel, is_halo, as_json=args.json)
+        predict_transit_cme(speed_val, args.cme_width, args.cme_accel, is_halo, lat=args.cme_lat, lon=args.cme_lon, as_json=args.json)
         return
 
     # Route 2: Tactical Prediction (1-6h Nowcasting)

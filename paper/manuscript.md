@@ -221,36 +221,36 @@ HELIOS 2.0 was trained exclusively on **Solar Cycles 23 and 24 (1998–2019)** a
 | | **HELIOS-Point (GBDT)** | **10.62** | **6.82** | **0.729** | **0.642** | **0.679** | N/A | N/A |
 | | **HELIOS-CQR (90%)** | — | — | — | — | — | **88.88%** | **26.93** |
 
-#### Table 2: 24–72h CME Transit Time Benchmark on Unseen Solar Cycle 25
-| Speed Regime / Benchmark | Model / System | Arrival MAE (h) | Arrival RMSE (h) | 90% Conformal Coverage | Compute Overhead |
-| :--- | :--- | :---: | :---: | :---: | :---: |
-| **Fast CMEs ($\ge 1000$ km/s)** | Empirical Kinematic Baseline | $\pm 14.80$ | $18.20$ | N/A | $< 0.01$ s |
-| | Classical Drag-Based Model (DBM) | $\pm 18.40$ | $22.10$ | N/A | $0.05$ s |
-| | **NASA WSA-ENLIL MHD Supercomputer** | $\pm 9.20$ | $12.40$ | N/A | **Hours on HPC Cluster** |
-| | **Zar-Manah HELIOS-Transit (Ours)** | **$\pm 7.90$** | **$10.15$** | **87.5%** | **$< 0.05$ s (Local Apple M4)** |
-| **Global (All CMEs, Unseen Cycle 25)**| Classical Drag-Based Model (DBM) | $\pm 29.19$ | $34.50$ | N/A | $0.05$ s |
-| | HELIOS Single GBDT | $\pm 12.24$ | $15.92$ | 82.4% | $< 0.01$ s |
-| | **HELIOS Dynamic Ensemble** | **$\pm 11.29$** | **$14.85$** | **85.9%** | **$< 0.05$ s (Local Apple M4)** |
+#### Table 2: 24–72h CME Transit Time Benchmark on Unseen Solar Cycle 25 (Zero Synthetic Leakage)
+| Speed Regime / Benchmark | Model / System | Arrival MAE (h) | Arrival RMSE (h) | Median Error (h) | Conformal Coverage | Compute Overhead |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Global (All CMEs, Unseen Cycle 25)**| Classical Drag-Based Model (DBM) | $\pm 28.95$ | $33.00$ | $\pm 24.10$ | N/A | $0.05$ s |
+| | **NASA WSA-ENLIL Operational Std** | $\pm 10.40$ | $13.20$ | — | N/A | **Hours on HPC Cluster** |
+| | HELIOS Single GBDT | **$\pm 10.63$** | $15.29$ | **$\pm 7.45$** | 81.3% | $< 0.01$ s (Local Apple M4) |
+| | **HELIOS Dynamic Ensemble (MoK+GBDT)** | $\pm 11.69$ | $15.68$ | $\pm 8.34$ | **81.3%** | **$< 0.05$ s (Local Apple M4)** |
+| **Fast CMEs ($\ge 1000$ km/s)** | Classical Drag-Based Model (DBM) | $\pm 18.40$ | $22.10$ | $\pm 16.50$ | N/A | $0.05$ s |
+| | **NASA WSA-ENLIL (STEREO-A, Wold 2018)**| $\pm 9.20$ | $12.40$ | — | N/A | **Hours on HPC Cluster** |
+| | **HELIOS Dynamic Ensemble (Ours)** | $\pm 15.37$ | $18.42$ | $\pm 14.19$ | 75.0% | **$< 0.05$ s (Local Apple M4)** |
 
 #### Table 3: Coronal Vision Dual APEX System Benchmark (Solar Cycle 25 OOD)
-| Model / Operational Tier | Target Quantity | Cycle 25 ROC-AUC | Test Accuracy / MAE | Specificity (Anti-False Alarm) | TSS Score |
-| :--- | :--- | :---: | :---: | :---: | :---: |
-| **Gear 1: HELIOS-VISION-APEX** | $B_z \le -10\text{ nT}$ Threat | **$0.6652$** | MAE $= 6.80\text{ nT}$ | $70.8\%$ | **$+0.2765$** |
-| **Gear 2: HELIOS-STORM-APEX** | Severe Storm ($Dst \le -110\text{ nT}$) | **$0.8717$** | **$87.0\%$ Accuracy** | **$92.1\%$ (70/76 Avoided)** | **$+0.4836$** |
+| Model / Operational Tier | Target Quantity | Cycle 25 ROC-AUC | Test Accuracy / MAE | Specificity (Anti-False Alarm) | Sensitivity (TPR) | TSS Score |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Gear 1: HELIOS-VISION-APEX** | $B_z \le -10\text{ nT}$ Threat | **$0.6652$** | MAE $= 6.80\text{ nT}$ | $70.8\%$ | $56.3\%$ | **$+0.2765$** |
+| **Gear 2: HELIOS-STORM-APEX** | Severe Storm ($Dst \le -110\text{ nT}$) | **$0.8717$** | **$85.9\%$ Accuracy** | **$92.1\%$ (70/76 Avoided)** | **$56.25\%$ (9/16 Captured)** | **$+0.4836$** |
 
 ---
 
 ### 4.2 Landmark Case Studies
-HELIOS 2.0 was verified against five historical landmark space weather events covering diverse physical regimes:
+HELIOS 2.0 was verified against historical landmark space weather events covering diverse physical regimes:
 
 #### Table 4: Landmark Historical Space Weather Validation Battery
 | Event | Date | Observed $Dst / B_z$ | HELIOS $P(\text{Severe})$ | HELIOS $P(B_z \le -10\text{ nT})$ | Transit ETA & Error | Operational Verdict | Status |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **May 2024 Superstorm** | 2024-05-10 | $-406\text{ nT} / -35.3\text{ nT}$ | **$58.7\%$ (ALERT)** | **$50.1\%$ (South)** | $53.9\text{h}$ (Shock captured) | 🔴 G5 Protocol Active | **✅ EXCELLENT** |
-| **Halloween 2003 Storm** | 2003-11-20 | $-422\text{ nT} / -50.9\text{ nT}$ | **$64.6\%$ (ALERT)** | **$55.5\%$ (South)** | $43.7\text{h}$ (Obs $47.2\text{h}$, $\Delta=3.5\text{h}$) | 🔴 G5 Protocol Active | **✅ EXCELLENT** |
-| **Oct 29, 2003 Hypersonic** | 2003-10-29 | $-88\text{ nT} / -3.2\text{ nT}$ | **$45.5\%$ (SAFE)** | **$35.5\%$ (North)** | **$19.4\text{h}$ (Obs $19.4\text{h}$, $\Delta=0.0\text{h}$)** | 🟢 False Alarm Filtered | **✅ EXCELLENT** |
-| **May 14, 2024 Moderate** | 2024-05-14 | $-88\text{ nT} / -12.8\text{ nT}$ | **$52.1\%$ (SAFE)** | **$46.5\%$ (North)** | **$75.3\text{h}$ (Obs $75.3\text{h}$, $\Delta=0.0\text{h}$)** | 🟢 Moderate / Safe | **✅ EXCELLENT** |
-| **Jan 17, 1998 Baseline** | 1998-01-17 | $-11\text{ nT} / -4.4\text{ nT}$ | **$34.7\%$ (SAFE)** | **$41.8\%$ (North)** | $96.3\text{h}$ (Obs $95.8\text{h}$, $\Delta=0.4\text{h}$) | 🟢 Quiet / Nominal | **✅ EXCELLENT** |
+| **May 2024 Superstorm** | 2024-05-10 | $-406\text{ nT} / -35.3\text{ nT}$ | **$58.7\%$ (ALERT)** | **$50.1\%$ (South)** | $53.9\text{h}$ (Obs $85.9\text{h}$, $\Delta=32.0\text{h}$) | 🔴 G5 Protocol Active | **⚠️ Cannibalism Delay** |
+| **Halloween 2003 Superstorm** | 2003-10-29 | $-383\text{ nT} / -38.5\text{ nT}$ | **$68.5\%$ (ALERT)** | **$62.0\%$ (South)** | $19.4\text{h}$ (Obs $19.4\text{h}$, $\Delta=0.0\text{h}$) | 🔴 G5 Protocol Active | **✅ Correct G5 Shock** |
+| **Nov 2003 Superstorm** | 2003-11-20 | $-422\text{ nT} / -50.9\text{ nT}$ | **$64.6\%$ (ALERT)** | **$55.5\%$ (South)** | $43.7\text{h}$ (Obs $47.2\text{h}$, $\Delta=3.5\text{h}$) | 🔴 G5 Protocol Active | **✅ Correct G5 Shock** |
+| **May 14, 2024 Moderate** | 2024-05-14 | $-88\text{ nT} / -12.8\text{ nT}$ | **$52.1\%$ (SAFE)** | **$46.5\%$ (North)** | $75.3\text{h}$ (Obs $75.3\text{h}$, $\Delta=0.0\text{h}$) | 🟢 Moderate / Safe | **✅ Defused Safely** |
+| **Jan 17, 1998 Baseline** | 1998-01-17 | $-11\text{ nT} / -4.4\text{ nT}$ | **$34.7\%$ (SAFE)** | **$41.8\%$ (North)** | $96.3\text{h}$ (Obs $95.8\text{h}$, $\Delta=0.4\text{h}$) | 🟢 Quiet / Nominal | **✅ Quiet / Nominal** |
 
 ---
 

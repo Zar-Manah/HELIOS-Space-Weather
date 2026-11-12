@@ -27,8 +27,8 @@
 
 Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **$<25$ milliseconds on consumer-grade hardware (Apple Silicon M4 GPU)** with zero cloud dependencies or supercomputing queues.
 
-⚡ **Outperforming NASA Supercomputers on a Standard Consumer Device:**  
-Evaluated strictly out-of-distribution across **Solar Cycles 23–25**, HELIOS 2.0 achieves a median transit arrival error of **$\pm 3.42$ hours** across historical CME shock arrivals (with $0.0\text{ h}$ error on hypersonic benchmark events like Oct 29, 2003)—**outperforming NASA's operational WSA-ENLIL 3D MHD supercomputer standard ($\pm 9.20\text{h}$)**. Breaking the barrier of institutional supercomputing, HELIOS runs entirely on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **$<25$ milliseconds** with zero cloud dependencies or supercomputing queues.
+⚡ **Near-Supercomputer Accuracy on a Standard Consumer Device:**  
+Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical drag-based models ($\pm 28.95\text{ h}$) and approaching the operational accuracy of NASA's WSA-ENLIL 3D MHD supercomputer standard ($\pm 10.40\text{ h}$ at Earth; Wold et al., 2018). Breaking the barrier of institutional supercomputing, HELIOS runs entirely on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **$<25$ milliseconds** with zero cloud dependencies or supercomputing queues.
 
 🤖 **Eliminating Human Bottlenecks & Full Operational Automation:**  
 Legacy space weather forecasting relies heavily on slow manual labor—requiring human operators to hand-fit geometric wireframes to coronagraph images, configure simulation grids, and wait hours for supercomputing cluster queues. HELIOS 2.0 eliminates these operational bottlenecks through **100% autonomous end-to-end execution**: from live multi-satellite telemetry ingestion (NOAA SWPC & NASA SDO/SOHO) and physical feature derivation to real-time kinematic inference, conformal uncertainty quantification, and automated NASA CCMC Scoreboard export.
@@ -44,8 +44,8 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
               ▼                                        ▼                                       ▼
  ┌──────────────────────────┐             ┌──────────────────────────┐            ┌──────────────────────────┐
  │  GEAR 2: STORM SEVERITY  │────────────▶│ CONFORMAL ARRIVAL WINDOW │───────────▶│ MISSION COCKPIT VERDICT  │
- │  HELIOS-STORM-APEX       │             │ ETA ± 6.5h Bound         │            │ 🟢 Safe | 🟡 Watch | 🔴 G5│
- │  Dst <= -110 nT Veto     │             │ 3.42h Median Error       │            │ Sub-Second Mitigation    │
+ │  HELIOS-STORM-APEX       │             │ Calibrated ± 18.8h Bound │            │ 🟢 Safe | 🟡 Watch | 🔴 G5│
+ │  Dst <= -110 nT Veto     │             │ 7.45h Median (10.6h MAE) │            │ Sub-Second Mitigation    │
  └──────────────────────────┘             └──────────────────────────┘            └──────────────────────────┘
 ```
 
@@ -56,19 +56,19 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
 | Gear | Operational Role | Time Horizon | Core Architecture & Data | Key Performance Metric |
 | :--- | :--- | :--- | :--- | :--- |
 | **Gear 1: Coronal Chirality** | Magnetic cloud polarity ($B_z \le -10\text{ nT}$) | **24–72 hours** | Deep MobileNetV3 visual extraction from SOHO/LASCO C2 + SDO/HMI Active Region magnetograms (Schrijver $R$-value) | Calibrated sensitivity to southward dangerous magnetic clouds |
-| **Gear 2: Storm Severity Veto** | Severe storm classification ($Dst \le -110\text{ nT}$) | **24–72 hours** | Unified 25-dim Solar Vector + Gradient-boosted Conformal Quantile Ensembles | **87.0% Accuracy** & **0.8717 ROC-AUC** on Cycle 25; **Defuses 92.1% of false alarms** |
-| **Gear 3: 3D Transit Kinematics** | Interplanetary shock arrival time ($\tau$) | **12–48 hours** | Bifurcated `MoKTransitNN` with closed-form Weight-Space Surgery (HTWS) & hydrodynamic drag floor ($\ge 16.0\text{ h}$) | **$\pm 3.42\text{ h}$ Median Error** across CMEs; **$0.0\text{ h}$ error** on Oct 29, 2003 ($2461\text{ km/s}$) |
-| **Gear 4: L1 In-Situ Attention** | Tactical ring current nowcasting ($Dst$) | **1–6 hours** | 24-hour multivariate bidirectional LSTM (`HeliosBiLSTM`) with temporal attention on L1 DSCOVR/ACE telemetry | **Mathematically guaranteed 90% coverage** via Inductive Conformal Prediction (CQR) |
+| **Gear 2: Storm Severity Veto** | Severe storm classification ($Dst \le -110\text{ nT}$) | **24–72 hours** | Unified 25-dim Solar Vector + Gradient-boosted Conformal Quantile Ensembles | **85.9% Accuracy** & **0.8717 ROC-AUC** on Cycle 25; **Defuses 92.1% of benign events** |
+| **Gear 3: 3D Transit Kinematics** | Interplanetary shock arrival time ($\tau$) | **12–48 hours** | Bifurcated `MoKTransitNN` + GBDT with deterministic 3D cone trajectory filter | **$\pm 7.45\text{ h}$ Median / $\pm 10.63\text{ h}$ MAE** on Cycle 25 OOD (beats DBM by 17.3h; near WSA-ENLIL 10.4h Earth std) |
+| **Gear 4: L1 In-Situ Attention** | Tactical ring current nowcasting ($Dst$) | **1–6 hours** | 24-hour multivariate bidirectional LSTM (`HeliosBiLSTM`) with temporal attention on L1 DSCOVR/ACE telemetry | Calibrated inductive conformal prediction bounds on real L1 stream |
 
 ### 🚀 Legacy Space Weather vs HELIOS 2.0 Architectural Contrast
 
 | Dimension | Legacy Standard (WSA-ENLIL / NOAA) | HELIOS 2.0 Autonomous AI | Operational Advantage |
 | :--- | :--- | :--- | :--- |
-| **CME Arrival Accuracy** | Numerical 3D MHD $\pm 9.20\text{h}$ on fast CMEs | Dynamic Mixture-of-Kinematics (MoK) **$\pm 3.42\text{h}$** | **$+5.78$ hours more precise warning** |
+| **CME Arrival Accuracy** | Numerical 3D MHD $\pm 10.40\text{h}$ (Earth, Wold 2018) | GBDT/MoK Ensemble **$\pm 7.45\text{h}$ median / $\pm 10.63\text{h}$ MAE** | **Comparable accuracy to HPC without cluster queues** |
 | **Computational Footprint** | 1 to 4 hours on supercomputing HPC clusters | **$<25$ milliseconds** on Apple Silicon M4 GPU / consumer CPUs | **Eliminates cluster queue latency entirely** |
 | **Human Labor & Bottlenecks** | Manual wireframe cone fitting on coronagraphs | **100% Autonomous** multi-satellite ingestion | **Zero human response lag in severe emergencies** |
-| **False Alarm Rate** | Velocity-only sirens (up to 92% false alarms) | Coronal Chirality ($B_z$) + Severity Veto ($Dst$) | **Defuses 92.1% of false alarms** before sirens sound |
-| **Uncertainty Quantification** | Heuristic single-point deterministic output | Inductive Conformal Prediction (CQR) | **Mathematically guaranteed 90% confidence bands** |
+| **False Alarm Rate** | Velocity-only sirens (up to 92% false alarms) | 3D Cone Trajectory Filter + Severity Veto | **Filters non-Earth CMEs deterministically** |
+| **Uncertainty Quantification** | Heuristic single-point deterministic output | Empirical Conformal Quantiles | **Calibrated ~81.3% coverage intervals** |
 | **Standard Interoperability** | Complex manual formats | Native NASA CCMC JSON Schema export | **Instant pre-event benchmarking for global agencies** |
 
 ---
@@ -98,10 +98,10 @@ Evaluating a randomized, stratified sample of 20 historical events across Solar 
 
 | Evaluation Metric | Real Severe Storms ($Dst \le -100\text{ nT}$, G3–G5) | Fast False Alarms ($V \ge 650-1537\text{ km/s}$, $Dst > -50\text{ nT}$) |
 | :--- | :---: | :---: |
-| **Operational Threat Coverage** | **100.0%** (0 false negatives / 0 misses) | **90.0% Defused** (Green safe / Yellow watch) |
-| **Red Alert Trigger Rate** | **50.0%–83.3%** direct G3–G5 alerts | **10.0%** (only 1 false red alarm vs 100% in legacy systems) |
-| **Median Transit Arrival Error** | **3.42 hours** (MoKTransitNN) | **3.42 hours** (MoKTransitNN) |
-| **Notable Exact Predictions** | Oct 29, 2003 ($2461\text{ km/s}$): **$\Delta = 0.0\text{ h}$**<br>Apr 18, 2014 ($1050\text{ km/s}$): **$\Delta = 0.2\text{ h}$** | Oct 26, 2003 ($1537\text{ km/s}$): **Defused (Green)**<br>Nov 09, 2000 ($1337\text{ km/s}$): **Defused (Green)** |
+| **Operational Threat Specificity** | **92.1%** (70/76 benign/moderate correctly rejected) | **92.1% Defused** (Green safe / Yellow watch) |
+| **Severe Storm Detection (TPR)** | **56.3%** direct G3–G5 trigger (9/16 on Cycle 25 OOD) | **7.9%** (false alarm rate on benign events) |
+| **Median Transit Arrival Error** | **7.45 hours** (GBDT) / **8.34 hours** (MoK) | **7.45 hours** (Cycle 25 OOD clean evaluation) |
+| **Notable Landmark Events** | Oct 29, 2003 (Halloween G5, $2029\text{ km/s}$): **$Dst = -383\text{ nT}$ Shock**<br>May 10, 2024 (Solar Superstorm): **Extreme G5 Alert Captured** | Oct 26, 2003 ($1537\text{ km/s}$): **Defused (Green)**<br>Nov 09, 2000 ($1337\text{ km/s}$): **Defused (Green)** |
 
 ---
 
@@ -192,6 +192,20 @@ If you utilize HELIOS 2.0 in academic research, space operations, or utility gri
 
 ---
 
-## 📄 License
+## 🛰️ Public Scientific Data Attributions
 
-Distributed under the **MIT License**. Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah**.
+HELIOS 2.0 ingests and builds upon public open-science data from international missions:
+* **NASA SOHO/LASCO CDAW CME Catalog:** Maintained by NASA GSFC and The Catholic University of America in cooperation with ESA.
+* **Richardson & Cane ICME Table:** Curated by I. G. Richardson and H. V. Cane, hosted by Caltech ASC.
+* **NASA OMNIWeb Data:** High-resolution solar wind, IMF, and plasma data provided by NASA GSFC Space Physics Data Facility (SPDF).
+* **Kyoto WDC for Geomagnetism:** Real-time and definitive Dst index series provided by Kyoto University.
+* **NOAA Space Weather Prediction Center (SWPC):** Operational RTSW plasma and magnetic field feeds.
+* **NASA Solar Dynamics Observatory (SDO):** HMI magnetograms and AIA EUV coronal observations.
+
+---
+
+## 📄 License & Open Science
+
+* **Software & Code:** Distributed under the **MIT License**.
+* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (DOI: [10.5281/zenodo.24148695](https://doi.org/10.5281/zenodo.24148695)).
+* Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah** (ORCID: [0009-0007-8443-8999](https://orcid.org/0009-0007-8443-8999)).

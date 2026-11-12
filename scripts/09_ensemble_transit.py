@@ -132,31 +132,34 @@ test_df["pred_dst_min"] = preds_tree_dst
 
 # Calculate metrics
 mae_global = float(mean_absolute_error(y_te, preds_hybrid))
-mae_fast   = float(mean_absolute_error(y_te[fast_mask], preds_hybrid[fast_mask]))
+median_global = float(np.median(np.abs(y_te - preds_hybrid)))
+mae_fast   = float(mean_absolute_error(y_te[fast_mask], preds_hybrid[fast_mask])) if fast_mask.sum() > 0 else 0.0
+median_fast = float(np.median(np.abs(y_te[fast_mask] - preds_hybrid[fast_mask]))) if fast_mask.sum() > 0 else 0.0
 rmse_global = float(np.sqrt(mean_squared_error(y_te, preds_hybrid)))
 r2_global  = float(r2_score(y_te, preds_hybrid))
 dbm_baseline = float(mean_absolute_error(y_te, test_df["drag_prior_h"].values))
 
-# Empirical conformal coverage
-in_window = (y_te >= (test_df["q_low"] - 1.5)) & (y_te <= (test_df["q_high"] + 1.5))
+# Empirical conformal coverage (HONEST EVALUATION: zero artificial padding)
+in_window = (y_te >= test_df["q_low"]) & (y_te <= test_df["q_high"])
 coverage_pct = float(in_window.mean() * 100.0)
-mean_window_h = float((test_df["q_high"] - test_df["q_low"] + 3.0).mean())
+mean_window_h = float((test_df["q_high"] - test_df["q_low"]).mean())
 
 print("\n" + "=" * 75)
 print("🏆 HELIOS-TRANSIT v2.5: UNIFIED DUAL-SCALE BENCHMARK (Cycle 25 OOD)")
 print("=" * 75)
 print(f"• Baseline Drag-Based Model (DBM):   MAE = ±{dbm_baseline:.2f} hours")
-print(f"• NASA WSA-ENLIL Operational Std:    MAE = ±9.20 hours")
+print(f"• NASA WSA-ENLIL Operational Std:    MAE = ±10.40 hours (Earth), ±9.20h (STEREO-A)")
 print("-" * 75)
-print(f"• Tree Model (GBDT Alone):           MAE = ±{mean_absolute_error(y_te, preds_tree_time):.2f} h | Fast: ±{mean_absolute_error(y_te[fast_mask], preds_tree_time[fast_mask]):.2f} h")
-print(f"• MoK Model (Surgically Edited):     MAE = ±{mean_absolute_error(y_te, preds_mok):.2f} h | Fast: ±{mean_absolute_error(y_te[fast_mask], preds_mok[fast_mask]):.2f} h")
+print(f"• Tree Model (GBDT Alone):           MAE = ±{mean_absolute_error(y_te, preds_tree_time):.2f} h | Median: ±{np.median(np.abs(y_te - preds_tree_time)):.2f} h")
+print(f"• MoK Model (Neural):                MAE = ±{mean_absolute_error(y_te, preds_mok):.2f} h | Median: ±{np.median(np.abs(y_te - preds_mok)):.2f} h")
 print("-" * 75)
 print(f"🌟 HYBRID DYNAMIC ENSEMBLE (MoK + GBDT):")
-print(f"  • Global Arrival Error (MAE):       ±{mae_global:.2f} hours  (Beat DBM by {dbm_baseline - mae_global:.1f}h)")
-print(f"  • Fast CME Arrival Error (≥1000):   ±{mae_fast:.2f} hours  (Beat NASA WSA-ENLIL by {9.2 - mae_fast:+.2f}h)")
+print(f"  • Global Arrival Error (MAE):       ±{mae_global:.2f} hours")
+print(f"  • Global Median Error:              ±{median_global:.2f} hours")
+print(f"  • Fast CME Arrival Error (≥1000):   ±{mae_fast:.2f} hours (Median: ±{median_fast:.2f}h)")
 print(f"  • Global RMSE:                       {rmse_global:.2f} hours")
 print(f"  • Explained Variance (R²):           {r2_global:.3f}")
-print(f"  • 90% Conformal Coverage Rate:       {coverage_pct:.1f}% (Mean Interval: ±{mean_window_h/2.0:.1f}h)")
+print(f"  • True Conformal Coverage Rate:      {coverage_pct:.1f}% (Mean Interval: ±{mean_window_h/2.0:.1f}h)")
 print("=" * 75)
 
 # Save ensemble configuration
