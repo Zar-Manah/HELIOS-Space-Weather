@@ -1,12 +1,12 @@
-# ☀️ HELIOS 2.0: Single-File Plug-and-Play 4 AI Models for Real-Time Solar Storm Impact & CME Arrival Prediction
+# ☀️ HELIOS 2.0: Multi-Gear Architecture for Real-Time Solar Storm Impact & CME Arrival Prediction
 
-> **An Open-Source 4-Gear AI Architecture Outperforming NASA Supercomputers on Consumer Hardware (<25ms vs 4 hours) — Predicting CME Arrival Times and Solar Storm Impact from Live Satellite Telemetry.**
+> **An Open-Source Space Weather Architecture on Consumer Hardware (<25ms) — Predicting CME Arrival Times and Geomagnetic Storm Severity from Live Satellite Telemetry.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
-[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24176372-blue.svg)](https://doi.org/10.5281/zenodo.24176372)
+[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24179115-blue.svg)](https://doi.org/10.5281/zenodo.24179115)
 [![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
@@ -78,30 +78,33 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
 1. **Eliminating the 92% False Alarm Trap:**  
    Standard kinematic-only models (like WSA-ENLIL or empirical speed alerts) trigger high-level emergency alerts whenever a CME launches at $V > 700-1500\text{ km/s}$, regardless of magnetic field orientation. When the field is northward ($B_z > 0$), the Earth's magnetosphere deflects the plasma, resulting in benign conditions ($Dst > -50\text{ nT}$). HELIOS 2.0 inspects coronal chirality at launch, **defusing 92.1% of false alarms** before sirens are sounded.
 
-2. **Weight-Space Surgery for Hypersonic CMEs (HTWS):**  
-   In hypersonic events ($V > 2000\text{ km/s}$), standard neural backpropagation suffers from gradient under-representation. Through closed-form latent weight manipulation ($\Delta b_{\text{fast}} = -0.150\text{ h}$) and aerodynamic drag bounding ($v_{\text{amb}} = 420\text{ km/s}$, $\tau \ge 16.0\text{ h}$), HELIOS 2.0 achieves **$0.0\text{ h}$ error** on the record October 29, 2003 CME ($19.4\text{ h}$ predicted vs $19.4\text{ h}$ observed).
+2. **Aerodynamic Drag Bounding for Hypersonic CMEs:**  
+   In extreme hypersonic eruptions ($V > 2000\text{ km/s}$), standard empirical models suffer from extrapolation error. By implementing closed-form aerodynamic drag limits ($v_{\text{amb}} = 420\text{ km/s}$, $\tau \ge 16.0\text{ h}$ physical solar wind saturation bound), HELIOS establishes an empirical transit lower bound on landmark events like the record October 29, 2003 Halloween storm ($19.4\text{ h}$ observed vs $16.0\text{ h}$ aerodynamic bound, $\Delta = 3.4\text{ h}$).
 
 3. **Sub-Second Execution on Consumer Hardware:**  
    While numerical 3D MHD simulations take 1 to 4 hours to run on supercomputer clusters, HELIOS 2.0 evaluates the entire 4-tier pipeline in **$<25$ milliseconds** on Apple Silicon M4 GPU (or standard CPUs), enabling continuous real-time space weather nowcasting.
 
-4. **Volatile RAM Telemetry Streaming:**  
-   The interactive mission cockpit (`Zar-Manah_HELIOS.html`) streams live magnetograms and coronagraphs from NASA SDO and ESA/NASA SOHO directly in volatile memory with explicit object dereferencing, ensuring **zero cumulative disk accumulation** during indefinite 24/7 operations.
+4. **Interactive Browser Mission Cockpit:**  
+   The interactive mission cockpit (`Zar-Manah_HELIOS.html`) provides an ephemeral visualization environment streaming live NOAA SWPC RTSW plasma and magnetic vectors directly in the browser with dual-track mission timelines and responsive aerodynamic drag modeling.
 
 5. **Eliminating Human Bottlenecks & Operational Latency:**  
    Legacy space weather forecasting relies on human operators manually fitting geometric wireframes to coronagraph images and waiting hours in supercomputing queues. HELIOS 2.0 achieves **100% autonomous end-to-end execution**: from live satellite ingestion (NOAA SWPC & NASA SDO/SOHO) to real-time kinematic inference and automated NASA CCMC Scoreboard export with zero human-in-the-loop latency.
 
 ---
 
-## 📊 Rigorous Validation: Randomized Real-Event Battery
+## 📊 Rigorous Validation: Landmark Historical Case Studies
 
-Evaluating a randomized, stratified sample of 20 historical events across Solar Cycles 23–25 with exact time-synchronized inputs (coronagraph images + magnetograms at $T_0$, real 24h OMNI L1 telemetry at $T_{\text{impact}}$):
+Evaluating historical landmark space weather events across Solar Cycles 23–25 with exact time-synchronized inputs and real empirical ground truth:
 
-| Evaluation Metric | Real Severe Storms ($Dst \le -100\text{ nT}$, G3–G5) | Fast False Alarms ($V \ge 650-1537\text{ km/s}$, $Dst > -50\text{ nT}$) |
-| :--- | :---: | :---: |
-| **Operational Threat Specificity** | **92.1%** (70/76 benign/moderate correctly rejected) | **92.1% Defused** (Green safe / Yellow watch) |
-| **Severe Storm Detection (TPR)** | **56.3%** direct G3–G5 trigger (9/16 on Cycle 25 OOD) | **7.9%** (false alarm rate on benign events) |
-| **Median Transit Arrival Error** | **7.45 hours** (GBDT) / **8.34 hours** (MoK) | **7.45 hours** (Cycle 25 OOD clean evaluation) |
-| **Notable Landmark Events** | Oct 29, 2003 (Halloween G5, $2029\text{ km/s}$): **$Dst = -383\text{ nT}$ Shock**<br>May 10, 2024 (Solar Superstorm): **Extreme G5 Alert Captured** | Oct 26, 2003 ($1537\text{ km/s}$): **Defused (Green)**<br>Nov 09, 2000 ($1337\text{ km/s}$): **Defused (Green)** |
+| Landmark Event | Detection Epoch | Launch Speed | Ground Truth ($Dst / B_z$) | Observed Transit | Pipeline Alert & Status |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **Halloween Superstorm (Oct 29, 2003)** | 2003-10-29 20:54 | $2029\text{ km/s}$ | $-383\text{ nT} / -38.5\text{ nT}$ (G5) | $19.4\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 70.0\%$, $P_{\text{south}} = 56.9\%$) |
+| **May 2024 Superstorm (AR 3664)** | 2024-05-07 03:12 | $812\text{ km/s}$ | $-406\text{ nT} / -35.3\text{ nT}$ (G5) | $85.9\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 73.3\%$, $P_{\text{south}} = 61.8\%$) |
+| **Nov 2003 Superstorm (Halloween)** | 2003-11-18 08:50 | $1824\text{ km/s}$ | $-422\text{ nT} / -50.9\text{ nT}$ (G5) | $47.2\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 74.8\%$, $P_{\text{south}} = 63.0\%$) |
+| **May 14, 2024 Moderate Eruption** | 2024-05-14 10:09 | $749\text{ km/s}$ | $-88\text{ nT} / -12.8\text{ nT}$ | $75.3\text{ h}$ | 🔴 Alert ($P_{\text{sev}} = 72.2\%$; ETA $70.7\text{ h}$, $\Delta = 4.7\text{ h}$) |
+| **Jan 17, 1998 Solar Baseline** | 1998-01-17 04:09 | $350\text{ km/s}$ | $-11\text{ nT} / -4.4\text{ nT}$ | $95.8\text{ h}$ | 🔴 Alert ($P_{\text{sev}} = 61.5\%$; ETA $70.2\text{ h}$) |
+
+*Note on Headless Evaluation:* In headless execution where raw active region magnetograms are absent from local storage, visual feature extractors default to zero, elevating baseline severity probability ($P_{\text{severe}} \approx 0.60\text{--}0.72$) for non-extreme events. Operational deployment utilizes live SDO/HMI magnetograms for full dynamic range.
 
 ---
 
@@ -185,8 +188,8 @@ If you utilize HELIOS 2.0 in academic research, space operations, or utility gri
   journal={Zenodo Preprints},
   year={2026},
   publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24176372},
-  url={https://doi.org/10.5281/zenodo.24176372}
+  doi={10.5281/zenodo.24179115},
+  url={https://doi.org/10.5281/zenodo.24179115}
 }
 ```
 
@@ -207,5 +210,5 @@ HELIOS 2.0 ingests and builds upon public open-science data from international m
 ## 📄 License & Open Science
 
 * **Software & Code:** Distributed under the **MIT License**.
-* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (DOI: [10.5281/zenodo.24176372](https://doi.org/10.5281/zenodo.24176372)).
+* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (DOI: [10.5281/zenodo.24179115](https://doi.org/10.5281/zenodo.24179115)).
 * Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah** (ORCID: [0009-0007-8443-8999](https://orcid.org/0009-0007-8443-8999)).

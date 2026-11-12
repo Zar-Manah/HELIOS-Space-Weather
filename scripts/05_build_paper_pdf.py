@@ -57,7 +57,7 @@ class NumberedCanvas(canvas.Canvas):
         # Running footer on all pages
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(566, 28, page_str)
-        self.drawString(46, 28, "Preprint — Independent Research — Distributed under MIT License — Zenodo DOI: 10.5281/zenodo.24148695 (Concept: 10.5281/zenodo.24061451)")
+        self.drawString(46, 28, "Preprint — Independent Research — Distributed under MIT License — Zenodo DOI: 10.5281/zenodo.24179115 (Concept: 10.5281/zenodo.24061451)")
         self.setStrokeColor(colors.HexColor("#cbd5e0"))
         self.setLineWidth(0.5)
         self.line(46, 38, 566, 38)
@@ -213,14 +213,14 @@ def build_pdf():
         "Zar-Manah HELIOS integrates two synchronized operational engines: <b>(1) Zar-Manah HELIOS-Tactical (1–6h):</b> Powered by "
         "gradient-boosted decision trees and bidirectional recurrent neural networks coupled to Inductive Conformalized Quantile "
         "Regression (CQR). Evaluated strictly out-of-distribution across 57,998 hourly samples in Solar Cycle 25 (2020–2026), "
-        "Zar-Manah HELIOS achieves an out-of-distribution R² of 0.969, an RMSE of 3.57 nT (+1h) and 7.52 nT (+3h), and exact 90% conformal "
-        "coverage (89.94% at +1h). During the historic May 10–12, 2024 G5 Superstorm (Dst = -406 nT), Zar-Manah HELIOS dynamically scaled its "
-        "uncertainty bounds from ~9.8 nT to >70 nT, capturing the catastrophic ring current collapse in real time. "
-        "<b>(2) Zar-Manah HELIOS-Transit (24–72h):</b> Trained on 338 verified Earth-impacting CMEs cross-matched between "
-        "NASA SOHO/LASCO CDAW and the Richardson & Cane database. Incorporating a bifurcated <b>Mixture-of-Kinematics (MoKTransitNN)</b> "
-        "architecture with closed-form hypersonic weight surgery, Zar-Manah HELIOS achieves an arrival MAE of <b>±7.90 hours on fast geoeffective "
-        "CMEs (≥1000 km/s)</b> on unseen Cycle 25, outperforming NASA's operational WSA-ENLIL MHD supercomputing benchmark (±9.20 hours) "
-        "by <b>+1.30 hours</b> without numerical supercomputing overhead. We provide open-source code, neural weights, and an automated "
+        "Zar-Manah HELIOS achieves an out-of-distribution R² of 0.972, an RMSE of 5.07 nT (+1h) and 10.34 nT (+3h), and exact 89.2% conformal "
+        "coverage (89.19% at +1h, ±12.5 nT). During the historic May 10–12, 2024 G5 Superstorm (Dst = -406 nT), Zar-Manah HELIOS dynamically scaled its "
+        "uncertainty bounds from ~12.5 nT to >70 nT, capturing the catastrophic ring current collapse in real time. "
+        "<b>(2) Zar-Manah HELIOS-Transit (24–72h):</b> Trained on 331 verified Earth-impacting CMEs cross-matched between "
+        "NASA SOHO/LASCO CDAW and the Richardson & Cane database with zero synthetic speed leakage. HELIOS achieves an arrival MAE of "
+        "<b>10.63 hours and median of 7.45 hours (GBDT)</b> and 11.69 hours MAE (dynamic hybrid ensemble) on unseen Cycle 25 (91 clean CMEs), "
+        "on par with NASA's operational WSA-ENLIL MHD supercomputing benchmark (±10.40 hours at Earth) "
+        "in sub-second execution (< 0.05 s) without numerical supercomputing overhead and with 81.3% unpadded conformal coverage. We provide open-source code, neural weights, and an automated "
         "NOAA SWPC real-time satellite CLI for immediate operational deployment."
     )
     story.append(Paragraph(abstract_text, abstract_style))
@@ -311,19 +311,19 @@ def build_pdf():
 
     table_tactical_data = [
         ["Lead Time", "Architecture", "RMSE (nT)", "MAE (nT)", "R²", "TSS (≤ -50)", "HSS (≤ -50)", "Nominal 90% Cov.", "Mean Width"],
-        ["+1 Hour", "Persistence Baseline", "4.57", "2.87", "0.950", "0.873", "0.873", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS-Point", "3.57", "2.31", "0.969", "0.896", "0.901", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS Bi-LSTM", "4.13", "2.28", "0.959", "0.907", "0.869", "N/A", "N/A"],
-        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>89.94%</b>", "<b>9.81 nT</b>"],
-        ["+2 Hours", "Persistence Baseline", "7.34", "4.66", "0.870", "0.796", "0.796", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS-Point", "5.83", "3.88", "0.918", "0.830", "0.839", "N/A", "N/A"],
-        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>90.18%</b>", "<b>16.16 nT</b>"],
-        ["+3 Hours", "Persistence Baseline", "9.23", "5.84", "0.795", "0.742", "0.742", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS-Point", "7.52", "4.99", "0.864", "0.765", "0.790", "N/A", "N/A"],
-        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>89.76%</b>", "<b>20.50 nT</b>"],
-        ["+6 Hours", "Persistence Baseline", "13.16", "8.09", "0.584", "0.614", "0.614", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS-Point", "10.62", "6.82", "0.729", "0.642", "0.679", "N/A", "N/A"],
-        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>88.88%</b>", "<b>26.93 nT</b>"]
+        ["+1 Hour", "Persistence Baseline", "6.37", "3.61", "0.955", "0.898", "0.898", "N/A", "N/A"],
+        ["", "Zar-Manah HELIOS-Point", "5.07", "2.90", "0.972", "0.921", "0.922", "N/A", "N/A"],
+        ["", "Zar-Manah HELIOS Bi-LSTM", "5.62", "3.15", "0.965", "0.912", "0.910", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>89.19%</b>", "<b>12.52 nT</b>"],
+        ["+2 Hours", "Persistence Baseline", "10.21", "5.90", "0.886", "0.829", "0.828", "N/A", "N/A"],
+        ["", "Zar-Manah HELIOS-Point", "7.97", "4.84", "0.930", "0.874", "0.872", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>88.96%</b>", "<b>19.48 nT</b>"],
+        ["+3 Hours", "Persistence Baseline", "12.95", "7.51", "0.816", "0.769", "0.768", "N/A", "N/A"],
+        ["", "Zar-Manah HELIOS-Point", "10.34", "6.31", "0.883", "0.836", "0.834", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>88.71%</b>", "<b>25.01 nT</b>"],
+        ["+6 Hours", "Persistence Baseline", "19.33", "10.95", "0.590", "0.638", "0.636", "N/A", "N/A"],
+        ["", "Zar-Manah HELIOS-Point", "15.46", "9.25", "0.738", "0.705", "0.705", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>88.50%</b>", "<b>35.40 nT</b>"]
     ]
 
     t_tactical = Table(table_tactical_data, colWidths=[0.85*inch, 1.5*inch, 0.7*inch, 0.7*inch, 0.55*inch, 0.8*inch, 0.8*inch, 1.05*inch, 0.85*inch])
@@ -382,11 +382,12 @@ def build_pdf():
         ["Regime / Benchmark", "Model / Architecture", "Arrival MAE (h)", "Arrival RMSE (h)", "90% Conformal Cov.", "Computational Cost"],
         ["<b>Fast CMEs (≥1000 km/s)</b>", "Empirical Kinematic Baseline", "±14.80", "18.20", "N/A", "< 0.01 s"],
         ["", "Classical Drag-Based Model (DBM)", "±18.40", "22.10", "N/A", "0.05 s"],
-        ["", "<b>NASA WSA-ENLIL MHD Supercomputer</b>", "<b>±9.20</b>", "<b>12.40</b>", "N/A", "<b>Hours on HPC Cluster</b>"],
-        ["", "<b>Zar-Manah HELIOS-Transit v2.5 (Ours)</b>", "<b>±7.90</b>", "<b>10.15</b>", "<b>87.5%</b>", "<b>< 0.05 s (Local Apple M4)</b>"],
-        ["<b>Global (All CMEs, Cycle 25)</b>", "Classical Drag-Based Model (DBM)", "±29.19", "34.50", "N/A", "0.05 s"],
-        ["", "Zar-Manah HELIOS Single GBDT", "±12.24", "15.92", "82.4%", "< 0.01 s"],
-        ["", "<b>Zar-Manah HELIOS Dynamic Ensemble</b>", "<b>±11.29</b>", "<b>14.85</b>", "<b>85.9%</b>", "<b>< 0.05 s (Local Apple M4)</b>"]
+        ["", "NASA WSA-ENLIL (STEREO-A, Wold 2018)", "±9.20", "12.40", "N/A", "Hours on HPC Cluster"],
+        ["", "<b>HELIOS Dynamic Ensemble (Fast)</b>", "<b>±15.37</b>", "<b>18.42</b>", "<b>75.0%</b>", "<b>< 0.05 s (Local Apple M4)</b>"],
+        ["<b>Global (All CMEs, Cycle 25)</b>", "Classical Drag-Based Model (DBM)", "±28.95", "33.00", "N/A", "0.05 s"],
+        ["", "NASA WSA-ENLIL Operational Std (Earth)", "±10.40", "13.20", "N/A", "Hours on HPC Cluster"],
+        ["", "<b>Zar-Manah HELIOS Single GBDT</b>", "<b>±10.63</b>", "<b>15.29</b>", "<b>81.3%</b>", "<b>< 0.01 s (Local Apple M4)</b>"],
+        ["", "<b>Zar-Manah HELIOS Dynamic Ensemble</b>", "<b>±11.69</b>", "<b>15.68</b>", "<b>81.3%</b>", "<b>< 0.05 s (Local Apple M4)</b>"]
     ]
 
     t_transit = Table(table_transit_data, colWidths=[1.8*inch, 2.0*inch, 0.9*inch, 0.9*inch, 1.0*inch, 1.2*inch])
@@ -408,7 +409,7 @@ def build_pdf():
     fig4_img = os.path.join(FIGURES_DIR, "fig4_cme_transit_benchmark.png")
     if os.path.exists(fig4_img):
         story.append(Image(fig4_img, width=6.6*inch, height=4.1*inch))
-        story.append(Paragraph("<b>Figure 4:</b> (A) Predicted vs actual 24–72h CME transit duration on unseen Solar Cycle 25. (B) Operational MAE benchmark across CME speed regimes, establishing that Zar-Manah HELIOS-Transit v2.5 (±7.90h) outperforms NASA WSA-ENLIL (±9.20h) on fast geoeffective CMEs. (C) 90% Conformal prediction bands. (D) 24–72h ahead planetary shock Dst severity prediction.", caption_style))
+        story.append(Paragraph("<b>Figure 4:</b> (A) Predicted vs actual 24–72h CME transit duration on unseen Solar Cycle 25. (B) Operational MAE benchmark across CME speed regimes, establishing that Zar-Manah HELIOS Single GBDT (±10.63h MAE, ±7.45h median) achieves accuracy on par with NASA WSA-ENLIL (±10.40h at Earth). (C) Calibrated conformal prediction bands (81.3% coverage). (D) 24–72h ahead planetary shock Dst severity prediction.", caption_style))
 
     story.append(PageBreak())
 
@@ -470,7 +471,7 @@ def build_pdf():
     p_avail = (
         "<b>Data and Code Availability:</b> All source code, preprocessing pipelines, model checkpoints, the interactive mission cockpit "
         "(<code>Zar-Manah_HELIOS.html</code>), and publication figures are open-sourced under the MIT license at: "
-        "<b>https://github.com/Zar-Manah/HELIOS-Space-Weather</b> (Concept DOI: <b>10.5281/zenodo.24061451</b>, Version DOI: <b>10.5281/zenodo.24148695</b>). "
+        "<b>https://github.com/Zar-Manah/HELIOS-Space-Weather</b> (Concept DOI: <b>10.5281/zenodo.24061451</b>, Version DOI: <b>10.5281/zenodo.24179115</b>). "
         "Raw solar wind data are curated by NASA SPDF OMNIWeb (https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/)."
     )
     story.append(Paragraph(p_avail, body_style))

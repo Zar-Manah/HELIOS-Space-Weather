@@ -15,10 +15,10 @@ import sys
 def build_ccmc_forecast(
     cme_start_time: str,
     arrival_time: str,
-    arrival_confidence: float = 88.5,
+    arrival_confidence: float = 81.3,
     arrival_type: str = "shock",
-    uncertainty_hours_low: float = 3.42,
-    uncertainty_hours_high: float = 3.42,
+    uncertainty_hours_low: float = 7.45,
+    uncertainty_hours_high: float = 10.63,
     max_v_kms: float = 1250.0,
     max_b_nt: float = 24.5,
     min_bz_nt: float = -18.2,
@@ -27,7 +27,7 @@ def build_ccmc_forecast(
     dst_uncertainty_low: float = 12.0,
     dst_uncertainty_high: float = 18.0,
     storm_duration_hours: float = 24.0,
-    forecast_note: str = "HELIOS 2.0 dual-scale physics-informed neural transit forecast with 90% conformal coverage."
+    forecast_note: str = "HELIOS 2.0 dual-scale physics-informed neural transit forecast with 81.3% conformal coverage (MAE 10.63h, median 7.45h)."
 ) -> dict:
     """
     Constructs a dictionary matching the NASA CCMC Earth CME Scoreboard JSON Schema.
@@ -40,7 +40,7 @@ def build_ccmc_forecast(
             "issueTime": now_utc,
             "method": {
                 "displayName": "HELIOS 2.0",
-                "registeredID": "spase://CCMC/SimulationModel/HELIOS-2.0"
+                "registeredID": "local://HELIOS-2.0/ScoreboardForecast"
             },
             "submitter": {
                 "name": "Zar Manah",
@@ -89,8 +89,8 @@ def main():
     parser.add_argument("--demo", action="store_true", help="Generate a verified benchmark demo forecast.")
     parser.add_argument("--cme-start", default="2026-11-10T12:00:00Z", help="CME eruption onset time (ISO 8601 UTC)")
     parser.add_argument("--arrival-time", default="2026-11-12T04:30:00Z", help="Predicted arrival time at L1/Earth (ISO 8601 UTC)")
-    parser.add_argument("--confidence", type=float, default=92.1, help="Arrival confidence percentage (0-100)")
-    parser.add_argument("--unc-hours", type=float, default=3.42, help="Median arrival uncertainty (hours)")
+    parser.add_argument("--confidence", type=float, default=81.3, help="Arrival confidence percentage (0-100)")
+    parser.add_argument("--unc-hours", type=float, default=7.45, help="Median arrival uncertainty (hours)")
     parser.add_argument("--max-v", type=float, default=1480.0, help="Predicted 1 AU shock speed (km/s)")
     parser.add_argument("--min-bz", type=float, default=-22.5, help="Predicted minimum southward magnetic field (nT)")
     parser.add_argument("--min-dst", type=float, default=-168.0, help="Predicted peak ring current depression (nT)")
@@ -107,9 +107,9 @@ def main():
         payload = build_ccmc_forecast(
             cme_start_time="2026-11-10T08:15:00Z",
             arrival_time="2026-11-11T22:45:00Z",
-            arrival_confidence=94.5,
-            uncertainty_hours_low=3.42,
-            uncertainty_hours_high=3.42,
+            arrival_confidence=81.3,
+            uncertainty_hours_low=7.45,
+            uncertainty_hours_high=10.63,
             max_v_kms=1620.0,
             max_b_nt=28.4,
             min_bz_nt=-24.1,

@@ -115,8 +115,8 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
         if as_json:
             out = {
                 "system": "Zar-Manah HELIOS 2.0",
-                "version": "2.5.5",
-                "doi": "10.5281/zenodo.24176372",
+                "version": "2.5.6",
+                "doi": "10.5281/zenodo.24179115",
                 "concept_doi": "10.5281/zenodo.24061451",
                 "type": "cme_trajectory_assessment",
                 "status": "ALL-CLEAR / MISS",
@@ -254,8 +254,8 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.5",
-            "doi": "10.5281/zenodo.24176372",
+            "version": "2.5.6",
+            "doi": "10.5281/zenodo.24179115",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "transit_cme_forecast",
             "speed_km_s": float(speed),
@@ -526,14 +526,14 @@ def run_synthetic_sample(scenario="extreme", as_json=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.5)")
-    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.5)")
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.6)")
+    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.6)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
     parser.add_argument("--cme_width", "--cme-width", "--width", dest="cme_width", type=float, default=360.0, help="Angular width of CME in degrees (default 360 for halo)")
-    parser.add_argument("--cme_lat", "--lat", dest="cme_lat", type=float, default=0.0, help="Eruption solar latitude in degrees (-90 to +90, default 0)")
-    parser.add_argument("--cme_lon", "--lon", dest="cme_lon", type=float, default=0.0, help="Eruption solar longitude in degrees (-180 to +180, Stonyhurst, default 0)")
+    parser.add_argument("--cme_lat", "--cme-lat", "--lat", dest="cme_lat", type=float, default=0.0, help="Eruption solar latitude in degrees (-90 to +90, default 0)")
+    parser.add_argument("--cme_lon", "--cme-lon", "--lon", dest="cme_lon", type=float, default=0.0, help="Eruption solar longitude in degrees (-180 to +180, Stonyhurst, default 0)")
     parser.add_argument("--cme_accel", "--cme-accel", "--accel", dest="cme_accel", type=float, default=0.0, help="Initial acceleration in m/s^2")
     parser.add_argument("--halo", action="store_true", help="Flag as full 360-degree Halo CME")
     parser.add_argument("--cme", action="store_true", help="Activate 24-72h CME transit forecast route")
@@ -577,8 +577,8 @@ def main():
     if args.json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.4",
-            "doi": "10.5281/zenodo.24176372",
+            "version": "2.5.6",
+            "doi": "10.5281/zenodo.24179115",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "tactical_dst_forecast",
             "horizons": {}

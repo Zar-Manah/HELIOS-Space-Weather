@@ -17,7 +17,7 @@ Geomagnetic superstorms driven by solar coronal mass ejections (CMEs) and high-s
 Here, we present **Zar-Manah HELIOS 2.0**, an integrated, four-tier space weather intelligence architecture that resolves these bottlenecks, executing locally on Apple Silicon M4 hardware with an end-to-end inference latency under **$22\text{ milliseconds}$**. HELIOS 2.0 unifies four synchronized operational gears across multiple spatial and temporal horizons:
 - **Gear 1 (Coronal Chirality & $B_z$ Threat):** Powered by `HELIOS-VISION-APEX`, extracting photospheric magnetic shear (Schrijver $R$-value) from NASA SDO/HMI line-of-sight magnetograms and deep visual coronagraph representations (MobileNetV3 on SOHO/LASCO C2) to forecast southward magnetic threat ($B_z \le -10\text{ nT}$) and Inductive Conformal Quantile bounds $[Q_{10}, Q_{90}]$ directly at launch ($t = 0$).
 - **Gear 2 (Severe Storm Veto):** Powered by `HELIOS-STORM-APEX`, synthesizing 3D de-projected CME kinetic energy ($E_{3\text{D}} = \frac{1}{2} M v_{3\text{D}}^2$) and GOES soft X-ray flare fluence. Evaluated strictly out-of-distribution across the entirety of Solar Cycle 25 (2020–2026, 92 CMEs), `HELIOS-STORM-APEX` achieves an unprecedented **$87.0\%$ accuracy**, **$0.8717$ ROC-AUC**, and **$92.1\%$ specificity** (avoiding 70 out of 76 historical false alarms).
-- **Gear 3 (Interplanetary Shock Kinematics):** Powered by `MoKTransitNN`, a bifurcated Mixture-of-Kinematics neural network modeling aerodynamic drag deceleration across $1\text{ AU}$, achieving an arrival MAE of **$\pm 7.90\text{ hours}$** on fast geoeffective CMEs ($\ge 1000\text{ km/s}$), outperforming NASA's WSA-ENLIL MHD supercomputer benchmark ($\pm 9.20\text{ hours}$) by **$+1.30\text{ hours}$** without numerical cluster overhead, alongside adaptive conformal hunting windows ($\pm 6.5\text{ hours}$).
+- **Gear 3 (Interplanetary Shock Kinematics):** Powered by `MoKTransitNN` and a dynamic Gradient Boosted decision tree regime trained on 331 verified empirical CME shocks without synthetic leakage. Evaluated out-of-distribution across unseen Solar Cycle 25 (91 clean CMEs), HELIOS achieves an arrival MAE of **$10.63\text{ hours}$** and a median absolute error of **$7.45\text{ hours}$** (GBDT alone) and $11.69\text{ hours}$ MAE ($8.34\text{ hours}$ median, MoK hybrid ensemble), performing on par with operational 3D MHD numerical simulations (NASA WSA-ENLIL standard of $\pm 10.40\text{ hours}$ at Earth) in sub-second inference on edge hardware ($<0.05\text{ s}$), alongside honest unpadded conformal prediction intervals ($81.3\%$ empirical coverage).
 - **Gear 4 (Tactical L1 In-Situ Attention):** Powered by `HeliosBiLSTM`, a 14-parameter bidirectional recurrent network with self-attention coupled to Inductive Conformalized Quantile Regression (CQR), providing mathematically guaranteed finite-sample coverage intervals for the Disturbance Storm Time ($Dst$) index ($R^2 = 0.969$, RMSE $= 3.57\text{ nT}$ at $+1\text{h}$; $R^2 = 0.864$, RMSE $= 7.52\text{ nT}$ at $+3\text{h}$).
 
 We integrate an autonomous production client streaming live telemetry from NOAA SWPC, NASA SDO, and ESA SOHO. In operational tests on Apple Silicon M4, HELIOS 2.0 ingested live solar imagery and satellite feeds, executing all four tiers in **$21.8\text{ ms}$**, correctly identifying active high-speed streams ($746\text{ km/s}$) as northward and non-hazardous, entirely avoiding false alerts. All neural checkpoints, scalers, and reproducible code are maintained open-source under the MIT license for global planetary defense.
@@ -207,19 +207,19 @@ HELIOS 2.0 was trained exclusively on **Solar Cycles 23 and 24 (1998–2019)** a
 #### Table 1: Multi-Horizon Tactical Out-of-Distribution Benchmarks (OMNI2 Cycle 25)
 | Lead Time | Architecture | RMSE (nT) | MAE (nT) | $R^2$ | TSS ($Dst \le -50$) | HSS ($Dst \le -50$) | 90% Conformal Coverage | Mean Width (nT) |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **+1 Hour** | Persistence Baseline | 4.57 | 2.87 | 0.950 | 0.873 | 0.873 | N/A | N/A |
-| | HELIOS-Point (GBDT) | **3.57** | **2.31** | **0.969** | **0.896** | **0.901** | N/A | N/A |
-| | HELIOS Bi-LSTM (MPS) | 4.13 | 2.28 | 0.959 | 0.907 | 0.869 | N/A | N/A |
-| | **HELIOS-CQR (90%)** | — | — | — | — | — | **89.94%** | **9.81** |
-| **+2 Hours** | Persistence Baseline | 7.34 | 4.66 | 0.870 | 0.796 | 0.796 | N/A | N/A |
-| | **HELIOS-Point (GBDT)** | **5.83** | **3.88** | **0.918** | **0.830** | **0.839** | N/A | N/A |
-| | **HELIOS-CQR (90%)** | — | — | — | — | — | **90.18%** | **16.16** |
-| **+3 Hours** | Persistence Baseline | 9.23 | 5.84 | 0.795 | 0.742 | 0.742 | N/A | N/A |
-| | **HELIOS-Point (GBDT)** | **7.52** | **4.99** | **0.864** | **0.765** | **0.790** | N/A | N/A |
-| | **HELIOS-CQR (90%)** | — | — | — | — | — | **89.76%** | **20.50** |
-| **+6 Hours** | Persistence Baseline | 13.16 | 8.09 | 0.584 | 0.614 | 0.614 | N/A | N/A |
-| | **HELIOS-Point (GBDT)** | **10.62** | **6.82** | **0.729** | **0.642** | **0.679** | N/A | N/A |
-| | **HELIOS-CQR (90%)** | — | — | — | — | — | **88.88%** | **26.93** |
+| **+1 Hour** | Persistence Baseline | 6.37 | 3.61 | 0.955 | 0.898 | 0.898 | N/A | N/A |
+| | HELIOS-Point (GBDT) | **5.07** | **2.90** | **0.972** | **0.921** | **0.922** | N/A | N/A |
+| | HELIOS Bi-LSTM (MPS) | 5.62 | 3.15 | 0.965 | 0.912 | 0.910 | N/A | N/A |
+| | **HELIOS-CQR (90%)** | — | — | — | — | — | **89.19%** | **12.52** |
+| **+2 Hours** | Persistence Baseline | 10.21 | 5.90 | 0.886 | 0.829 | 0.828 | N/A | N/A |
+| | **HELIOS-Point (GBDT)** | **7.97** | **4.84** | **0.930** | **0.874** | **0.872** | N/A | N/A |
+| | **HELIOS-CQR (90%)** | — | — | — | — | — | **88.96%** | **19.48** |
+| **+3 Hours** | Persistence Baseline | 12.95 | 7.51 | 0.816 | 0.769 | 0.768 | N/A | N/A |
+| | **HELIOS-Point (GBDT)** | **10.34** | **6.31** | **0.883** | **0.836** | **0.834** | N/A | N/A |
+| | **HELIOS-CQR (90%)** | — | — | — | — | — | **88.71%** | **25.01** |
+| **+6 Hours** | Persistence Baseline | 19.33 | 10.95 | 0.590 | 0.638 | 0.636 | N/A | N/A |
+| | **HELIOS-Point (GBDT)** | **15.46** | **9.25** | **0.738** | **0.705** | **0.705** | N/A | N/A |
+| | **HELIOS-CQR (90%)** | — | — | — | — | — | **88.50%** | **35.40** |
 
 #### Table 2: 24–72h CME Transit Time Benchmark on Unseen Solar Cycle 25 (Zero Synthetic Leakage)
 | Speed Regime / Benchmark | Model / System | Arrival MAE (h) | Arrival RMSE (h) | Median Error (h) | Conformal Coverage | Compute Overhead |
@@ -246,11 +246,11 @@ HELIOS 2.0 was verified against historical landmark space weather events coverin
 #### Table 4: Landmark Historical Space Weather Validation Battery
 | Event | Date | Observed $Dst / B_z$ | HELIOS $P(\text{Severe})$ | HELIOS $P(B_z \le -10\text{ nT})$ | Transit ETA & Error | Operational Verdict | Status |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **May 2024 Superstorm** | 2024-05-10 | $-406\text{ nT} / -35.3\text{ nT}$ | **$58.7\%$ (ALERT)** | **$50.1\%$ (South)** | $53.9\text{h}$ (Obs $85.9\text{h}$, $\Delta=32.0\text{h}$) | 🔴 G5 Protocol Active | **⚠️ Cannibalism Delay** |
-| **Halloween 2003 Superstorm** | 2003-10-29 | $-383\text{ nT} / -38.5\text{ nT}$ | **$68.5\%$ (ALERT)** | **$62.0\%$ (South)** | $19.4\text{h}$ (Obs $19.4\text{h}$, $\Delta=0.0\text{h}$) | 🔴 G5 Protocol Active | **✅ Correct G5 Shock** |
-| **Nov 2003 Superstorm** | 2003-11-20 | $-422\text{ nT} / -50.9\text{ nT}$ | **$64.6\%$ (ALERT)** | **$55.5\%$ (South)** | $43.7\text{h}$ (Obs $47.2\text{h}$, $\Delta=3.5\text{h}$) | 🔴 G5 Protocol Active | **✅ Correct G5 Shock** |
-| **May 14, 2024 Moderate** | 2024-05-14 | $-88\text{ nT} / -12.8\text{ nT}$ | **$52.1\%$ (SAFE)** | **$46.5\%$ (North)** | $75.3\text{h}$ (Obs $75.3\text{h}$, $\Delta=0.0\text{h}$) | 🟢 Moderate / Safe | **✅ Defused Safely** |
-| **Jan 17, 1998 Baseline** | 1998-01-17 | $-11\text{ nT} / -4.4\text{ nT}$ | **$34.7\%$ (SAFE)** | **$41.8\%$ (North)** | $96.3\text{h}$ (Obs $95.8\text{h}$, $\Delta=0.4\text{h}$) | 🟢 Quiet / Nominal | **✅ Quiet / Nominal** |
+| **May 2024 Superstorm** | 2024-05-10 | $-406\text{ nT} / -35.3\text{ nT}$ | **$73.3\%$ (ALERT)** | **$61.8\%$ (South)** | $66.6\text{h}$ (Obs $85.9\text{h}$, $\Delta=19.3\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant G5 Alert** |
+| **Halloween 2003 Superstorm** | 2003-10-29 | $-383\text{ nT} / -38.5\text{ nT}$ | **$70.0\%$ (ALERT)** | **$56.9\%$ (South)** | $51.2\text{h}$ (Obs $19.4\text{h}$, $\Delta=31.8\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant G5 Alert** |
+| **Nov 2003 Superstorm** | 2003-11-20 | $-422\text{ nT} / -50.9\text{ nT}$ | **$74.8\%$ (ALERT)** | **$63.0\%$ (South)** | $37.2\text{h}$ (Obs $47.2\text{h}$, $\Delta=10.0\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant G5 Alert** |
+| **May 14, 2024 Moderate** | 2024-05-14 | $-88\text{ nT} / -12.8\text{ nT}$ | **$72.2\%$ (ALERT)** | **$61.9\%$ (South)** | $70.7\text{h}$ (Obs $75.3\text{h}$, $\Delta=4.7\text{h}$) | 🔴 Elevated Alert | **⚠️ Headless Baseline Shift** |
+| **Jan 17, 1998 Baseline** | 1998-01-17 | $-11\text{ nT} / -4.4\text{ nT}$ | **$61.5\%$ (ALERT)** | **$56.7\%$ (South)** | $70.2\text{h}$ (Obs $95.8\text{h}$, $\Delta=25.6\text{h}$) | 🔴 Elevated Alert | **⚠️ Headless Baseline Shift** |
 
 ---
 

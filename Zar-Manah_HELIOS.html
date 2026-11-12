@@ -1203,7 +1203,7 @@
           issueTime: now.toISOString(),
           method: {
             displayName: "HELIOS 2.0",
-            registeredID: "spase://CCMC/SimulationModel/HELIOS-2.0"
+            registeredID: "local://HELIOS-2.0/ScoreboardForecast"
           },
           submitter: {
             name: "Zar Manah",
@@ -1212,7 +1212,7 @@
           forecasts: [
             {
               overallForecastConfidence: pipeline.v0 >= 1000 ? 1 : 2,
-              forecastNote: `HELIOS 2.0 4-tier Swiss Watch multi-horizon space weather forecast (${currentMode.toUpperCase()} mode). DOI: 10.5281/zenodo.24148695 (Concept DOI: 10.5281/zenodo.24061451)`,
+              forecastNote: `HELIOS 2.0 4-tier Swiss Watch multi-horizon space weather forecast (${currentMode.toUpperCase()} mode). DOI: 10.5281/zenodo.24176372 (Concept DOI: 10.5281/zenodo.24061451)`,
               cme: [
                 {
                   startTime: new Date(now.getTime() - 2 * 3600 * 1000).toISOString()
@@ -1226,8 +1226,8 @@
                   arrivalDetails: {
                     arrivalType: "shock",
                     arrivalTime: eta.toISOString(),
-                    arrivalTimeUncertaintyLow: 7.9,
-                    arrivalTimeUncertaintyHigh: 7.9,
+                    arrivalTimeUncertaintyLow: 7.45,
+                    arrivalTimeUncertaintyHigh: 10.63,
                     maxV: Math.round(pipeline.arrivalSpeed),
                     maxB: Math.round(Math.max(5.0, Math.abs(pipeline.bzLive) * 1.5 + 4.0) * 10) / 10,
                     minBz: Math.round(parseFloat(document.getElementById('g1MedianBz').textContent) * 10) / 10,

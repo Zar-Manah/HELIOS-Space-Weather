@@ -62,42 +62,43 @@ def run_battery():
     test_cases = [
         {
             "name": "1. May 2024 Solar Superstorm (G5 - Cycle 25 OOD)",
-            "idx": 278,
+            "idx": 272,
             "expected_storm": True,
             "expected_bz_south": True,
-            "desc": "Apex event of Solar Cycle 25. Must trigger G5 ALERT and detect southward Bz."
+            "desc": "Apex event of Solar Cycle 25 (Dst -406 nT). Must trigger G5 ALERT and detect southward Bz."
         },
         {
             "name": "2. November 2003 Superstorm (G5 - Halloween)",
-            "idx": 100,
+            "idx": 97,
             "expected_storm": True,
             "expected_bz_south": True,
-            "desc": "Extreme event with Dst -422 nT and 47h transit. Must trigger G5 ALERT."
+            "desc": "Extreme event with Dst -422 nT and 47.2h transit. Must trigger G5 ALERT."
         },
         {
             "name": "3. Halloween Superstorm Oct 29, 2003 (G5 - Dst -383 nT)",
-            "idx": 99,
+            "idx": 96,
             "expected_storm": True,
             "expected_bz_south": True,
-            "desc": "Hypersonic CME with severe southward field. Must trigger G5 SEVERE STORM ALERT."
+            "desc": "Hypersonic CME (2029 km/s) with Dst -383 nT. Must trigger G5 ALERT."
         },
         {
             "name": "4. Moderate CME May 14, 2024 (Cycle 25 OOD - Dst -88 nT)",
-            "idx": 280,
+            "idx": 274,
             "expected_storm": False,
             "expected_bz_south": False,
-            "desc": "Standard Solar Cycle 25 eruption. Must not exceed severe storm threshold."
+            "desc": "Cycle 25 moderate eruption. Evaluates non-extreme regime."
         },
         {
             "name": "5. Quiet Solar Baseline (Jan 17, 1998 - Baseline)",
             "idx": 1,
             "expected_storm": False,
             "expected_bz_south": False,
-            "desc": "Quiet nominal solar conditions (Dst -23 nT). Must remain fully green."
+            "desc": "Quiet nominal solar conditions (Dst -11 nT)."
         }
     ]
     
     audit_results = []
+    concordant_count = 0
     for tc in test_cases:
         row = df.iloc[tc["idx"]].to_dict()
         res = pipeline.run_inference(row)
@@ -105,8 +106,18 @@ def run_battery():
         # Check assertions
         storm_ok = (res["is_severe_storm"] == tc["expected_storm"])
         bz_ok = (res["is_bz_south"] == tc["expected_bz_south"])
+        gt_transit = float(row.get("transit_hours", 0.0))
+        pred_transit = float(res.get("transit_hours") or 0.0)
+        transit_err = abs(pred_transit - gt_transit) if gt_transit > 0 else 0.0
         
-        status_str = "✅ EXCELLENT" if (storm_ok and bz_ok) else ("⚠️ PARTIAL" if (storm_ok or bz_ok) else "❌ FAIL")
+        if storm_ok and bz_ok:
+            status_str = "✅ CONCORDANT"
+            concordant_count += 1
+        elif storm_ok or bz_ok:
+            status_str = f"⚠️ PARTIAL (Sev: {'PASS' if storm_ok else 'FAIL'}, Bz: {'PASS' if bz_ok else 'FAIL'})"
+        else:
+            status_str = "❌ DIVERGENT"
+            
         audit_results.append({
             "name": tc["name"],
             "gt_dst": res["gt_dst"],
@@ -115,14 +126,18 @@ def run_battery():
             "is_severe": res["is_severe_storm"],
             "p_bz": res["bz_prob_south"],
             "is_bz_south": res["is_bz_south"],
-            "eta": res["transit_hours"],
+            "gt_transit": gt_transit,
+            "pred_transit": pred_transit,
+            "transit_err": transit_err,
             "status": status_str
         })
         print_swiss_report(tc["name"], res)
         
     print("\n📊 HISTORICAL BATTERY SUMMARY:")
     for ar in audit_results:
-        print(f"  • {ar['name']:55s} | Verdict: {ar['status']} (P_sev: {ar['p_storm']*100:.1f}%, P_south: {ar['p_bz']*100:.1f}%)")
+        print(f"  • {ar['name']:55s} | {ar['status']:<25s} | ΔTransit: {ar['transit_err']:4.1f}h | P_sev: {ar['p_storm']*100:.1f}%, P_south: {ar['p_bz']*100:.1f}%")
+    print(f"\n   Concordance: {concordant_count}/{len(audit_results)} events fully matched ground truth classification.")
+    print("   Note: Moderate/Quiet events show elevated baseline P_sev (~0.60–0.72) when run headless without local raw magnetogram images.")
 
     # -------------------------------------------------------------
     # PHASE 3: LIVE BENCHMARK WITH CURRENT SATELLITES
@@ -180,7 +195,7 @@ def run_battery():
     print_live_report(live_summary, res_live, pred_l1_dst)
     
     print("=" * 85)
-    print("✅ VERIFICATION BATTERY 100% COMPLETE: ALL DATA AND NEURAL MODELS VALIDATED")
+    print("🏁 VERIFICATION BATTERY COMPLETE: SATELLITE INGESTION & PIPELINE INTEGRATION VERIFIED")
     print("=" * 85)
 
 if __name__ == "__main__":

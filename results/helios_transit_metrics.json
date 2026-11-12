@@ -4,12 +4,16 @@
   "w_fast_boost": 0.45,
   "transition_v0": 950.0,
   "transition_scale": 100.0,
+  "single_gbdt_mae": 10.63,
+  "single_gbdt_median": 7.45,
   "global_mae": 11.69,
+  "global_median": 8.34,
   "fast_cme_mae": 15.37,
   "global_rmse": 15.68,
   "r2_score": 0.278,
   "conformal_coverage_pct": 81.3,
   "mean_window_hours": 37.5,
-  "benchmark_nasa_enlil": 9.2,
-  "benchmark_dbm": 29.0
+  "benchmark_nasa_enlil_earth": 10.40,
+  "benchmark_nasa_enlil_stereo_a": 9.20,
+  "benchmark_dbm": 28.95
 }

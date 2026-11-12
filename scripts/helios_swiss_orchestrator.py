@@ -41,6 +41,21 @@ M4_PATH = os.path.join(MODELS_DIR, "helios_bilstm_edited.pt")
 TRANSIT_SCALER_PATH = os.path.join(MODELS_DIR, "transit_scaler.json")
 BILSTM_SCALER_PATH = os.path.join(MODELS_DIR, "bilstm_scaler.json")
 
+
+def check_cme_earth_trajectory(lat, lon, width):
+    """
+    Evaluates whether a CME source location and angular width intercept the Sun-Earth line of sight.
+    Uses spherical trigonometry to compute the angular separation from disk center (0, 0)
+    to the eruption coordinates (lat, lon) and verifies cone intersection.
+    """
+    rad_lat = np.radians(lat)
+    rad_lon = np.radians(lon)
+    cos_alpha = np.cos(rad_lat) * np.cos(rad_lon)
+    delta_alpha = np.degrees(np.arccos(np.clip(cos_alpha, -1.0, 1.0)))
+    half_width = width / 2.0
+    is_impact = delta_alpha <= half_width
+    return is_impact, delta_alpha, half_width
+
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
 # --- ARCHITECTURES FOR GEAR 3 & 4 ---
@@ -130,12 +145,12 @@ class SwissWatchPipeline:
         with open(TRANSIT_SCALER_PATH, "r") as f:
             self.transit_scaler = json.load(f)
         self.transit_model = MoKTransitNN(in_features=8).to(device)
-        self.transit_model.load_state_dict(torch.load(M3_PATH, map_location=device))
+        self.transit_model.load_state_dict(torch.load(M3_PATH, map_location=device, weights_only=True))
         self.transit_model.eval()
         
         # Gear 4: HeliosBiLSTM
         self.bilstm_model = HeliosBiLSTM(in_features=14, hidden_dim=64).to(device)
-        self.bilstm_model.load_state_dict(torch.load(M4_PATH, map_location=device))
+        self.bilstm_model.load_state_dict(torch.load(M4_PATH, map_location=device, weights_only=True))
         self.bilstm_model.eval()
         self.bilstm_scaler = None
         if os.path.exists(BILSTM_SCALER_PATH):
@@ -233,6 +248,13 @@ class SwissWatchPipeline:
         q50_dst = float(self.m2_pkg["q50"].predict(X_solar)[0])
         q90_dst = float(self.m2_pkg["q90"].predict(X_solar)[0])
         
+        # --- GEAR 0: DETERMINISTIC 3D CONE TRAJECTORY CHECK ---
+        cme_lat = float(row.get("lat", row.get("cme_lat", row.get("lat_proxy", 0.0))))
+        cme_lon = float(row.get("lon", row.get("cme_lon", row.get("lon_proxy", 0.0))))
+        is_halo_flag = int(row.get("is_halo", 1 if float(row.get("width", row.get("cme_width", 360.0))) >= 360.0 else 0))
+        cme_w = 360.0 if is_halo_flag == 1 else float(row.get("width", row.get("cme_width", 360.0)))
+        is_earth_impact, cone_separation, cone_half_w = check_cme_earth_trajectory(cme_lat, cme_lon, cme_w)
+        
         # --- GEAR 3 (3D TRANSIT KINEMATICS) ---
         L_AU = 1.495978707e8
         v_amb = 420.0
@@ -304,7 +326,10 @@ class SwissWatchPipeline:
             "dst_q50": q50_dst,
             "dst_conformal_range": [q10_dst, q90_dst],
             # Gear 3
-            "transit_hours": pred_transit_hours,
+            "earth_impact": bool(is_earth_impact),
+            "cone_separation_deg": float(cone_separation),
+            "cone_half_width_deg": float(cone_half_w),
+            "transit_hours": pred_transit_hours if is_earth_impact else None,
             "arrival_eta": str(t_eta),
             "window_early": str(t_window_early),
             "window_late": str(t_window_late),
@@ -333,13 +358,17 @@ def print_swiss_report(name, res):
     print(f"⚙️  GEAR 1 & 2 [24–72h HORIZON | SUN]:")
     print(f"   • Coronal Chirality:         {status_bz} (P_south: {res['bz_prob_south']*100:.1f}%)")
     print(f"   • Conformal Bz_min Range:    [{res['bz_conformal_range'][0]:.1f} nT, {res['bz_conformal_range'][1]:.1f} nT] (Median: {res['bz_q50']:.1f} nT)")
-    print(f"   • Geomagnetic Severity:      {status_st} (P_severe: {res['storm_prob_severe']*100:.1f}% | OOD Accuracy: 87.0%)")
+    print(f"   • Geomagnetic Severity:      {status_st} (P_severe: {res['storm_prob_severe']*100:.1f}% | ROC-AUC: 0.872)")
     print(f"   • Conformal Dst_min Range:   [{res['dst_conformal_range'][0]:.0f} nT, {res['dst_conformal_range'][1]:.0f} nT] (Median: {res['dst_q50']:.0f} nT)")
     print("-" * 85)
     
     # Gear 3
     print(f"⚙️  GEAR 3 [12–48h HORIZON | INTERPLANETARY TRANSIT]:")
-    print(f"   • Estimated Flight Time:     {res['transit_hours']:.1f} hours (Arrival uncertainty: ±6.5 hours)")
+    if not res.get("earth_impact", True) or res['transit_hours'] is None:
+        print("   • Estimated Flight Time:     N/A (Geometric Miss - No Earth Impact)")
+        print(f"   • Trajectory Verification:   🟢 ALL-CLEAR (Offset: {res.get('cone_separation_deg', 0.0):.1f}°, Cone: {res.get('cone_half_width_deg', 0.0):.1f}°)")
+    else:
+        print(f"   • Estimated Flight Time:     {res['transit_hours']:.1f} hours (Arrival uncertainty: ±6.5 hours)")
     print(f"   • Projected Impact Epoch:    {res['arrival_eta']} UTC")
     print(f"   • Conformal Search Window:   [{res['window_early']} -> {res['window_late']}]")
     if res["gt_transit"] > 0:
@@ -355,7 +384,10 @@ def print_swiss_report(name, res):
     
     # Master Advisory
     print(f"🛡️  INTEGRATED MITIGATION VERDICT (MISSION CONTROL):")
-    if res["is_severe_storm"] and res["is_bz_south"]:
+    if not res.get("earth_impact", True):
+        print("   🟢 GREEN PROTOCOL (GEOMETRIC MISS): CME trajectory does not intercept Earth.")
+        print(f"      Actions: Angular offset {res.get('cone_separation_deg', 0.0):.1f}° exceeds cone half-width {res.get('cone_half_width_deg', 0.0):.1f}°. Zero geomagnetic impact.")
+    elif res["is_severe_storm"] and res["is_bz_south"]:
         print("   🔴 ACTIVE G5 PROTOCOL: Violent magnetospheric coupling confirmed.")
         print(f"      Actions: Grid transformer load shedding 1 hour prior to {res['arrival_eta']} UTC.")
     elif res["is_severe_storm"] and not res["is_bz_south"]:
@@ -574,7 +606,7 @@ def print_live_report(live_summary, res_solar, res_l1_dst):
         print(f"   • Evaluated 3D Radial Kinematics:  {res_solar['v_launch_3d']:.0f} km/s")
         print(f"   • Coronal Chirality (Gear 1):      {status_bz} (P_south: {res_solar['bz_prob_south']*100:.1f}%)")
         print(f"   • Projected Bz_min Range:          [{res_solar['bz_conformal_range'][0]:.1f} nT, {res_solar['bz_conformal_range'][1]:.1f} nT] (Median: {res_solar['bz_q50']:.1f} nT)")
-        print(f"   • Severity Veto (Gear 2):          {status_st} (P_severe: {res_solar['storm_prob_severe']*100:.1f}% | OOD Accuracy: 87.0%)")
+        print(f"   • Severity Veto (Gear 2):          {status_st} (P_severe: {res_solar['storm_prob_severe']*100:.1f}% | ROC-AUC: 0.872)")
         print(f"   • Projected Dst_min Range:         [{res_solar['dst_conformal_range'][0]:.0f} nT, {res_solar['dst_conformal_range'][1]:.0f} nT] (Median: {res_solar['dst_q50']:.0f} nT)")
         print(f"   • Estimated Flight Time:           {res_solar['transit_hours']:.1f} hours (±6.5h)")
         print(f"   • Conformal Impact Window:         [{res_solar['window_early']} -> {res_solar['window_late']}]")
@@ -597,6 +629,9 @@ def main():
     parser.add_argument("--live", action="store_true", help="Fetch real-time NOAA SWPC telemetry and forecast live state")
     parser.add_argument("--interactive", "--dashboard", action="store_true", help="Launch interactive Space Weather UI Cockpit in browser")
     parser.add_argument("--cme-speed", "--cme_speed", type=float, default=None, help="CME launch speed in km/s for live what-if simulation")
+    parser.add_argument("--cme-lat", "--cme_lat", type=float, default=0.0, help="CME solar latitude in degrees [-90 to +90]")
+    parser.add_argument("--cme-lon", "--cme_lon", type=float, default=0.0, help="CME solar longitude in degrees [-90 to +90]")
+    parser.add_argument("--cme-width", "--cme_width", type=float, default=360.0, help="CME angular width in degrees [0 to 360]")
     parser.add_argument("--index", type=int, default=None, help="Specific CME index from dataset")
     args = parser.parse_args()
     
@@ -659,12 +694,35 @@ def main():
         
     df = pd.read_parquet(DATA_PATH)
     
+    if args.cme_speed is not None and not args.live:
+        print("\n🚀 RUNNING WHAT-IF CME SIMULATION:")
+        payload = {
+            'v_launch': float(args.cme_speed),
+            'cme_speed': float(args.cme_speed),
+            'lat': float(args.cme_lat),
+            'lon': float(args.cme_lon),
+            'width': float(args.cme_width),
+            'cme_lat': float(args.cme_lat),
+            'cme_lon': float(args.cme_lon),
+            'cme_width': float(args.cme_width),
+            'accel': 0.0,
+            'mass': 15.0,
+            'is_halo': 1 if args.cme_width >= 360.0 else 0,
+            'f107': 120.0,
+            'r_sunspot': 80.0,
+            'v_sw_launch': 420.0,
+            't_launch': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        res = pipeline.run_inference(payload)
+        print_swiss_report(f"What-If Simulation (V={args.cme_speed} km/s, Lat={args.cme_lat}°, Lon={args.cme_lon}°, Width={args.cme_width}°)", res)
+        return
+
     if args.demo or args.index is None:
         cases = [
-            ("November 2003 Superstorm (Catastrophic G5 - Dst -422 nT)", 100),
-            ("May 2024 Solar Superstorm (Cycle 25 - Dst -406 nT)", 278),
-            ("Hypersonic CME Oct 29, 2003 (2461 km/s - Filtered False Alarm)", 99),
-            ("Moderate CME Cycle 25 OOD (May 14, 2024 - Dst -88 nT)", 280)
+            ("November 2003 Superstorm (Catastrophic G5 - Dst -422 nT)", 97),
+            ("May 2024 Solar Superstorm (Cycle 25 - Dst -406 nT)", 272),
+            ("Halloween Superstorm Oct 29, 2003 (G5 - Dst -383 nT, 2029 km/s)", 96),
+            ("Moderate CME Cycle 25 OOD (May 14, 2024 - Dst -88 nT)", 274)
         ]
         for name, idx in cases:
             if idx < len(df):
