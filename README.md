@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
-[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24148695-blue.svg)](https://doi.org/10.5281/zenodo.24148695)
+[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24176372-blue.svg)](https://doi.org/10.5281/zenodo.24176372)
 [![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
@@ -185,8 +185,8 @@ If you utilize HELIOS 2.0 in academic research, space operations, or utility gri
   journal={Zenodo Preprints},
   year={2026},
   publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24148695},
-  url={https://doi.org/10.5281/zenodo.24148695}
+  doi={10.5281/zenodo.24176372},
+  url={https://doi.org/10.5281/zenodo.24176372}
 }
 ```
 
@@ -207,5 +207,5 @@ HELIOS 2.0 ingests and builds upon public open-science data from international m
 ## 📄 License & Open Science
 
 * **Software & Code:** Distributed under the **MIT License**.
-* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (DOI: [10.5281/zenodo.24148695](https://doi.org/10.5281/zenodo.24148695)).
+* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (DOI: [10.5281/zenodo.24176372](https://doi.org/10.5281/zenodo.24176372)).
 * Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah** (ORCID: [0009-0007-8443-8999](https://orcid.org/0009-0007-8443-8999)).

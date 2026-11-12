@@ -116,7 +116,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
             out = {
                 "system": "Zar-Manah HELIOS 2.0",
                 "version": "2.5.5",
-                "doi": "10.5281/zenodo.24148695",
+                "doi": "10.5281/zenodo.24176372",
                 "concept_doi": "10.5281/zenodo.24061451",
                 "type": "cme_trajectory_assessment",
                 "status": "ALL-CLEAR / MISS",
@@ -255,7 +255,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
         out = {
             "system": "Zar-Manah HELIOS 2.0",
             "version": "2.5.5",
-            "doi": "10.5281/zenodo.24148695",
+            "doi": "10.5281/zenodo.24176372",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "transit_cme_forecast",
             "speed_km_s": float(speed),
@@ -578,7 +578,7 @@ def main():
         out = {
             "system": "Zar-Manah HELIOS 2.0",
             "version": "2.5.4",
-            "doi": "10.5281/zenodo.24148695",
+            "doi": "10.5281/zenodo.24176372",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "tactical_dst_forecast",
             "horizons": {}
