@@ -208,7 +208,8 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, as_json=False)
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.5",
-            "doi": "10.5281/zenodo.24147610",
+            "doi": "10.5281/zenodo.24148612",
+            "concept_doi": "10.5281/zenodo.24061451",
             "type": "transit_cme_forecast",
             "speed_km_s": float(speed),
             "is_halo": bool(is_halo),
@@ -244,8 +245,9 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, as_json=False)
     print("      (outperforming NASA WSA-ENLIL standard of ±9.2h by +1.3h).")
 
 
-def fetch_noaa_live():
-    print("📡 Contacting NOAA Space Weather Prediction Center (SWPC) & Kyoto WDC feeds...")
+def fetch_noaa_live(as_json=False):
+    if not as_json:
+        print("📡 Contacting NOAA Space Weather Prediction Center (SWPC) & Kyoto WDC feeds...")
     
     def _fetch_url(url):
         try:
@@ -392,15 +394,16 @@ def fetch_noaa_live():
     r_sunspot = max(10.0, (f107_now - 63.7) / 0.72)
 
     latest_dt = df_1m["dt"].iloc[-1]
-    print(f"✅ Ingested Multi-Station Live Telemetry (NOAA SWPC + Kyoto WDC):")
-    print(f"   • Telemetry Epoch:    {latest_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
-    print(f"   • Solar Wind Flow V:  {curr_v:.1f} km/s (1h lag: {v_l1:.1f} km/s, Δ1h: {v_diff1:+.1f} km/s)")
-    print(f"   • Proton Density Np:  {curr_np:.1f} cm⁻³ | Pdyn: {curr_pdyn:.2f} nPa")
-    print(f"   • IMF Field (GSM):    Bz = {curr_bz:.2f} nT (3h min: {bz_min3:.2f} nT, 6h min: {bz_min6:.2f} nT)")
-    print(f"   • Total Field Bt:     {curr_bt:.2f} nT | Transverse B: {curr_b_trans:.2f} nT")
-    print(f"   • Newell Coupling:    {curr_newell:.0f} (3h sum: {newell_sum3:.0f}, 6h sum: {newell_sum6:.0f})")
-    print(f"   • Geomagnetic Kyoto:  Dst = {dst_now:.1f} nT (24h min: {dst_min24:.1f} nT, Δ1h: {dst_d1:+.1f} nT)")
-    print(f"   • Planetary Indices:  Kp = {kp_now:.2f} | Penticton F10.7 = {f107_now:.1f} sfu (Est. SSN: {r_sunspot:.0f})")
+    if not as_json:
+        print(f"✅ Ingested Multi-Station Live Telemetry (NOAA SWPC + Kyoto WDC):")
+        print(f"   • Telemetry Epoch:    {latest_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
+        print(f"   • Solar Wind Flow V:  {curr_v:.1f} km/s (1h lag: {v_l1:.1f} km/s, Δ1h: {v_diff1:+.1f} km/s)")
+        print(f"   • Proton Density Np:  {curr_np:.1f} cm⁻³ | Pdyn: {curr_pdyn:.2f} nPa")
+        print(f"   • IMF Field (GSM):    Bz = {curr_bz:.2f} nT (3h min: {bz_min3:.2f} nT, 6h min: {bz_min6:.2f} nT)")
+        print(f"   • Total Field Bt:     {curr_bt:.2f} nT | Transverse B: {curr_b_trans:.2f} nT")
+        print(f"   • Newell Coupling:    {curr_newell:.0f} (3h sum: {newell_sum3:.0f}, 6h sum: {newell_sum6:.0f})")
+        print(f"   • Geomagnetic Kyoto:  Dst = {dst_now:.1f} nT (24h min: {dst_min24:.1f} nT, Δ1h: {dst_d1:+.1f} nT)")
+        print(f"   • Planetary Indices:  Kp = {kp_now:.2f} | Penticton F10.7 = {f107_now:.1f} sfu (Est. SSN: {r_sunspot:.0f})")
 
     row = {
         "dst": dst_now, "dst_lag_1h": dst_l1, "dst_lag_2h": dst_l2, "dst_lag_3h": dst_l3,
@@ -418,8 +421,9 @@ def fetch_noaa_live():
     return pd.DataFrame([row])[FEATURE_COLS]
 
 
-def run_synthetic_sample(scenario="extreme"):
-    print(f"🧪 Generating Synthetic L1 Scenario: [{scenario.upper()}]...")
+def run_synthetic_sample(scenario="extreme", as_json=False):
+    if not as_json:
+        print(f"🧪 Generating Synthetic L1 Scenario: [{scenario.upper()}]...")
     if scenario == "extreme":
         # May 2024 Superstorm peak simulation
         row = {
@@ -472,10 +476,11 @@ def main():
     parser = argparse.ArgumentParser(description="Zar-Manah HELIOS: Unified Space Weather Intelligence System (v2.5)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
-    parser.add_argument("--cme_speed", "--cme-speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
-    parser.add_argument("--cme_width", "--cme-width", type=float, default=360.0, help="Angular width of CME in degrees (default 360 for halo)")
-    parser.add_argument("--cme_accel", "--cme-accel", type=float, default=0.0, help="Initial acceleration in m/s^2")
+    parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
+    parser.add_argument("--cme_width", "--cme-width", "--width", dest="cme_width", type=float, default=360.0, help="Angular width of CME in degrees (default 360 for halo)")
+    parser.add_argument("--cme_accel", "--cme-accel", "--accel", dest="cme_accel", type=float, default=0.0, help="Initial acceleration in m/s^2")
     parser.add_argument("--halo", action="store_true", help="Flag as full 360-degree Halo CME")
+    parser.add_argument("--cme", action="store_true", help="Activate 24-72h CME transit forecast route")
     parser.add_argument("--json", action="store_true", help="Output predictions as machine-readable JSON")
     parser.add_argument("--dashboard", action="store_true", help="Launch interactive Space Weather UI Dashboard in browser")
 
@@ -490,9 +495,10 @@ def main():
         return
 
     # Route 1: Transit Prediction (24-72h CME)
-    if args.cme_speed is not None:
+    if args.cme_speed is not None or args.cme:
+        speed_val = args.cme_speed if args.cme_speed is not None else 1000.0
         is_halo = 1 if (args.halo or args.cme_width >= 360.0) else 0
-        predict_transit_cme(args.cme_speed, args.cme_width, args.cme_accel, is_halo, as_json=args.json)
+        predict_transit_cme(speed_val, args.cme_width, args.cme_accel, is_halo, as_json=args.json)
         return
 
     # Route 2: Tactical Prediction (1-6h Nowcasting)
@@ -500,23 +506,26 @@ def main():
     
     if args.live:
         try:
-            features_df = fetch_noaa_live()
+            features_df = fetch_noaa_live(as_json=args.json)
         except Exception as e:
-            print(f"⚠️ Live telemetry stream error: {e}")
-            print("🔄 Falling back gracefully to synthetic benchmark profile...")
-            features_df = run_synthetic_sample("extreme")
+            if not args.json:
+                print(f"⚠️ Live telemetry stream error: {e}")
+            if not args.json:
+                print("🔄 Falling back gracefully to synthetic benchmark profile...")
+            features_df = run_synthetic_sample("extreme", as_json=args.json)
     elif args.sample:
-        features_df = run_synthetic_sample(args.sample)
+        features_df = run_synthetic_sample(args.sample, as_json=args.json)
     else:
         # Default fallback to extreme superstorm scenario
-        features_df = run_synthetic_sample("extreme")
+        features_df = run_synthetic_sample("extreme", as_json=args.json)
 
     results = predict_tactical_storm(features_df[FEATURE_COLS], models, metrics)
     
     if args.json:
         out = {
             "system": "Zar-Manah HELIOS 2.5",
-            "doi": "10.5281/zenodo.24147610",
+            "doi": "10.5281/zenodo.24148612",
+            "concept_doi": "10.5281/zenodo.24061451",
             "type": "tactical_dst_forecast",
             "horizons": {}
         }

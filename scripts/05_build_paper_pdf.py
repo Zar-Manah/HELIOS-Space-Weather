@@ -57,7 +57,7 @@ class NumberedCanvas(canvas.Canvas):
         # Running footer on all pages
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(566, 28, page_str)
-        self.drawString(46, 28, "Preprint — Independent Research — Distributed under MIT License — Zenodo DOI: 10.5281/zenodo.24147610")
+        self.drawString(46, 28, "Preprint — Independent Research — Distributed under MIT License — Zenodo DOI: 10.5281/zenodo.24148612 (Concept: 10.5281/zenodo.24061451)")
         self.setStrokeColor(colors.HexColor("#cbd5e0"))
         self.setLineWidth(0.5)
         self.line(46, 38, 566, 38)
@@ -470,7 +470,7 @@ def build_pdf():
     p_avail = (
         "<b>Data and Code Availability:</b> All source code, preprocessing pipelines, model checkpoints, the interactive mission cockpit "
         "(<code>Zar-Manah_HELIOS.html</code>), and publication figures are open-sourced under the MIT license at: "
-        "<b>https://github.com/Zar-Manah/HELIOS-Space-Weather</b> (Permanent DOI: <b>10.5281/zenodo.24147610</b>). "
+        "<b>https://github.com/Zar-Manah/HELIOS-Space-Weather</b> (Concept DOI: <b>10.5281/zenodo.24061451</b>, Version DOI: <b>10.5281/zenodo.24148612</b>). "
         "Raw solar wind data are curated by NASA SPDF OMNIWeb (https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/)."
     )
     story.append(Paragraph(p_avail, body_style))
