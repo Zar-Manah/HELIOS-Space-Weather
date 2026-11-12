@@ -600,7 +600,7 @@ def main():
     parser.add_argument("--index", type=int, default=None, help="Specific CME index from dataset")
     args = parser.parse_args()
     
-    if args.interactive or args.dashboard:
+    if args.interactive:
         import webbrowser
         html_path = os.path.join(BASE_DIR, "Zar-Manah_HELIOS.html")
         print(f"🚀 Opening Zar-Manah HELIOS Interactive Mission Cockpit: {html_path}")
