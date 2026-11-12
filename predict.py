@@ -207,7 +207,8 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, as_json=False)
 
     if as_json:
         out = {
-            "system": "Zar-Manah HELIOS 2.5",
+            "system": "Zar-Manah HELIOS 2.0",
+            "version": "2.5.4",
             "doi": "10.5281/zenodo.24148695",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "transit_cme_forecast",
@@ -473,7 +474,8 @@ def run_synthetic_sample(scenario="extreme", as_json=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS: Unified Space Weather Intelligence System (v2.5)")
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.4)")
+    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.4)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
@@ -504,26 +506,24 @@ def main():
     # Route 2: Tactical Prediction (1-6h Nowcasting)
     models, metrics = load_tactical_models()
     
-    if args.live:
+    if args.sample:
+        features_df = run_synthetic_sample(args.sample, as_json=args.json)
+    else:
+        # Default mode: Live NOAA SWPC L1 telemetry (or graceful nominal quiet fallback)
         try:
             features_df = fetch_noaa_live(as_json=args.json)
         except Exception as e:
             if not args.json:
                 print(f"⚠️ Live telemetry stream error: {e}")
-            if not args.json:
-                print("🔄 Falling back gracefully to synthetic benchmark profile...")
-            features_df = run_synthetic_sample("extreme", as_json=args.json)
-    elif args.sample:
-        features_df = run_synthetic_sample(args.sample, as_json=args.json)
-    else:
-        # Default fallback to extreme superstorm scenario
-        features_df = run_synthetic_sample("extreme", as_json=args.json)
+                print("🔄 Falling back gracefully to nominal quiet baseline scenario...")
+            features_df = run_synthetic_sample("quiet", as_json=args.json)
 
     results = predict_tactical_storm(features_df[FEATURE_COLS], models, metrics)
     
     if args.json:
         out = {
-            "system": "Zar-Manah HELIOS 2.5",
+            "system": "Zar-Manah HELIOS 2.0",
+            "version": "2.5.4",
             "doi": "10.5281/zenodo.24148695",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "tactical_dst_forecast",
