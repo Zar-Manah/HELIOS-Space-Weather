@@ -92,7 +92,7 @@ def predict_tactical_storm(features_df, models, metrics):
     return results
 
 
-def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1):
+def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, as_json=False):
     L_AU = 1.495978707e8
     v_amb = 420.0
     gamma = 1.0e-7
@@ -203,6 +203,21 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1):
     high_h = max(pred_h + q_margin, q_high_tree)
     
     arrival_dt = now + timedelta(hours=pred_h)
+
+    if as_json:
+        out = {
+            "system": "Zar-Manah HELIOS 2.5",
+            "doi": "10.5281/zenodo.24147610",
+            "type": "transit_cme_forecast",
+            "speed_km_s": float(speed),
+            "is_halo": bool(is_halo),
+            "transit_hours": round(float(pred_h), 2),
+            "conformal_window_90_hours": [round(float(low_h), 2), round(float(high_h), 2)],
+            "arrival_time_utc": arrival_dt.strftime("%Y-%m-%d %H:%M UTC"),
+            "predicted_shock_dst_nT": round(float(pred_dst), 2)
+        }
+        print(json.dumps(out, indent=2))
+        return out
     
     print("\n" + "=" * 78)
     print("🚀 ZAR-MANAH HELIOS-TRANSIT v2.5: 24–72H DYNAMIC REGIME ENSEMBLE FORECAST")
@@ -419,6 +434,21 @@ def run_synthetic_sample(scenario="extreme"):
             "borovsky_coupling": 9.2, "newell_sum_3h": 95000.0, "newell_sum_6h": 165000.0,
             "newell_sum_12h": 210000.0, "kp": 8.7, "r_sunspot": 220.0, "f107": 240.0
         }
+    elif scenario == "moderate":
+        # Moderate G1/G2 geomagnetic storm simulation
+        row = {
+            "dst": -45.0, "dst_lag_1h": -35.0, "dst_lag_2h": -25.0, "dst_lag_3h": -18.0,
+            "dst_lag_6h": -12.0, "dst_lag_12h": -10.0, "dst_lag_24h": -8.0,
+            "dst_mean_6h": -25.0, "dst_std_6h": 12.0, "dst_min_24h": -55.0, "dst_diff_1h": -10.0,
+            "bz_gsm": -8.5, "bz_lag_1h": -7.0, "bz_lag_2h": -5.0, "bz_lag_3h": -2.0, "bz_lag_6h": 0.0,
+            "bz_min_3h": -8.5, "bz_min_6h": -8.5, "bz_mean_6h": -5.0, "bz_diff_1h": -1.5,
+            "by_gsm": 4.0, "b_mag": 12.0, "b_transverse": 9.4, "clock_angle": 2.7,
+            "v_flow": 520.0, "v_lag_1h": 510.0, "v_lag_2h": 490.0, "v_lag_3h": 460.0, "v_diff_1h": 10.0,
+            "np_dens": 8.5, "temp": 85000.0, "pdyn": 3.8, "pdyn_lag_1h": 3.5, "pdyn_diff_1h": 0.3,
+            "ey_rectified": 4.4, "newell_coupling": 6800.0, "akasofu_eps": 18.0,
+            "borovsky_coupling": 2.2, "newell_sum_3h": 19000.0, "newell_sum_6h": 32000.0,
+            "newell_sum_12h": 45000.0, "kp": 4.3, "r_sunspot": 150.0, "f107": 165.0
+        }
     else:
         # Quiet solar wind
         row = {
@@ -440,11 +470,12 @@ def run_synthetic_sample(scenario="extreme"):
 def main():
     parser = argparse.ArgumentParser(description="Zar-Manah HELIOS: Unified Space Weather Intelligence System (v2.5)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
-    parser.add_argument("--sample", choices=["extreme", "quiet"], default=None, help="Run on synthetic benchmark profile")
+    parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
     parser.add_argument("--cme_width", "--cme-width", type=float, default=360.0, help="Angular width of CME in degrees (default 360 for halo)")
     parser.add_argument("--cme_accel", "--cme-accel", type=float, default=0.0, help="Initial acceleration in m/s^2")
     parser.add_argument("--halo", action="store_true", help="Flag as full 360-degree Halo CME")
+    parser.add_argument("--json", action="store_true", help="Output predictions as machine-readable JSON")
     parser.add_argument("--dashboard", action="store_true", help="Launch interactive Space Weather UI Dashboard in browser")
 
     args = parser.parse_args()
@@ -460,14 +491,19 @@ def main():
     # Route 1: Transit Prediction (24-72h CME)
     if args.cme_speed is not None:
         is_halo = 1 if (args.halo or args.cme_width >= 360.0) else 0
-        predict_transit_cme(args.cme_speed, args.cme_width, args.cme_accel, is_halo)
+        predict_transit_cme(args.cme_speed, args.cme_width, args.cme_accel, is_halo, as_json=args.json)
         return
 
     # Route 2: Tactical Prediction (1-6h Nowcasting)
     models, metrics = load_tactical_models()
     
     if args.live:
-        features_df = fetch_noaa_live()
+        try:
+            features_df = fetch_noaa_live()
+        except Exception as e:
+            print(f"⚠️ Live telemetry stream error: {e}")
+            print("🔄 Falling back gracefully to synthetic benchmark profile...")
+            features_df = run_synthetic_sample("extreme")
     elif args.sample:
         features_df = run_synthetic_sample(args.sample)
     else:
@@ -476,6 +512,33 @@ def main():
 
     results = predict_tactical_storm(features_df[FEATURE_COLS], models, metrics)
     
+    if args.json:
+        out = {
+            "system": "Zar-Manah HELIOS 2.5",
+            "doi": "10.5281/zenodo.24147610",
+            "type": "tactical_dst_forecast",
+            "horizons": {}
+        }
+        for lead in [1, 2, 3, 6]:
+            r = results[lead]
+            pt = float(r["pred"])
+            if pt <= -200:
+                threat = "G5 EXTREME SUPERSTORM"
+            elif pt <= -100:
+                threat = "G3/G4 SEVERE STORM"
+            elif pt <= -50:
+                threat = "G1/G2 MODERATE STORM"
+            else:
+                threat = "G0 QUIET / MINOR"
+            out["horizons"][f"plus_{lead}h"] = {
+                "expected_dst_nT": round(pt, 2),
+                "conformal_interval_90_nT": [round(float(r["q10"]), 2), round(float(r["q90"]), 2)],
+                "margin_nT": round(float(r["margin"]), 2),
+                "severity_threat": threat
+            }
+        print(json.dumps(out, indent=2))
+        return
+
     print("\n" + "=" * 78)
     print("⚡ ZAR-MANAH HELIOS-TACTICAL: MULTI-HORIZON RING CURRENT (Dst) FORECAST")
     print("=" * 78)

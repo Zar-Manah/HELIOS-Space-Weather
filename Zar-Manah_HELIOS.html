@@ -434,27 +434,27 @@
       <div class="metric-grid">
         <div class="metric-box">
           <div class="metric-lbl">Chirality (South Threat)</div>
-          <div class="metric-val" id="g1ProbBz" style="color:var(--crimson);">88.4%</div>
+          <div class="metric-val" id="g1ProbBz" style="color:var(--green);">12.3%</div>
           <div class="metric-sub" id="g1ChiralityDesc">Bz &le; -10 nT Threat</div>
         </div>
         <div class="metric-box">
           <div class="metric-lbl">Median Peak Bz (Q50)</div>
-          <div class="metric-val" id="g1MedianBz" style="color:var(--cyan);">-28.5 nT</div>
-          <div class="metric-sub" id="g1RangeBz">[ -38.2, -18.6 nT ]</div>
+          <div class="metric-val" id="g1MedianBz" style="color:var(--green);">+6.8 nT</div>
+          <div class="metric-sub" id="g1RangeBz">[ -4.2, +15.5 nT ]</div>
         </div>
       </div>
 
       <div class="field" style="margin-top:2px;">
         <div class="field-row">
           <span>Magnetic Polarity Inversion (PIL)</span>
-          <span id="lblG1Pil">Shear: 82°</span>
+          <span id="lblG1Pil">Shear: 22°</span>
         </div>
-        <input type="range" id="rngG1Shear" min="0" max="90" step="1" value="82" oninput="onG1Input()">
+        <input type="range" id="rngG1Shear" min="0" max="90" step="1" value="22" oninput="onG1Input()">
       </div>
 
       <div class="impact-tile" style="padding:6px 8px; margin-top:auto;">
         <span class="impact-name">Coronal Polarity Status</span>
-        <span class="status-badge badge-danger" id="g1StatusBadge">SOUTHWARD INJECTION</span>
+        <span class="status-badge badge-safe" id="g1StatusBadge">NORTHWARD / DEFLECTED (SAFE)</span>
       </div>
     </div>
 
@@ -471,27 +471,27 @@
       <div class="metric-grid">
         <div class="metric-box">
           <div class="metric-lbl">Severe Storm Veto</div>
-          <div class="metric-val" id="g2ProbStorm" style="color:var(--crimson);">94.1%</div>
+          <div class="metric-val" id="g2ProbStorm" style="color:var(--green);">5.8%</div>
           <div class="metric-sub">Dst &le; -110 nT (0.871 AUC)</div>
         </div>
         <div class="metric-box">
           <div class="metric-lbl">Coronal Dst Proxy (Q50)</div>
-          <div class="metric-val" id="g2MedianDst" style="color:var(--purple);">-342 nT</div>
-          <div class="metric-sub" id="g2RangeDst">[ -412, -220 nT ]</div>
+          <div class="metric-val" id="g2MedianDst" style="color:var(--cyan);">-42 nT</div>
+          <div class="metric-sub" id="g2RangeDst">[ -112, +18 nT ]</div>
         </div>
       </div>
 
       <div class="field" style="margin-top:2px;">
         <div class="field-row">
           <span>Halo Expansion Velocity (C2)</span>
-          <span id="lblG2HaloExp" style="color:var(--cyan); font-weight:700;">1950 km/s</span>
+          <span id="lblG2HaloExp" style="color:var(--cyan); font-weight:700;">450 km/s</span>
         </div>
-        <input type="range" id="rngG2HaloExp" min="300" max="3000" step="50" value="1950" oninput="onG2Input()">
+        <input type="range" id="rngG2HaloExp" min="300" max="3000" step="50" value="450" oninput="onG2Input()">
       </div>
 
       <div class="impact-tile" style="padding:6px 8px; margin-top:auto;">
         <span class="impact-name">Coronal Threat Level</span>
-        <span class="status-badge badge-danger" id="g2StatusBadge">G5 SUPERSTORM VETO</span>
+        <span class="status-badge badge-safe" id="g2StatusBadge">QUIET / MINOR VETO</span>
       </div>
     </div>
 
@@ -508,19 +508,19 @@
       <div class="metric-grid">
         <div class="metric-box">
           <div class="metric-lbl">Transit Time</div>
-          <div class="metric-val" id="g3TransitTime">26.4 h</div>
-          <div class="metric-sub" id="g3Days">1.10 days to Earth</div>
+          <div class="metric-val" id="g3TransitTime">88.5 h</div>
+          <div class="metric-sub" id="g3Days">3.69 days to Earth</div>
         </div>
         <div class="metric-box">
           <div class="metric-lbl">1 AU Arrival Speed</div>
-          <div class="metric-val" id="g3ArrivalSpeed" style="color:var(--amber);">885 km/s</div>
-          <div class="metric-sub">Drag Deceleration: -1065 km/s</div>
+          <div class="metric-val" id="g3ArrivalSpeed" style="color:var(--green);">425 km/s</div>
+          <div class="metric-sub">Drag Deceleration: -25 km/s</div>
         </div>
       </div>
 
       <div class="metric-box">
         <div class="metric-lbl">90% Conformal Window (Empirical Coverage)</div>
-        <div class="metric-val" id="g3Window" style="font-size:13px;">[ 18.5 h &ndash; 34.3 h ]</div>
+        <div class="metric-val" id="g3Window" style="font-size:13px;">[ 80.6 h &ndash; 96.4 h ]</div>
         <div class="metric-sub">Margin: &plusmn;7.90 h (Finite Sample Guarantee)</div>
       </div>
 
@@ -543,13 +543,13 @@
       <div class="metric-grid">
         <div class="metric-box">
           <div class="metric-lbl">In-Situ IMF Bz (L1)</div>
-          <div class="metric-val" id="g4Bz" style="color:var(--crimson);">-18.4 nT</div>
-          <div class="metric-sub" id="g4BzDesc">Active Substorm Drive</div>
+          <div class="metric-val" id="g4Bz" style="color:var(--green);">+1.2 nT</div>
+          <div class="metric-sub" id="g4BzDesc">Northward (Quiet / Safe)</div>
         </div>
         <div class="metric-box">
           <div class="metric-lbl">Solar Wind Flow</div>
-          <div class="metric-val" id="g4Vsw">782 km/s</div>
-          <div class="metric-sub" id="g4Pdyn">Pdyn: 26.2 nPa</div>
+          <div class="metric-val" id="g4Vsw">450 km/s</div>
+          <div class="metric-sub" id="g4Pdyn">Pdyn: 1.5 nPa</div>
         </div>
       </div>
 
@@ -557,24 +557,24 @@
       <div style="display:flex; flex-direction:column; gap:4px;">
         <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; padding:3px 6px; background:#090e18; border-radius:3px;">
           <span style="font-weight:700;">+1h Forecast</span>
-          <span id="g4Fc1" style="font-weight:700; color:var(--crimson);">-284 nT</span>
-          <span class="status-badge g5" style="padding:1px 4px; font-size:9px;">G5</span>
+          <span id="g4Fc1" style="font-weight:700; color:var(--green);">0 nT</span>
+          <span class="status-badge g0" id="badgeFc1" style="padding:1px 4px; font-size:9px;">G0</span>
         </div>
         <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; padding:3px 6px; background:#090e18; border-radius:3px;">
           <span style="font-weight:700;">+3h Forecast</span>
-          <span id="g4Fc3" style="font-weight:700; color:var(--purple);">-392 nT</span>
-          <span class="status-badge g5" style="padding:1px 4px; font-size:9px;">G5</span>
+          <span id="g4Fc3" style="font-weight:700; color:var(--green);">-3 nT</span>
+          <span class="status-badge g0" id="badgeFc3" style="padding:1px 4px; font-size:9px;">G0</span>
         </div>
         <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; padding:3px 6px; background:#090e18; border-radius:3px;">
           <span style="font-weight:700;">+6h Forecast</span>
-          <span id="g4Fc6" style="font-weight:700; color:var(--purple);">-412 nT</span>
-          <span class="status-badge g5" style="padding:1px 4px; font-size:9px;">G5</span>
+          <span id="g4Fc6" style="font-weight:700; color:var(--green);">-6 nT</span>
+          <span class="status-badge g0" id="badgeFc6" style="padding:1px 4px; font-size:9px;">G0</span>
         </div>
       </div>
 
       <div class="impact-tile" style="padding:6px 8px; margin-top:auto;">
         <span class="impact-name">NOAA Global Threat</span>
-        <span class="status-badge g5" id="g4GlobalBadge">G5 EXTREME STORM</span>
+        <span class="status-badge g0" id="g4GlobalBadge">G0 QUIET (NO THREAT)</span>
       </div>
     </div>
 
@@ -597,7 +597,7 @@
           <span>90% Conformal Arrival Window (&plusmn;7.90h)</span>
         </div>
         <div class="legend-item">
-          <div class="legend-color" style="background:var(--crimson);"></div>
+          <div class="legend-color" id="legendDstColor" style="background:var(--green);"></div>
           <span>Earth Dst Storm Response [nT]</span>
         </div>
         <div class="legend-item">
@@ -615,15 +615,15 @@
   <div class="impact-grid">
     <div class="impact-tile">
       <span class="impact-name">Power Grid (NERC TPL-007)</span>
-      <span class="impact-val" id="valGrid" style="color:var(--crimson);">GIC SATURATION ALERT</span>
+      <span class="impact-val" id="valGrid" style="color:var(--green);">NOMINAL (NO GIC RISK)</span>
     </div>
     <div class="impact-tile">
       <span class="impact-name">LEO Satellites (Thermospheric Drag)</span>
-      <span class="impact-val" id="valSat" style="color:var(--crimson);">SEVERE ORBITAL DECAY</span>
+      <span class="impact-val" id="valSat" style="color:var(--green);">NOMINAL DRAG PROFILE</span>
     </div>
     <div class="impact-tile">
       <span class="impact-name">Transpolar Aviation (ICAO High Lat)</span>
-      <span class="impact-val" id="valAv" style="color:var(--amber);">POLAR CAP ABSORPTION (HF BLACKOUT)</span>
+      <span class="impact-val" id="valAv" style="color:var(--green);">NORMAL HF PROPAGATION</span>
     </div>
   </div>
 
@@ -635,21 +635,21 @@
 
     // Reactive State
     const pipeline = {
-      v0: 1950,
-      shearAngle: 82,
-      isHalo: 1,
-      transitHours: 26.4,
-      windowEarly: 18.5,
-      windowLate: 34.3,
-      arrivalSpeed: 885,
-      bzLive: -18.4,
-      vswLive: 782,
-      pdynLive: 26.2,
-      dstCurrent: -140,
-      fc1: -284,
-      fc2: -352,
-      fc3: -392,
-      fc6: -412
+      v0: 450,
+      shearAngle: 22,
+      isHalo: 0,
+      transitHours: 88.5,
+      windowEarly: 80.6,
+      windowLate: 96.4,
+      arrivalSpeed: 425,
+      bzLive: 1.2,
+      vswLive: 450,
+      pdynLive: 1.5,
+      dstCurrent: 0,
+      fc1: 0,
+      fc2: -1,
+      fc3: -3,
+      fc6: -6
     };
 
     // Initialize
@@ -713,11 +713,12 @@
       const q10Bz = medianBz - 12.0;
       const q90Bz = medianBz + 8.5;
 
-      document.getElementById('lblG1Pil').textContent = `Shear: ${shear}°`;
+      document.getElementById('lblG1Pil').textContent = `Shear: ${Math.round(shear)}°`;
       document.getElementById('g1ProbBz').textContent = `${(probBzSouth * 100).toFixed(1)}%`;
       document.getElementById('g1ProbBz').style.color = isSouth ? 'var(--crimson)' : 'var(--green)';
-      document.getElementById('g1MedianBz').textContent = `${medianBz.toFixed(1)} nT`;
-      document.getElementById('g1RangeBz').textContent = `[ ${q10Bz.toFixed(1)}, ${q90Bz.toFixed(1)} nT ]`;
+      document.getElementById('g1MedianBz').textContent = `${medianBz >= 0 ? '+' : ''}${medianBz.toFixed(1)} nT`;
+      document.getElementById('g1MedianBz').style.color = medianBz < 0 ? 'var(--crimson)' : 'var(--green)';
+      document.getElementById('g1RangeBz').textContent = `[ ${q10Bz >= 0 ? '+' : ''}${q10Bz.toFixed(1)}, ${q90Bz >= 0 ? '+' : ''}${q90Bz.toFixed(1)} nT ]`;
       const g1Badge = document.getElementById('g1StatusBadge');
       if (isSouth) {
         g1Badge.textContent = 'SOUTHWARD INJECTION (DANGER)';
@@ -737,8 +738,9 @@
       const q90Dst = medianDstProxy + 90.0;
 
       document.getElementById('g2ProbStorm').textContent = `${(probStorm * 100).toFixed(1)}%`;
-      document.getElementById('g2ProbStorm').style.color = isSevere ? 'var(--crimson)' : 'var(--green)';
+      document.getElementById('g2ProbStorm').style.color = isSevere ? 'var(--crimson)' : (probStorm > 0.25 ? 'var(--amber)' : 'var(--green)');
       document.getElementById('g2MedianDst').textContent = `${Math.round(medianDstProxy)} nT`;
+      document.getElementById('g2MedianDst').style.color = medianDstProxy <= -100 ? 'var(--crimson)' : (medianDstProxy <= -50 ? 'var(--amber)' : 'var(--cyan)');
       document.getElementById('g2RangeDst').textContent = `[ ${Math.round(q10Dst)}, ${Math.round(q90Dst)} nT ]`;
       const g2Badge = document.getElementById('g2StatusBadge');
       if (v0 >= 1800) {
@@ -771,6 +773,7 @@
       document.getElementById('g3TransitTime').textContent = `${transitHours.toFixed(1)} h`;
       document.getElementById('g3Days').textContent = `${(transitHours / 24.0).toFixed(2)} days to Earth`;
       document.getElementById('g3ArrivalSpeed').textContent = `${Math.round(arrivalSpeed)} km/s`;
+      document.getElementById('g3ArrivalSpeed').style.color = arrivalSpeed >= 800 ? 'var(--crimson)' : (arrivalSpeed >= 600 ? 'var(--amber)' : 'var(--green)');
       document.getElementById('g3Window').textContent = `[ ${windowEarly.toFixed(1)} h – ${windowLate.toFixed(1)} h ]`;
 
       const eta = new Date(Date.now() + transitHours * 3600 * 1000);
@@ -780,36 +783,61 @@
       let bz = pipeline.bzLive;
       let vsw = pipeline.vswLive;
       let pdyn = pipeline.pdynLive;
+      let dstCurr = pipeline.dstCurrent || 0;
 
-      document.getElementById('g4Bz').textContent = `${bz.toFixed(1)} nT`;
+      document.getElementById('g4Bz').textContent = `${bz >= 0 ? '+' : ''}${bz.toFixed(1)} nT`;
       document.getElementById('g4Bz').style.color = bz < -10 ? 'var(--crimson)' : (bz < 0 ? 'var(--amber)' : 'var(--green)');
+      document.getElementById('g4BzDesc').textContent = bz < -10 ? 'Severe Substorm Drive' : (bz < 0 ? 'Weak Southward Drive' : 'Northward (Quiet / Safe)');
       document.getElementById('g4Vsw').textContent = `${Math.round(vsw)} km/s`;
       document.getElementById('g4Pdyn').textContent = `Pdyn: ${pdyn.toFixed(1)} nPa`;
 
-      // Multi-horizon forecast
-      const bzFactor = Math.max(0, -bz);
-      const coupling = bzFactor * (vsw / 1000.0) * Math.sqrt(pdyn / 5.0);
-      const baseDst = -25.0 - coupling * 11.5;
+      // Multi-horizon forecast with physical coupling (Burton / Newell ring current injection)
+      const bzSouth = Math.max(0, -bz);
+      const coupling = bzSouth * (vsw / 400.0) * Math.sqrt(Math.max(0.1, pdyn) / 2.0);
+      const expectedDrop = coupling * 12.0;
+      const baseDst = dstCurr - expectedDrop;
 
-      pipeline.fc1 = Math.round(baseDst * 0.72);
-      pipeline.fc2 = Math.round(baseDst * 0.88);
-      pipeline.fc3 = Math.round(baseDst * 1.00);
-      pipeline.fc6 = Math.round(baseDst * 1.06);
+      pipeline.fc1 = Math.round(dstCurr * 0.70 + baseDst * 0.30);
+      pipeline.fc2 = Math.round(dstCurr * 0.45 + baseDst * 0.55);
+      pipeline.fc3 = Math.round(dstCurr * 0.25 + baseDst * 0.75);
+      pipeline.fc6 = Math.round(baseDst);
 
-      document.getElementById('g4Fc1').textContent = `${pipeline.fc1} nT`;
-      document.getElementById('g4Fc3').textContent = `${pipeline.fc3} nT`;
-      document.getElementById('g4Fc6').textContent = `${pipeline.fc6} nT`;
+      const formatDst = (val) => `${val >= 0 ? '+' : ''}${val} nT`;
+      const getThreat = (val) => {
+        if (val <= -300) return { cls: 'g5', lbl: 'G5', col: 'var(--purple)' };
+        if (val <= -200) return { cls: 'g4', lbl: 'G4', col: 'var(--crimson)' };
+        if (val <= -100) return { cls: 'g3', lbl: 'G3', col: 'var(--crimson)' };
+        if (val <= -50)  return { cls: 'g1', lbl: 'G1', col: 'var(--amber)' };
+        return { cls: 'g0', lbl: 'G0', col: 'var(--green)' };
+      };
+
+      const b1 = getThreat(pipeline.fc1);
+      const b3 = getThreat(pipeline.fc3);
+      const b6 = getThreat(pipeline.fc6);
+
+      const elFc1 = document.getElementById('g4Fc1');
+      const elFc3 = document.getElementById('g4Fc3');
+      const elFc6 = document.getElementById('g4Fc6');
+      if (elFc1) { elFc1.textContent = formatDst(pipeline.fc1); elFc1.style.color = b1.col; }
+      if (elFc3) { elFc3.textContent = formatDst(pipeline.fc3); elFc3.style.color = b3.col; }
+      if (elFc6) { elFc6.textContent = formatDst(pipeline.fc6); elFc6.style.color = b6.col; }
+
+      const elB1 = document.getElementById('badgeFc1');
+      if (elB1) { elB1.className = `status-badge ${b1.cls}`; elB1.textContent = b1.lbl; }
+      const elB3 = document.getElementById('badgeFc3');
+      if (elB3) { elB3.className = `status-badge ${b3.cls}`; elB3.textContent = b3.lbl; }
+      const elB6 = document.getElementById('badgeFc6');
+      if (elB6) { elB6.className = `status-badge ${b6.cls}`; elB6.textContent = b6.lbl; }
 
       // NOAA Threat Badge & Infrastructure
       const minDst = Math.min(pipeline.fc1, pipeline.fc3, pipeline.fc6);
-      let gScale = 'G0';
       let gClass = 'g0';
       let gLabel = 'G0 QUIET (NO THREAT)';
 
-      if (minDst <= -300) { gScale = 'G5'; gClass = 'g5'; gLabel = 'G5 EXTREME SUPERSTORM'; }
-      else if (minDst <= -200) { gScale = 'G4'; gClass = 'g4'; gLabel = 'G4 SEVERE STORM'; }
-      else if (minDst <= -100) { gScale = 'G3'; gClass = 'g3'; gLabel = 'G3 STRONG STORM'; }
-      else if (minDst <= -50) { gScale = 'G1'; gClass = 'g1'; gLabel = 'G1 MINOR STORM'; }
+      if (minDst <= -300) { gClass = 'g5'; gLabel = 'G5 EXTREME SUPERSTORM'; }
+      else if (minDst <= -200) { gClass = 'g4'; gLabel = 'G4 SEVERE STORM'; }
+      else if (minDst <= -100) { gClass = 'g3'; gLabel = 'G3 STRONG STORM'; }
+      else if (minDst <= -50) { gClass = 'g1'; gLabel = 'G1 MINOR STORM'; }
 
       const g4Badge = document.getElementById('g4GlobalBadge');
       g4Badge.textContent = gLabel;
@@ -841,6 +869,12 @@
         valSat.style.color = 'var(--green)';
         valAv.textContent = 'NORMAL HF PROPAGATION';
         valAv.style.color = 'var(--green)';
+      }
+
+      // Legend color update
+      const legDst = document.getElementById('legendDstColor');
+      if (legDst) {
+        legDst.style.background = minDst <= -100 ? 'var(--crimson)' : (minDst <= -50 ? 'var(--amber)' : 'var(--green)');
       }
 
       // 5. Redraw Master Unified Chart
@@ -1021,28 +1055,30 @@
       ctx.setLineDash([]);
 
       // Draw Dst Response Curve
-      // Before Arrival: baseline (-15 to 0 nT)
-      // At Arrival: Storm Sudden Commencement (SSC) +15 nT surge, then sharp plunge into Main Phase
       const minDstVal = pipeline.fc6;
+      const dstCurveColor = minDstVal <= -100 ? '#ef4444' : (minDstVal <= -50 ? '#f59e0b' : '#10b981');
       ctx.beginPath();
-      ctx.strokeStyle = '#ef4444';
+      ctx.strokeStyle = dstCurveColor;
       ctx.lineWidth = 2.4;
 
       for (let t = 0; t <= maxT; t += 0.5) {
-        let d = -10;
-        if (t < tArrival - 0.5) {
-          d = -10 + Math.sin(t * 0.5) * 4;
-        } else if (t >= tArrival - 0.5 && t <= tArrival + 1.0) {
-          // SSC compression jump
-          d = 18;
-        } else if (t > tArrival + 1.0 && t <= tArrival + 7.0) {
-          // Main Phase Plunge
-          const f = (t - (tArrival + 1.0)) / 6.0;
-          d = 18 - (18 - minDstVal) * Math.sin(f * (Math.PI / 2));
+        let d = pipeline.dstCurrent || 0;
+        if (minDstVal <= -50) {
+          if (t < tArrival - 0.5) {
+            d = (pipeline.dstCurrent || 0) + Math.sin(t * 0.5) * 3;
+          } else if (t >= tArrival - 0.5 && t <= tArrival + 1.0) {
+            d = Math.max(12, (pipeline.dstCurrent || 0) + 15);
+          } else if (t > tArrival + 1.0 && t <= tArrival + 7.0) {
+            const f = (t - (tArrival + 1.0)) / 6.0;
+            const peakDst = Math.max(12, (pipeline.dstCurrent || 0) + 15);
+            d = peakDst - (peakDst - minDstVal) * Math.sin(f * (Math.PI / 2));
+          } else {
+            const recT = t - (tArrival + 7.0);
+            d = minDstVal + (minDstVal * -0.65) * (1.0 - Math.exp(-recT / 24.0));
+          }
         } else {
-          // Recovery Phase
-          const recT = t - (tArrival + 7.0);
-          d = minDstVal + (minDstVal * -0.65) * (1.0 - Math.exp(-recT / 24.0));
+          // Nominal / Quiet baseline trajectory
+          d = (pipeline.dstCurrent || 0) + Math.sin(t * 0.4) * 2 - (t / maxT) * 4;
         }
 
         const x = toX(t);
@@ -1053,14 +1089,14 @@
       ctx.stroke();
 
       // Highlight HeliosBiLSTM Horizon Points (+1h, +3h, +6h)
-      const tH1 = tArrival + 2.0;
-      const tH3 = tArrival + 4.0;
-      const tH6 = tArrival + 7.0;
+      const tH1 = 1.0;
+      const tH3 = 3.0;
+      const tH6 = 6.0;
 
       const pts = [
-        { t: tH1, val: pipeline.fc1, lbl: `+1h (${pipeline.fc1} nT)` },
-        { t: tH3, val: pipeline.fc3, lbl: `+3h (${pipeline.fc3} nT)` },
-        { t: tH6, val: pipeline.fc6, lbl: `+6h Peak (${pipeline.fc6} nT)` }
+        { t: tH1, val: pipeline.fc1, lbl: `+1h (${pipeline.fc1 >= 0 ? '+' : ''}${pipeline.fc1} nT)` },
+        { t: tH3, val: pipeline.fc3, lbl: `+3h (${pipeline.fc3 >= 0 ? '+' : ''}${pipeline.fc3} nT)` },
+        { t: tH6, val: pipeline.fc6, lbl: `+6h Peak (${pipeline.fc6 >= 0 ? '+' : ''}${pipeline.fc6} nT)` }
       ];
 
       pts.forEach(p => {
@@ -1095,29 +1131,63 @@
     async function fetchLiveSwpcData() {
       if (currentMode !== 'live') return;
       try {
-        const [resMag, resWind] = await Promise.all([
-          fetch('https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json').then(r => r.json()),
-          fetch('https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json').then(r => r.json())
+        const [resMag, resWind, resDst, resFlares] = await Promise.all([
+          fetch('https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json').then(r => r.json()).catch(() => null),
+          fetch('https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json').then(r => r.json()).catch(() => null),
+          fetch('https://services.swpc.noaa.gov/products/kyoto-dst.json').then(r => r.json()).catch(() => null),
+          fetch('https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json').then(r => r.json()).catch(() => null)
         ]);
 
-        if (Array.isArray(resMag) && resMag.length > 0 && Array.isArray(resWind) && resWind.length > 0) {
+        // 1. Process In-Situ IMF Magnetometer (RTSW)
+        if (Array.isArray(resMag) && resMag.length > 0) {
           const latestMag = resMag[resMag.length - 1];
-          const latestWind = resWind[resWind.length - 1];
-
-          const bz = parseFloat(latestMag.bz_gsm ?? latestMag.bz ?? -3.5);
-          const vsw = parseFloat(latestWind.solar_wind_speed ?? latestWind.speed ?? 430);
-          const density = parseFloat(latestWind.solar_wind_density ?? latestWind.density ?? 6.2);
-          const pdyn = 1.6726e-6 * density * Math.pow(vsw, 2) * 1e-3; // nPa
-
-          pipeline.bzLive = bz;
-          pipeline.vswLive = vsw;
-          pipeline.pdynLive = pdyn;
-
-          recomputePipeline();
+          const bz = parseFloat(latestMag.bz_gsm ?? latestMag.bz_gse ?? latestMag.bz ?? 0.0);
+          if (!isNaN(bz)) pipeline.bzLive = bz;
         }
+
+        // 2. Process In-Situ Solar Wind Plasma (RTSW)
+        if (Array.isArray(resWind) && resWind.length > 0) {
+          const latestWind = resWind[resWind.length - 1];
+          const vsw = parseFloat(latestWind.proton_speed ?? latestWind.solar_wind_speed ?? latestWind.speed ?? 450.0);
+          const density = parseFloat(latestWind.proton_density ?? latestWind.solar_wind_density ?? latestWind.density ?? 3.0);
+          if (!isNaN(vsw)) pipeline.vswLive = vsw;
+          if (!isNaN(vsw) && !isNaN(density)) {
+            pipeline.pdynLive = 1.6726e-6 * density * Math.pow(vsw, 2); // nPa
+          }
+        }
+
+        // 3. Process Geomagnetic Kyoto Dst
+        if (Array.isArray(resDst) && resDst.length > 0) {
+          const latestDst = resDst[resDst.length - 1];
+          const dstVal = parseFloat(latestDst.dst ?? 0.0);
+          if (!isNaN(dstVal)) pipeline.dstCurrent = dstVal;
+        }
+
+        // 4. Process GOES Solar Flare X-ray Telemetry (Stage 1 & Stage 2 CME Kinematics)
+        if (Array.isArray(resFlares) && resFlares.length > 0) {
+          const latestFlare = resFlares[resFlares.length - 1];
+          const maxFlux = parseFloat(latestFlare.max_xrlong ?? 1e-8);
+          
+          if (!isNaN(maxFlux)) {
+            let derivedV0 = 450.0;
+            let derivedShear = 22.0;
+            if (maxFlux > 1e-7) {
+              derivedV0 = Math.min(2800.0, Math.max(420.0, 420.0 + 260.0 * Math.log10(maxFlux / 1e-7 + 1.0)));
+              derivedShear = Math.min(88.0, Math.max(18.0, 18.0 + 16.0 * Math.log10(maxFlux / 1e-7 + 1.0)));
+            }
+            pipeline.v0 = derivedV0;
+            pipeline.shearAngle = derivedShear;
+
+            const rngShear = document.getElementById('rngG1Shear');
+            const rngV0 = document.getElementById('rngG2HaloExp');
+            if (rngShear) rngShear.value = Math.round(derivedShear);
+            if (rngV0) rngV0.value = Math.round(derivedV0);
+          }
+        }
+
+        recomputePipeline();
       } catch (err) {
-        // Safe offline / fallback telemetry
-        console.warn('NOAA SWPC direct fetch using local telemetry buffer:', err);
+        console.warn('NOAA SWPC direct fetch warning:', err);
       }
     }
 
