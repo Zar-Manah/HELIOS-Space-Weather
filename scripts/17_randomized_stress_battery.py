@@ -202,7 +202,7 @@ def run_stress_battery(n_per_class=6, random_seed=42):
     print(f"\n1. SEVERE STORM DETECTION (G3–G5, n={len(severe_res)}):")
     print(f"   • Direct Red Alerts Issued (G3–G5):         {severe_detected}/{len(severe_res)} ({severe_detected/len(severe_res)*100:.1f}%)")
     print(f"   • Yellow Preventive Watches (Impact alert): {severe_watched}/{len(severe_res)} ({severe_watched/len(severe_res)*100:.1f}%)")
-    print(f"   • Missed Storms (False Negatives):          {severe_missed}/{len(severe_res)} (0.0% - ZERO MISSES)")
+    print(f"   • Missed Storms (False Negatives):          {severe_missed}/{len(severe_res)} ({severe_missed/len(severe_res)*100:.1f}%)")
     print(f"   • TOTAL OPERATIONAL COVERAGE (Red+Yellow):   {(severe_detected + severe_watched)/len(severe_res)*100:.1f}%")
     
     print(f"\n2. FALSE ALARM MITIGATION (Fast CMEs V >= 650 km/s, n={len(fa_res)}):")

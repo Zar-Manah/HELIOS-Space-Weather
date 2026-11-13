@@ -322,7 +322,9 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
                     "dst_conformal_range_nT": [round(q10_dst, 1), round(q90_dst, 1)]
                 }
             }
-        except Exception:
+        except Exception as e:
+            import sys
+            print(f"⚠️ Warning: APEX inference encountered an error: {e}", file=sys.stderr)
             apex_info = None
 
     if as_json:

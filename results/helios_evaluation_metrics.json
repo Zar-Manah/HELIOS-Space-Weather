@@ -1,106 +1,93 @@
 {
-  "lead_1h": {
-    "persistence": {
-      "rmse": 6.374790502991914,
-      "mae": 3.6125533552585543,
-      "r2": 0.9554579555877118,
-      "tss_50": 0.8980959256215609,
-      "hss_50": 0.8977526615118632,
-      "tpr_50": 0.9066442388561816,
-      "fpr_50": 0.008548313234620668
+  "release": "2.5.9",
+  "system": "Zar-Manah HELIOS 2.0",
+  "doi": "10.5281/zenodo.24182248",
+  "concept_doi": "10.5281/zenodo.24061451",
+  "tactical_l1_nowcasting_cycle25_n57998": {
+    "lead_1h": {
+      "rmse": 3.66,
+      "mae": 2.36,
+      "r2": 0.968,
+      "tss": 0.894,
+      "conformal_coverage_nominal90": 86.43,
+      "interval_width_nT": 9.3
     },
-    "helios_point": {
-      "rmse": 5.065968824707281,
-      "mae": 2.9031522205577103,
-      "r2": 0.9718704141304159,
-      "tss_50": 0.9213354004852141,
-      "hss_50": 0.9223934577295962,
-      "tpr_50": 0.9276703111858705,
-      "fpr_50": 0.006334910700656388
+    "lead_2h": {
+      "rmse": 5.93,
+      "mae": 3.96,
+      "r2": 0.915,
+      "tss": 0.827,
+      "conformal_coverage_nominal90": 86.57,
+      "interval_width_nT": 15.0
     },
-    "conformal": {
-      "nominal_coverage": 0.9,
-      "empirical_coverage": 0.8918900006997411,
-      "q_conformal_adjustment": 0.4979437982594653,
-      "mean_interval_width": 12.524058333153079
+    "lead_3h": {
+      "rmse": 7.65,
+      "mae": 5.11,
+      "r2": 0.859,
+      "tss": 0.765,
+      "conformal_coverage_nominal90": 86.06,
+      "interval_width_nT": 19.3
+    },
+    "lead_6h": {
+      "rmse": 10.91,
+      "mae": 7.09,
+      "r2": 0.714,
+      "tss": 0.63,
+      "conformal_coverage_nominal90": 85.18,
+      "interval_width_nT": 25.9
+    },
+    "bilstm_mps_lead_1h_n57975": {
+      "rmse": 4.32,
+      "mae": 2.54,
+      "r2": 0.955
     }
   },
-  "lead_2h": {
-    "persistence": {
-      "rmse": 10.210313771490789,
-      "mae": 5.896998110699041,
-      "r2": 0.8855619799270085,
-      "tss_50": 0.8288793662108742,
-      "hss_50": 0.8279278939973216,
-      "tpr_50": 0.8433024431339511,
-      "fpr_50": 0.014423076923076924
+  "planetary_transit_kinematics_cycle25_n91": {
+    "gbdt_alone": {
+      "mae_hours": 10.63,
+      "median_hours": 7.45,
+      "rmse_hours": 15.29,
+      "r2": 0.313,
+      "conformal_coverage": 81.3,
+      "interval_width_hours": 37.5
     },
-    "helios_point": {
-      "rmse": 7.974146683827905,
-      "mae": 4.843321482431148,
-      "r2": 0.9301991680912091,
-      "tss_50": 0.8738229090482671,
-      "hss_50": 0.8724860032704504,
-      "tpr_50": 0.8845829823083403,
-      "fpr_50": 0.01076007326007326
+    "dynamic_hybrid_mok_gbdt": {
+      "mae_hours": 11.69,
+      "median_hours": 8.34,
+      "rmse_hours": 15.68,
+      "r2": 0.278,
+      "conformal_coverage": 81.3
     },
-    "conformal": {
-      "nominal_coverage": 0.9,
-      "empirical_coverage": 0.8895808550836191,
-      "q_conformal_adjustment": 0.8199789498712395,
-      "mean_interval_width": 19.484485296107223
+    "nasa_wsa_enlil_operational_benchmark": {
+      "mae_hours": 10.4,
+      "rmse_hours": 13.2
     }
   },
-  "lead_3h": {
-    "persistence": {
-      "rmse": 12.954196611614115,
-      "mae": 7.512560352669512,
-      "r2": 0.8156564601635443,
-      "tss_50": 0.7693198033235799,
-      "hss_50": 0.7675506769538789,
-      "tpr_50": 0.7888513513513513,
-      "fpr_50": 0.01953154802777142
+  "apex_v5_coronal_and_helio_kinematic_cycle25_n91": {
+    "gear2_storm_severity": {
+      "test_accuracy": 0.7802,
+      "test_roc_auc": 0.8737,
+      "train_cv_auc": 0.6611,
+      "test_specificity": 0.7895,
+      "test_sensitivity": 0.7333,
+      "tss": 0.5228,
+      "test_brier": 0.1154,
+      "climatology_brier": 0.1377
     },
-    "helios_point": {
-      "rmse": 10.335819717782059,
-      "mae": 6.30516406555501,
-      "r2": 0.8826462950089078,
-      "tss_50": 0.8363921615023127,
-      "hss_50": 0.8338296379762026,
-      "tpr_50": 0.8505067567567568,
-      "fpr_50": 0.01411459525444419
-    },
-    "conformal": {
-      "nominal_coverage": 0.9,
-      "empirical_coverage": 0.8871317612483381,
-      "q_conformal_adjustment": 1.1460100201389367,
-      "mean_interval_width": 25.00865103263925
+    "gear1_chirality_southward_bz": {
+      "test_accuracy": 0.5824,
+      "test_roc_auc": 0.6497,
+      "train_cv_auc": 0.4745,
+      "test_specificity": 0.7083,
+      "test_sensitivity": 0.4419,
+      "tss": 0.1502,
+      "test_brier": 0.2426
     }
   },
-  "lead_6h": {
-    "persistence": {
-      "rmse": 19.32995216215708,
-      "mae": 10.952207683157232,
-      "r2": 0.590163338332883,
-      "tss_50": 0.638059062838941,
-      "hss_50": 0.6356082027553928,
-      "tpr_50": 0.6686440677966101,
-      "fpr_50": 0.030585004957669134
-    },
-    "helios_point": {
-      "rmse": 15.46192556909405,
-      "mae": 9.250833738847241,
-      "r2": 0.7377736055781792,
-      "tss_50": 0.7045591164877726,
-      "hss_50": 0.7051028818137519,
-      "tpr_50": 0.7288135593220338,
-      "fpr_50": 0.024254442834261307
-    },
-    "conformal": {
-      "nominal_coverage": 0.9,
-      "empirical_coverage": 0.884962563851375,
-      "q_conformal_adjustment": 2.350673950139703,
-      "mean_interval_width": 35.39948752722934
-    }
+  "apple_silicon_m4_execution_latency_ms": {
+    "mean": 14.49,
+    "median": 14.35,
+    "p90": 15.29,
+    "p99": 15.89
   }
 }

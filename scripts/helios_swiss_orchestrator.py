@@ -40,7 +40,7 @@ MODELS_DIR = os.path.join(BASE_DIR, "models")
 DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "helios_vision_matched.parquet")
 M1_PATH = os.path.join(MODELS_DIR, "helios_vision_apex.pkl")
 M2_PATH = os.path.join(MODELS_DIR, "helios_storm_apex.pkl")
-M3_PATH = os.path.join(MODELS_DIR, "helios_transit_mok_edited.pt")
+M3_PATH = os.path.join(MODELS_DIR, "helios_transit_mok_mps.pt")
 M4_PATH = os.path.join(MODELS_DIR, "helios_bilstm_edited.pt")
 GBDT_TIME_PATH = os.path.join(MODELS_DIR, "helios_transit_time.joblib")
 GBDT_LOW_PATH  = os.path.join(MODELS_DIR, "helios_transit_q_low.joblib")
@@ -314,9 +314,7 @@ class SwissWatchPipeline:
                 seq_t = torch.tensor(seq_arr, dtype=torch.float32).unsqueeze(0).to(device)
                 pred_dst_1h = float(self.bilstm_model(seq_t).item())
         else:
-            # Coupled emulation: modulates Burton injection using Gear 1 chirality
-            coupling_factor = np.maximum(0.0, -q50_bz) * (v_3d / 1000.0)
-            pred_dst_1h = q50_dst * (0.85 if is_bz_south else 0.45)
+            pred_dst_1h = None
             
         total_latency_ms = (time.time() - t_start) * 1000.0
         
@@ -393,7 +391,10 @@ def print_swiss_report(name, res):
     
     # Gear 4
     print(f"⚙️  GEAR 4 [15–60 min HORIZON | L1 SATELLITE & EARTH IMPACT]:")
-    print(f"   • L1 BiLSTM Telemetry:       Projected Dst +1h = {res['l1_confirmed_dst_1h']:.0f} nT")
+    if res.get("l1_confirmed_dst_1h") is not None:
+        print(f"   • L1 BiLSTM Telemetry:       Projected Dst +1h = {res['l1_confirmed_dst_1h']:.0f} nT")
+    else:
+        print("   • L1 BiLSTM Telemetry:       Pending CME transit to L1 (in-situ sequence inactive at t=0)")
     if res["gt_dst"] != 0.0:
         print(f"   • Recorded Ground Truth:     Dst = {res['gt_dst']:.0f} nT | Bz = {res['gt_bz']:.1f} nT")
     print("-" * 85)
