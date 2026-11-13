@@ -264,16 +264,31 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
                 pkg_m2 = pickle.load(f)
             
             theta = np.deg2rad(np.clip(np.sqrt(lat**2 + lon**2), 0.0, 75.0))
-            v_3d = speed / max(np.cos(theta), 0.35)
-            mass_proxy = 15.0 if is_halo else 14.5
-            e_3d = np.log10(0.5) + mass_proxy + 2.0 * np.log10(v_3d)
-            f107_val = 140.0
-            flare_proxy = np.log10(np.clip(v_3d * f107_val / 100.0, 1.0, 1e6))
+            cos_t = np.clip(np.cos(theta), 0.35, 1.0)
+            v_3d = float(speed / cos_t)
+            m_grams = 1.0e16 if is_halo else 5.0e15
+            log_m = np.log10(m_grams)
+            log_v_cms = np.log10(np.clip(v_3d, 100.0, 4000.0) * 1e5)
+            e_3d = float(np.log10(0.5) + log_m + 2.0 * log_v_cms)
+            f107_val = 145.0
+            r_ss = max(10.0, (f107_val - 60.0) * 1.1)
+            flare_proxy = float(np.log10(np.clip(v_3d * f107_val / 100.0, 1.0, 1e6)))
             
             phys_vals = {
-                "v_launch_3d": v_3d, "width": width, "accel": accel, "mass": mass_proxy, "energy_3d": e_3d,
-                "is_halo": is_halo, "f107": f107_val, "r_sunspot": 80.0, "v_sw_launch": 420.0, "prior_v": 420.0,
-                "shear_angle_proxy": 35.0, "free_energy_proxy": 1.0, "helicity_proxy": 0.5, "flare_flux_proxy": flare_proxy
+                "v_launch_3d": v_3d,
+                "width": float(360.0 if is_halo else width),
+                "accel": float(accel if accel > 0 else 880.0),
+                "mass": float(m_grams),
+                "energy_3d": e_3d,
+                "is_halo": int(is_halo),
+                "f107": f107_val,
+                "r_sunspot": r_ss,
+                "v_sw_launch": 450.0,
+                "prior_v": 550.0,
+                "shear_angle_proxy": 59.5,
+                "free_energy_proxy": 1.25,
+                "helicity_proxy": 0.0,
+                "flare_flux_proxy": flare_proxy
             }
             cols = pkg_m1["phys_cols"]
             vec = np.array([phys_vals.get(c, 0.0) for c in cols], dtype=np.float32)

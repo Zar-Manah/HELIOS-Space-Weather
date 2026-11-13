@@ -2,8 +2,8 @@
 """
 helios_swiss_orchestrator.py — HELIOS 4-TIER SWISS WATCH ORCHESTRATOR.
 The unified master space weather early-warning pipeline for Apple Silicon M4 GPU:
-  - GEAR 1 (SOLAR CHIRALITY): HELIOS-VISION-APEX (Bz <= -10 nT coronal polarity)
-  - GEAR 2 (STORM SEVERITY): HELIOS-STORM-APEX (Dst <= -110 nT severe storm veto, 87% Acc, 0.8717 AUC)
+  - GEAR 1 (SOLAR CHIRALITY): HELIOS-CHIRALITY-APEX (Bz <= -10 nT threat, 58.2% Acc, 0.6497 Test AUC, 0.4745 Train CV AUC)
+  - GEAR 2 (STORM SEVERITY): HELIOS-STORM-APEX (Dst <= -110 nT severe storm veto, 78.0% Acc, 0.8737 Test AUC, 0.6611 Train CV AUC)
   - GEAR 3 (3D TRANSIT KINEMATICS): MoKTransitNN (Hyperbolic/Drag deceleration travel time & arrival window)
   - GEAR 4 (L1 IN-SITU ATTENTION): HeliosBiLSTM (1h, 2h, 3h, 6h forward Dst prediction at L1 impact)
 Executes all 4 tiers in <25 ms with active dynamic feedback across time horizons.
@@ -184,7 +184,7 @@ class SwissWatchPipeline:
         if isinstance(loc, (tuple, list, np.ndarray)) and len(loc) == 2:
             y, x = loc
             rad = np.sqrt((x - 256)**2 + (y - 256)**2)
-            sin_t = np.clip(rad / 200.0, 0.0, 0.95)
+            sin_t = np.clip(rad / 256.0, 0.0, 0.95)
             cos_t = np.sqrt(1.0 - sin_t**2)
         else:
             lat = float(row.get("lat_proxy", row.get("cme_lat", row.get("lat", 15.0))))
@@ -689,16 +689,16 @@ def main():
         cme_payload = {
             'v_launch': v_solar,
             'width': 120.0,
-            'accel': 0.0,
-            'mass': 15.0,
+            'accel': 880.0,
+            'mass': 5.0e15,
             'is_halo': 0,
             'f107': live_summary['f107'],
             'r_sunspot': max(10.0, (live_summary['f107'] - 60.0) * 1.1),
             'v_sw_launch': live_summary['v_sw'],
             'prior_v': live_summary['v_sw'],
-            'shear_angle_proxy': 35.0,
-            'free_energy_proxy': 1.0,
-            'helicity_proxy': 0.5,
+            'shear_angle_proxy': 59.5,
+            'free_energy_proxy': 1.25,
+            'helicity_proxy': 0.0,
             'mag_ar_crop_path': solar_live["p_hmi"],
             'c2_image_path': solar_live["p_c2"],
             't_launch': flare_time
@@ -722,12 +722,16 @@ def main():
             'cme_lat': float(args.cme_lat),
             'cme_lon': float(args.cme_lon),
             'cme_width': float(args.cme_width),
-            'accel': 0.0,
-            'mass': 15.0,
+            'accel': 880.0,
+            'mass': 1.0e16 if args.cme_width >= 360.0 else 5.0e15,
             'is_halo': 1 if args.cme_width >= 360.0 else 0,
-            'f107': 120.0,
-            'r_sunspot': 80.0,
-            'v_sw_launch': 420.0,
+            'f107': 145.0,
+            'r_sunspot': 100.0,
+            'v_sw_launch': 450.0,
+            'prior_v': 550.0,
+            'shear_angle_proxy': 59.5,
+            'free_energy_proxy': 1.25,
+            'helicity_proxy': 0.0,
             't_launch': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         }
         res = pipeline.run_inference(payload)
