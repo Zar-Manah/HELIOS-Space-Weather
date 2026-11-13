@@ -49,19 +49,20 @@ TRANSIT_SCALER_PATH = os.path.join(MODELS_DIR, "transit_scaler.json")
 BILSTM_SCALER_PATH = os.path.join(MODELS_DIR, "bilstm_scaler.json")
 
 
-def check_cme_earth_trajectory(lat, lon, width):
+def check_cme_earth_trajectory(lat, lon, width, speed=500.0):
     """
-    Evaluates whether a CME source location and angular width intercept the Sun-Earth line of sight.
-    Uses spherical trigonometry to compute the angular separation from disk center (0, 0)
-    to the eruption coordinates (lat, lon) and verifies cone intersection.
+    Evaluates whether a CME source location and expanding shock envelope intercept Earth.
+    Under 3D heliospheric shock physics (Ontiveros & Vourlidas 2009; Rouillard et al. 2011),
+    interplanetary shock flanks extend 20-30° beyond the optical coronagraph core.
     """
     rad_lat = np.radians(lat)
     rad_lon = np.radians(lon)
     cos_alpha = np.cos(rad_lat) * np.cos(rad_lon)
     delta_alpha = np.degrees(np.arccos(np.clip(cos_alpha, -1.0, 1.0)))
-    half_width = width / 2.0
-    is_impact = delta_alpha <= half_width
-    return is_impact, delta_alpha, half_width
+    shock_flank = 20.0 if speed < 1000.0 else 30.0
+    effective_half_w = max(width / 2.0 + shock_flank, 45.0 if abs(lat) <= 45.0 else width / 2.0)
+    is_impact = delta_alpha <= effective_half_w
+    return is_impact, delta_alpha, effective_half_w
 
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
@@ -178,7 +179,7 @@ class SwissWatchPipeline:
         t_start = time.time()
         
         # --- GEAR 1 & 2: SOLAR APEX EXTRACTION ---
-        v = row.get("v_launch", 500.0)
+        v = float(row.get("v_launch", row.get("cme_speed", 500.0)))
         loc = row.get("ar_location", None)
         if isinstance(loc, (tuple, list, np.ndarray)) and len(loc) == 2:
             y, x = loc
@@ -186,16 +187,21 @@ class SwissWatchPipeline:
             sin_t = np.clip(rad / 200.0, 0.0, 0.95)
             cos_t = np.sqrt(1.0 - sin_t**2)
         else:
-            lat = row.get("lat_proxy", 15.0)
+            lat = float(row.get("lat_proxy", row.get("cme_lat", row.get("lat", 15.0))))
             cos_t = np.cos(np.radians(np.clip(lat, 0.0, 75.0)))
         cos_t = np.clip(cos_t, 0.35, 1.0)
         v_3d = float(v / cos_t)
         
-        mass = row.get("mass", row.get("cme_mass", 15.0))
-        mass_val = mass if mass < 1e10 else np.log10(np.clip(mass, 1e13, 1e18))
-        energy_3d = np.log10(np.clip(0.5 * np.power(10.0, mass_val) * (v_3d * 1e5)**2, 1e28, 1e34))
+        mass = float(row.get("mass", row.get("cme_mass", 5e15)))
+        m_grams = np.clip(mass if mass > 1e10 else 10.0**mass, 1e12, 1e18)
+        log_m = np.log10(m_grams)
+        log_v_cms = np.log10(np.clip(v_3d, 100.0, 4000.0) * 1e5)
+        energy_3d = float(np.log10(0.5) + log_m + 2.0 * log_v_cms)
         
-        # Phys vector
+        f107 = float(row.get("f107", 120.0))
+        flare_val = float(np.log10(np.clip(v_3d * f107 / 100.0, 1.0, 1e6)))
+
+        # Phys vector (14 active dimensions)
         phys_cols = self.m1_pkg["phys_cols"]
         vals = []
         for c in phys_cols:
@@ -203,50 +209,15 @@ class SwissWatchPipeline:
                 vals.append(v_3d)
             elif c == "energy_3d":
                 vals.append(energy_3d)
+            elif c == "flare_flux_proxy":
+                vals.append(flare_val)
             elif c in row and pd.notna(row[c]):
-                vals.append(row[c])
+                vals.append(float(row[c]))
             else:
                 vals.append(0.0)
         p_std = np.where(self.m1_pkg["p_std"] == 0, 1.0, self.m1_pkg["p_std"])
-        phys_norm = (np.array(vals, dtype=np.float32) - self.m1_pkg["p_mean"]) / p_std
-        phys_norm = np.nan_to_num(phys_norm, nan=0.0, posinf=0.0, neginf=0.0)
-        
-        # Schrijver R-value
-        p_ar = row.get("mag_ar_crop_path", "")
-        if isinstance(p_ar, str) and os.path.exists(p_ar):
-            try:
-                im = np.array(Image.open(p_ar).convert("L"), dtype=np.float32) / 255.0 - 0.5
-                gy, gx = np.gradient(im)
-                grad_mag = np.sqrt(gx**2 + gy**2)
-                pil_mask = (np.abs(im) < 0.15).astype(float)
-                r_val = float(np.sum(grad_mag * pil_mask))
-                tot_flux = float(np.sum(np.abs(im)))
-                net_flux = float(np.sum(im) / (tot_flux + 1e-6))
-                r_arr = np.array([r_val, tot_flux, net_flux], dtype=np.float32)
-            except:
-                r_arr = np.zeros(3, dtype=np.float32)
-        else:
-            r_arr = np.zeros(3, dtype=np.float32)
-        r_norm = (r_arr - self.m1_pkg["r_mean"]) / self.m1_pkg["r_std"]
-        
-        f107 = row.get("f107", 120.0)
-        flare_val = np.log10(np.clip(v_3d * f107 / 100.0, 1.0, 1e6)).astype(np.float32)
-        f_norm = (np.array([flare_val], dtype=np.float32) - self.m1_pkg["f_mean"]) / self.m1_pkg["f_std"]
-        
-        # C2 visual
-        p_c2 = row.get("c2_image_path", "")
-        if isinstance(p_c2, str) and os.path.exists(p_c2):
-            try:
-                t = c2_tf(Image.open(p_c2).convert("RGB")).unsqueeze(0).to(device)
-                with torch.no_grad():
-                    f_c2 = self.mobilenet(t).mean(dim=[2, 3]).cpu().numpy().flatten()
-            except:
-                f_c2 = np.zeros(576, dtype=np.float32)
-        else:
-            f_c2 = np.zeros(576, dtype=np.float32)
-        c2_pca = self.m1_pkg["pca_c2"].transform(f_c2.reshape(1, -1)).flatten()
-        
-        X_solar = np.hstack([phys_norm, r_norm, f_norm, c2_pca]).reshape(1, -1)
+        X_solar = ((np.array(vals, dtype=np.float32) - self.m1_pkg["p_mean"]) / p_std).reshape(1, -1)
+        X_solar = np.nan_to_num(X_solar, nan=0.0, posinf=0.0, neginf=0.0)
         
         # --- GEAR 1 (BZ CHIRALITY) ---
         prob_bz_south = float(self.m1_pkg["clf"].predict_proba(X_solar)[0, 1])
@@ -262,17 +233,13 @@ class SwissWatchPipeline:
         q50_dst = float(self.m2_pkg["q50"].predict(X_solar)[0])
         q90_dst = float(self.m2_pkg["q90"].predict(X_solar)[0])
         
-        # --- GEAR 0: DETERMINISTIC 3D CONE TRAJECTORY CHECK ---
+        # --- GEAR 0: DETERMINISTIC 3D SHOCK TRAJECTORY CHECK ---
         cme_lat = float(row.get("lat", row.get("cme_lat", row.get("lat_proxy", 0.0))))
         cme_lon = float(row.get("lon", row.get("cme_lon", row.get("lon_proxy", 0.0))))
         is_halo_flag = int(row.get("is_halo", 1 if float(row.get("width", row.get("cme_width", 360.0))) >= 360.0 else 0))
-        cme_w = 360.0 if is_halo_flag == 1 else float(row.get("width", row.get("cme_width", 360.0)))
-        cone_impact, cone_separation, cone_half_w = check_cme_earth_trajectory(cme_lat, cme_lon, cme_w)
-        
-        # In historical catalog evaluation, all events are confirmed Earth-impacting ICMEs from Richardson & Cane.
-        # Geometric proxy checks are retained for live what-if telemetry.
-        has_catalog_transit = pd.notna(row.get("transit_hours")) and float(row.get("transit_hours", 0.0)) > 0.0
-        is_earth_impact = True if has_catalog_transit or row.get("is_earth_impact", False) else cone_impact
+        cme_w = 360.0 if is_halo_flag == 1 else float(row.get("width", row.get("cme_width", 120.0)))
+        v_speed = float(row.get("cme_speed", row.get("v_launch", 500.0)))
+        is_earth_impact, cone_separation, cone_half_w = check_cme_earth_trajectory(cme_lat, cme_lon, cme_w, v_speed)
 
         # --- GEAR 3 (3D TRANSIT KINEMATICS & DYNAMIC ENSEMBLE) ---
         L_AU = 1.495978707e8
@@ -403,7 +370,7 @@ def print_swiss_report(name, res):
     print(f"⚙️  GEAR 1 & 2 [24–72h HORIZON | SUN]:")
     print(f"   • Coronal Chirality:         {status_bz} (P_south: {res['bz_prob_south']*100:.1f}%)")
     print(f"   • Conformal Bz_min Range:    [{res['bz_conformal_range'][0]:.1f} nT, {res['bz_conformal_range'][1]:.1f} nT] (Median: {res['bz_q50']:.1f} nT)")
-    print(f"   • Geomagnetic Severity:      {status_st} (P_severe: {res['storm_prob_severe']*100:.1f}% | ROC-AUC: 0.872)")
+    print(f"   • Geomagnetic Severity:      {status_st} (P_severe: {res['storm_prob_severe']*100:.1f}% | ROC-AUC: 0.836)")
     print(f"   • Conformal Dst_min Range:   [{res['dst_conformal_range'][0]:.0f} nT, {res['dst_conformal_range'][1]:.0f} nT] (Median: {res['dst_q50']:.0f} nT)")
     print("-" * 85)
     
@@ -653,7 +620,7 @@ def print_live_report(live_summary, res_solar, res_l1_dst):
         print(f"   • Evaluated 3D Radial Kinematics:  {res_solar['v_launch_3d']:.0f} km/s")
         print(f"   • Coronal Chirality (Gear 1):      {status_bz} (P_south: {res_solar['bz_prob_south']*100:.1f}%)")
         print(f"   • Projected Bz_min Range:          [{res_solar['bz_conformal_range'][0]:.1f} nT, {res_solar['bz_conformal_range'][1]:.1f} nT] (Median: {res_solar['bz_q50']:.1f} nT)")
-        print(f"   • Severity Veto (Gear 2):          {status_st} (P_severe: {res_solar['storm_prob_severe']*100:.1f}% | ROC-AUC: 0.872)")
+        print(f"   • Severity Veto (Gear 2):          {status_st} (P_severe: {res_solar['storm_prob_severe']*100:.1f}% | ROC-AUC: 0.836)")
         print(f"   • Projected Dst_min Range:         [{res_solar['dst_conformal_range'][0]:.0f} nT, {res_solar['dst_conformal_range'][1]:.0f} nT] (Median: {res_solar['dst_q50']:.0f} nT)")
         print(f"   • Estimated Flight Time:           {res_solar['transit_hours']:.1f} hours (±6.5h)")
         print(f"   • Conformal Impact Window:         [{res_solar['window_early']} -> {res_solar['window_late']}]")

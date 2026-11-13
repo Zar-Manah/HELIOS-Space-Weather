@@ -51,7 +51,7 @@ df["bz_min"] = df["bz_min"].fillna(0.0)
 print(f"Cargado dataset con {len(df)} eventos CME.")
 
 # 1. Desproyección Geométrica 3D del Frente de Choque (Modelo Cónico GCS)
-print("\n[1/5] Aplicando corrección de desproyección trigonométrica 3D (GCS)...")
+print("\n[1/4] Aplicando corrección de desproyección trigonométrica 3D (GCS)...")
 v_3d_list = []
 for idx, r in df.iterrows():
     v = r.get("v_launch", 500.0)
@@ -68,38 +68,22 @@ for idx, r in df.iterrows():
     v_3d_list.append(float(v / cos_t))
 
 df["v_launch_3d"] = v_3d_list
-df["energy_3d"] = np.log10(np.clip(0.5 * np.power(10.0, df["mass"]) * (df["v_launch_3d"] * 1e5)**2, 1e28, 1e34))
+m_grams = np.clip(df["mass"].fillna(5e15), 1e12, 1e18)
+log_m = np.log10(m_grams)
+log_v_cms = np.log10(np.clip(df["v_launch_3d"], 100.0, 4000.0) * 1e5)
+df["energy_3d"] = np.log10(0.5) + log_m + 2.0 * log_v_cms
 
-# 2. Extracción de Gradientes Magnéticos Schrijver R-value
-print("[2/5] Extrayendo gradientes de inversión de polaridad (Schrijver R-value)...")
-r_values = []
-for p in df["mag_ar_crop_path"]:
-    if isinstance(p, str) and os.path.exists(p):
-        try:
-            im = np.array(Image.open(p).convert("L"), dtype=np.float32) / 255.0 - 0.5
-            gy, gx = np.gradient(im)
-            grad_mag = np.sqrt(gx**2 + gy**2)
-            pil_mask = (np.abs(im) < 0.15).astype(float)
-            r_val = float(np.sum(grad_mag * pil_mask))
-            tot_flux = float(np.sum(np.abs(im)))
-            net_flux = float(np.sum(im) / (tot_flux + 1e-6))
-            r_values.append([r_val, tot_flux, net_flux])
-        except:
-            r_values.append([0.0, 0.0, 0.0])
-    else:
-        r_values.append([0.0, 0.0, 0.0])
-r_values = np.array(r_values, dtype=np.float32)
+# 2. GOES Soft X-ray Flare Reconnection Proxy
+print("[2/4] Computando inyección de energía de rayos X blandos GOES...")
+df["flare_flux_proxy"] = np.log10(np.clip(df["v_launch_3d"] * df["f107"] / 100.0, 1.0, 1e6)).astype(np.float32)
 
-# 3. GOES Flare Fluence Proxy
-print("[3/5] Computando inyección de energía de rayos X blandos GOES...")
-flare_flux_proxy = np.log10(np.clip(df["v_launch_3d"] * df["f107"] / 100.0, 1.0, 1e6)).values.reshape(-1, 1).astype(np.float32)
-
-# 4. Cinemática de Erupción
+# 3. Vector Multivariante Solar Físico (14 características activas, cero ceros artificiales)
 PHYS_COLS = [
     "v_launch_3d", "width", "accel", "mass", "energy_3d", "is_halo",
     "f107", "r_sunspot", "v_sw_launch", "prior_v",
-    "shear_angle_proxy", "free_energy_proxy", "helicity_proxy"
+    "shear_angle_proxy", "free_energy_proxy", "helicity_proxy", "flare_flux_proxy"
 ]
+
 X_phys = df[PHYS_COLS].copy()
 for c in PHYS_COLS:
     X_phys[c] = X_phys[c].fillna(X_phys[c].median())
@@ -110,47 +94,8 @@ test_mask = (df["solar_cycle"] == "Cycle 25").values
 
 p_mean = X_phys_arr[train_mask].mean(axis=0)
 p_std = X_phys_arr[train_mask].std(axis=0) + 1e-6
-X_phys_norm = (X_phys_arr - p_mean) / p_std
-
-r_mean = r_values[train_mask].mean(axis=0)
-r_std = r_values[train_mask].std(axis=0) + 1e-6
-r_norm = (r_values - r_mean) / r_std
-
-f_mean = flare_flux_proxy[train_mask].mean(axis=0)
-f_std = flare_flux_proxy[train_mask].std(axis=0) + 1e-6
-f_norm = (flare_flux_proxy - f_mean) / f_std
-
-# 5. Representaciones Visuales C2
-print("[4/5] Extrayendo morfología coronal profunda C2 con MobileNetV3...")
-mobilenet = models.mobilenet_v3_small(weights=models.MobileNet_V3_Small_Weights.DEFAULT).features.to(device)
-mobilenet.eval()
-
-c2_tf = T.Compose([
-    T.Resize((224, 224)),
-    T.ToTensor(),
-    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
-
-c2_feats = []
-with torch.no_grad():
-    for p in df["c2_image_path"]:
-        if isinstance(p, str) and os.path.exists(p):
-            try:
-                t = c2_tf(Image.open(p).convert("RGB")).unsqueeze(0).to(device)
-                f = mobilenet(t).mean(dim=[2, 3]).cpu().numpy().flatten()
-            except:
-                f = np.zeros(576, dtype=np.float32)
-        else:
-            f = np.zeros(576, dtype=np.float32)
-        c2_feats.append(f)
-c2_arr = np.array(c2_feats, dtype=np.float32)
-
-pca_c2 = PCA(n_components=8, random_state=42).fit(c2_arr[train_mask])
-c2_pca = pca_c2.transform(c2_arr)
-
-# Matriz unificada de características Apex (25 dimensiones)
-X_apex = np.hstack([X_phys_norm, r_norm, f_norm, c2_pca])
-print(f"Espacio Vectorial HELIOS APEX: {X_apex.shape[1]} dimensiones de máxima palanca física.")
+X_apex = (X_phys_arr - p_mean) / p_std
+print(f"Espacio Vectorial HELIOS APEX: {X_apex.shape[1]} dimensiones físicas activas y verificadas.")
 
 # ==============================================================================
 # ENTRENAMIENTO MODELO 1: POLARIDAD MAGNÉTICA (Bz <= -10 nT)
@@ -302,13 +247,8 @@ with open(MODEL1_PKL, "wb") as f:
         "q10": q10_bz,
         "q50": q50_bz,
         "q90": q90_bz,
-        "pca_c2": pca_c2,
         "p_mean": p_mean,
         "p_std": p_std,
-        "r_mean": r_mean,
-        "r_std": r_std,
-        "f_mean": f_mean,
-        "f_std": f_std,
         "phys_cols": PHYS_COLS,
         "decision_threshold": best_th1,
         "metrics": {
@@ -326,13 +266,8 @@ with open(MODEL2_PKL, "wb") as f:
         "q10": q10_dst,
         "q50": q50_dst,
         "q90": q90_dst,
-        "pca_c2": pca_c2,
         "p_mean": p_mean,
         "p_std": p_std,
-        "r_mean": r_mean,
-        "r_std": r_std,
-        "f_mean": f_mean,
-        "f_std": f_std,
         "phys_cols": PHYS_COLS,
         "decision_threshold": best_th2,
         "metrics": {

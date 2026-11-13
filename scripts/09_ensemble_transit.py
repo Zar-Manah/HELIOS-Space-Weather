@@ -167,7 +167,7 @@ coverage_pct = float(in_window.mean() * 100.0)
 mean_window_h = float((test_df["q_high"] - test_df["q_low"]).mean())
 
 print("\n" + "=" * 75)
-print("🏆 HELIOS-TRANSIT v2.5.7: UNIFIED DUAL-SCALE BENCHMARK (Cycle 25 OOD)")
+print("🏆 HELIOS-TRANSIT v2.5.8: UNIFIED DUAL-SCALE BENCHMARK (Cycle 25 OOD)")
 print("=" * 75)
 print(f"• Baseline Drag Prior Proxy (DBM-prior): MAE = ±{dbm_baseline:.2f} hours")
 print(f"• Analytical Drag-Based Model (Vršnak):  MAE = ±{mae_vrsnak_dbm:.2f} hours")
@@ -188,18 +188,24 @@ print("=" * 75)
 # Save ensemble configuration
 ensemble_config = {
     "architecture": "MoKTransitNN + GBDT Dynamic Regime",
+    "version": "2.5.8",
     "w_base": 0.45,
     "w_fast_boost": 0.45,
     "transition_v0": 950.0,
     "transition_scale": 100.0,
+    "single_gbdt_mae": round(float(mean_absolute_error(y_te, preds_tree_time)), 2),
+    "single_gbdt_median": round(float(np.median(np.abs(y_te - preds_tree_time))), 2),
     "global_mae": round(mae_global, 2),
+    "global_median": round(median_global, 2),
     "fast_cme_mae": round(mae_fast, 2),
     "global_rmse": round(rmse_global, 2),
     "r2_score": round(r2_global, 3),
     "conformal_coverage_pct": round(coverage_pct, 1),
     "mean_window_hours": round(mean_window_h, 1),
-    "benchmark_nasa_enlil": 9.2,
-    "benchmark_dbm": round(dbm_baseline, 1)
+    "benchmark_vrsnak_dbm": round(mae_vrsnak_dbm, 2),
+    "benchmark_nasa_enlil_earth": 10.40,
+    "benchmark_nasa_enlil_stereo_a": 9.20,
+    "benchmark_dbm_prior": round(dbm_baseline, 1)
 }
 
 with open(os.path.join(MODELS_DIR, "helios_transit_ensemble_config.json"), "w") as f:

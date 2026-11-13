@@ -16,9 +16,9 @@ Geomagnetic superstorms driven by solar coronal mass ejections (CMEs) and high-s
 
 Here, we present **Zar-Manah HELIOS 2.0**, an integrated, four-tier space weather intelligence architecture that resolves these bottlenecks, executing locally on Apple Silicon M4 hardware with an end-to-end inference latency under **$22\text{ milliseconds}$**. HELIOS 2.0 unifies four synchronized operational gears across multiple spatial and temporal horizons:
 - **Gear 1 (Coronal Chirality & $B_z$ Threat):** Powered by `HELIOS-VISION-APEX`, extracting photospheric magnetic shear (Schrijver $R$-value) from NASA SDO/HMI line-of-sight magnetograms and deep visual coronagraph representations (MobileNetV3 on SOHO/LASCO C2) to forecast southward magnetic threat ($B_z \le -10\text{ nT}$) and Inductive Conformal Quantile bounds $[Q_{10}, Q_{90}]$ directly at launch ($t = 0$).
-- **Gear 2 (Severe Storm Veto):** Powered by `HELIOS-STORM-APEX`, synthesizing 3D de-projected CME kinetic energy ($E_{3\text{D}} = \frac{1}{2} M v_{3\text{D}}^2$) and GOES soft X-ray flare fluence. Evaluated strictly out-of-distribution across the entirety of Solar Cycle 25 (2020–2026, 92 CMEs), `HELIOS-STORM-APEX` achieves an unprecedented **$87.0\%$ accuracy**, **$0.8717$ ROC-AUC**, and **$92.1\%$ specificity** (avoiding 70 out of 76 historical false alarms).
-- **Gear 3 (Interplanetary Shock Kinematics):** Powered by `MoKTransitNN` and a dynamic Gradient Boosted decision tree regime trained on 331 verified empirical CME shocks without synthetic leakage. Evaluated out-of-distribution across unseen Solar Cycle 25 (91 clean CMEs), HELIOS achieves an arrival MAE of **$10.63\text{ hours}$** and a median absolute error of **$7.45\text{ hours}$** (GBDT alone) and $11.69\text{ hours}$ MAE ($8.34\text{ hours}$ median, MoK hybrid ensemble), performing on par with operational 3D MHD numerical simulations (NASA WSA-ENLIL standard of $\pm 10.40\text{ hours}$ at Earth) in sub-second inference on edge hardware ($<0.05\text{ s}$), alongside honest unpadded conformal prediction intervals ($81.3\%$ empirical coverage).
-- **Gear 4 (Tactical L1 In-Situ Attention):** Powered by `HeliosBiLSTM`, a 14-parameter bidirectional recurrent network with self-attention coupled to Inductive Conformalized Quantile Regression (CQR), providing mathematically guaranteed finite-sample coverage intervals for the Disturbance Storm Time ($Dst$) index ($R^2 = 0.969$, RMSE $= 3.57\text{ nT}$ at $+1\text{h}$; $R^2 = 0.864$, RMSE $= 7.52\text{ nT}$ at $+3\text{h}$).
+- **Gear 2 (Severe Storm Veto):** Powered by `HELIOS-STORM-APEX`, synthesizing 3D de-projected CME kinetic energy ($E_{3\text{D}} = \frac{1}{2} M v_{3\text{D}}^2$) and GOES soft X-ray flare fluence across 14 verified physical dimensions. Evaluated strictly out-of-distribution across unseen Solar Cycle 25 (2020–2026, 91 CMEs with zero synthetic leakage), `HELIOS-STORM-APEX` achieves **$76.9\%$ accuracy**, **$0.8360$ ROC-AUC**, and **$81.6\%$ specificity** (avoiding 62 out of 76 historical false alarms, with $53.3\%$ sensitivity capturing 8 of 15 severe storms).
+- **Gear 3 (Interplanetary Shock Kinematics):** Powered by `MoKTransitNN` and a dynamic Gradient Boosted decision tree regime trained on 331 verified empirical CME shocks without synthetic leakage. Evaluated out-of-distribution across unseen Solar Cycle 25 (91 clean CMEs), HELIOS achieves an arrival MAE of **$10.63\text{ hours}$** and a median absolute error of **$7.45\text{ hours}$** (GBDT alone) and $11.69\text{ hours}$ MAE ($8.34\text{ hours}$ median, MoK hybrid ensemble), performing on par with operational 3D MHD numerical simulations (NASA WSA-ENLIL standard of $\pm 10.40\text{ hours}$ at Earth; Wold et al., 2018) in sub-second inference on edge hardware ($<0.05\text{ s}$), alongside honest unpadded conformal prediction intervals ($81.3\%$ empirical coverage).
+- **Gear 4 (Tactical L1 In-Situ Attention):** Powered by `HeliosBiLSTM`, a 14-parameter bidirectional recurrent network with self-attention coupled to Inductive Conformalized Quantile Regression (CQR), providing mathematically guaranteed finite-sample coverage intervals for the Disturbance Storm Time ($Dst$) index ($R^2 = 0.972$, RMSE $= 5.07\text{ nT}$, MAE $= 2.90\text{ nT}$ at $+1\text{h}$; $R^2 = 0.930$, RMSE $= 7.97\text{ nT}$ at $+2\text{h}$, with $89.2\%$ empirical conformal coverage).
 
 We integrate an autonomous production client streaming live telemetry from NOAA SWPC, NASA SDO, and ESA SOHO. In operational tests on Apple Silicon M4, HELIOS 2.0 ingested live solar imagery and satellite feeds, executing all four tiers in **$21.8\text{ ms}$**, correctly identifying active high-speed streams ($746\text{ km/s}$) as northward and non-hazardous, entirely avoiding false alerts. All neural checkpoints, scalers, and reproducible code are maintained open-source under the MIT license for global planetary defense.
 
@@ -224,19 +224,20 @@ HELIOS 2.0 was trained exclusively on **Solar Cycles 23 and 24 (1998–2019)** a
 #### Table 2: 24–72h CME Transit Time Benchmark on Unseen Solar Cycle 25 (Zero Synthetic Leakage)
 | Speed Regime / Benchmark | Model / System | Arrival MAE (h) | Arrival RMSE (h) | Median Error (h) | Conformal Coverage | Compute Overhead |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Global (All CMEs, Unseen Cycle 25)**| Classical Drag-Based Model (DBM) | $\pm 28.95$ | $33.00$ | $\pm 24.10$ | N/A | $0.05$ s |
+| **Global (All CMEs, Unseen Cycle 25)**| Baseline Drag Prior Proxy (DBM-prior) | $\pm 28.95$ | $33.00$ | $\pm 24.10$ | N/A | $0.05$ s |
+| | Analytical Drag-Based Model (Vršnak 2013) | $\pm 12.30$ | $16.10$ | $\pm 9.80$ | N/A | $< 0.01$ s |
 | | **NASA WSA-ENLIL Operational Std** | $\pm 10.40$ | $13.20$ | — | N/A | **Hours on HPC Cluster** |
 | | HELIOS Single GBDT | **$\pm 10.63$** | $15.29$ | **$\pm 7.45$** | 81.3% | $< 0.01$ s (Local Apple M4) |
 | | **HELIOS Dynamic Ensemble (MoK+GBDT)** | $\pm 11.69$ | $15.68$ | $\pm 8.34$ | **81.3%** | **$< 0.05$ s (Local Apple M4)** |
-| **Fast CMEs ($\ge 1000$ km/s)** | Classical Drag-Based Model (DBM) | $\pm 18.40$ | $22.10$ | $\pm 16.50$ | N/A | $0.05$ s |
+| **Fast CMEs ($\ge 1000$ km/s)** | Baseline Drag Prior Proxy | $\pm 18.40$ | $22.10$ | $\pm 16.50$ | N/A | $0.05$ s |
 | | **NASA WSA-ENLIL (STEREO-A, Wold 2018)**| $\pm 9.20$ | $12.40$ | — | N/A | **Hours on HPC Cluster** |
 | | **HELIOS Dynamic Ensemble (Ours)** | $\pm 15.37$ | $18.42$ | $\pm 14.19$ | 75.0% | **$< 0.05$ s (Local Apple M4)** |
 
 #### Table 3: Coronal Vision Dual APEX System Benchmark (Solar Cycle 25 OOD)
 | Model / Operational Tier | Target Quantity | Cycle 25 ROC-AUC | Test Accuracy / MAE | Specificity (Anti-False Alarm) | Sensitivity (TPR) | TSS Score |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Gear 1: HELIOS-VISION-APEX** | $B_z \le -10\text{ nT}$ Threat | **$0.6652$** | MAE $= 6.80\text{ nT}$ | $70.8\%$ | $56.3\%$ | **$+0.2765$** |
-| **Gear 2: HELIOS-STORM-APEX** | Severe Storm ($Dst \le -110\text{ nT}$) | **$0.8717$** | **$85.9\%$ Accuracy** | **$92.1\%$ (70/76 Avoided)** | **$56.25\%$ (9/16 Captured)** | **$+0.4836$** |
+| **Gear 1: HELIOS-VISION-APEX** | $B_z \le -10\text{ nT}$ Threat | **$0.6594$** | **$63.7\%$ Acc** (MAE $= 5.56\text{ nT}$) | **$72.9\%$ (35/48 Avoided)** | **$53.5\%$ (23/43 Captured)** | **$+0.2641$** |
+| **Gear 2: HELIOS-STORM-APEX** | Severe Storm ($Dst \le -110\text{ nT}$) | **$0.8360$** | **$76.9\%$ Accuracy** (MAE $= 44.2\text{ nT}$) | **$81.6\%$ (62/76 Avoided)** | **$53.3\%$ (8/15 Captured)** | **$+0.3491$** |
 
 ---
 
@@ -246,11 +247,11 @@ HELIOS 2.0 was verified against historical landmark space weather events coverin
 #### Table 4: Landmark Historical Space Weather Validation Battery
 | Event | Date | Observed $Dst / B_z$ | HELIOS $P(\text{Severe})$ | HELIOS $P(B_z \le -10\text{ nT})$ | Transit ETA & Error | Operational Verdict | Status |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **May 2024 Superstorm** | 2024-05-10 | $-406\text{ nT} / -35.3\text{ nT}$ | **$46.6\%$** | **$53.0\%$ (South)** | $70.8\text{h}$ (Obs $85.9\text{h}$, $\Delta=15.1\text{h}$) | 🟡 Watch / South Alert | **⚠️ Partial Concordance (Bz: PASS)** |
-| **Halloween 2003 Superstorm** | 2003-10-29 | $-383\text{ nT} / -38.5\text{ nT}$ | **$81.3\%$ (ALERT)** | **$42.2\%$** | $49.4\text{h}$ (Obs $19.4\text{h}$, $\Delta=30.0\text{h}$) | 🔴 G5 Protocol Active | **⚠️ Partial Concordance (G5: PASS, Hypersonic Lag)** |
-| **Nov 2003 Superstorm** | 2003-11-20 | $-422\text{ nT} / -50.9\text{ nT}$ | **$76.3\%$ (ALERT)** | **$56.4\%$ (South)** | $37.4\text{h}$ (Obs $47.2\text{h}$, $\Delta=9.8\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant G5 Alert** |
-| **May 14, 2024 Moderate** | 2024-05-14 | $-88\text{ nT} / -12.8\text{ nT}$ | **$32.4\%$ (SAFE)** | **$48.5\%$ (Safe)** | $68.7\text{h}$ (Obs $75.3\text{h}$, $\Delta=6.6\text{h}$) | 🟢 Safe Protocol | **✅ Concordant Moderate Match** |
-| **Jan 17, 1998 Baseline** | 1998-01-17 | $-11\text{ nT} / -4.4\text{ nT}$ | **$44.5\%$ (SAFE)** | **$46.8\%$ (Safe)** | $75.8\text{h}$ (Obs $95.8\text{h}$, $\Delta=20.0\text{h}$) | 🟢 Safe Protocol | **⚠️ Partial (Classes: PASS, Transit Δ: 20.0h)** |
+| **May 2024 Superstorm** | 2024-05-07 | $-406\text{ nT} / -35.3\text{ nT}$ | **$45.4\%$** | **$53.5\%$ (South)** | $70.8\text{h}$ (Obs $85.9\text{h}$, $\Delta=15.1\text{h}$) | 🟡 Watch / South Alert | **⚠️ Partial Concordance (Bz: PASS)** |
+| **Halloween 2003 Superstorm** | 2003-10-29 | $-383\text{ nT} / -38.5\text{ nT}$ | **$82.2\%$ (ALERT)** | **$41.3\%$** | $49.4\text{h}$ (Obs $19.4\text{h}$, $\Delta=30.0\text{h}$) | 🔴 G5 Protocol Active | **⚠️ Partial Concordance (G5: PASS, Hypersonic Lag)** |
+| **Nov 2003 Superstorm** | 2003-11-18 | $-422\text{ nT} / -50.9\text{ nT}$ | **$77.0\%$ (ALERT)** | **$56.4\%$ (South)** | $37.4\text{h}$ (Obs $47.2\text{h}$, $\Delta=9.8\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant G5 Alert** |
+| **May 14, 2024 Moderate** | 2024-05-14 | $-88\text{ nT} / -12.8\text{ nT}$ | **$30.2\%$ (SAFE)** | **$48.5\%$ (Safe)** | $68.7\text{h}$ (Obs $75.3\text{h}$, $\Delta=6.6\text{h}$) | 🟢 Safe Protocol | **✅ Concordant Moderate Match** |
+| **Jan 17, 1998 Baseline** | 1998-01-17 | $-11\text{ nT} / -4.4\text{ nT}$ | **$42.8\%$ (SAFE)** | **$47.9\%$ (Safe)** | $75.8\text{h}$ (Obs $95.8\text{h}$, $\Delta=20.0\text{h}$) | 🟢 Safe Protocol | **⚠️ Partial (Classes: PASS, Transit Δ: 20.0h)** |
 
 ---
 
@@ -286,13 +287,13 @@ In live operational tests on Apple Silicon M4, HELIOS 2.0 parsed live high-speed
 
 ## 6. Conclusions and Data Availability
 
-Zar-Manah HELIOS 2.0 demonstrates that coupling coronal solar vision, aerodynamic shock kinematics, and L1 in-situ attention into a unified multi-tier framework resolves the five-decade-old Southward $B_z$ Paradox. By evaluating solar eruptions at the moment of launch ($24\text{--}72\text{ hours}$ in advance), HELIOS 2.0 achieves **$87.0\%$ accuracy** and **$0.8717$ ROC-AUC** in discriminating severe geomagnetic storms from harmless events, eliminating **$92.1\%$ of operational false alarms**.
+Zar-Manah HELIOS 2.0 demonstrates that coupling coronal solar vision, aerodynamic shock kinematics, and L1 in-situ attention into a unified multi-tier framework resolves the five-decade-old Southward $B_z$ Paradox. By evaluating solar eruptions at the moment of launch ($24\text{--}72\text{ hours}$ in advance), HELIOS 2.0 achieves **$76.9\%$ accuracy** and **$0.8360$ ROC-AUC** in discriminating severe geomagnetic storms from harmless events, avoiding **$81.6\%$ of operational false alarms** while maintaining sub-second inference.
 
 Operating locally on Apple Silicon M4 with sub-22 millisecond latency and streaming live data from NASA and NOAA spacecraft, HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for planetary defense against extreme space weather.
 
 ### Data and Code Availability
 The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under the MIT license at:  
-`https://github.com/Zar-Manah/HELIOS-Space-Weather` (Permanent DOI: [10.5281/zenodo.24181624](https://doi.org/10.5281/zenodo.24181624) (Concept DOI: [10.5281/zenodo.24061451](https://doi.org/10.5281/zenodo.24061451))).  
+`https://github.com/Zar-Manah/HELIOS-Space-Weather` (Permanent DOI: [10.5281/zenodo.24182248](https://doi.org/10.5281/zenodo.24182248) (Concept DOI: [10.5281/zenodo.24061451](https://doi.org/10.5281/zenodo.24061451))).  
 Raw solar wind and imagery data are curated by NASA SPDF OMNIWeb, SDO, and ESA/NASA SOHO.
 
 ---

@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
-[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24181624-blue.svg)](https://doi.org/10.5281/zenodo.24181624)
+[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24182248-blue.svg)](https://doi.org/10.5281/zenodo.24182248)
 [![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
@@ -27,8 +27,8 @@
 
 Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **$<25$ milliseconds on consumer-grade hardware (Apple Silicon M4 GPU)** with zero cloud dependencies or supercomputing queues.
 
-⚡ **Near-Supercomputer Accuracy on a Standard Consumer Device:**  
-Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical drag-based models ($\pm 28.95\text{ h}$) and approaching the operational accuracy of NASA's WSA-ENLIL 3D MHD supercomputer standard ($\pm 10.40\text{ h}$ at Earth; Wold et al., 2018). Breaking the barrier of institutional supercomputing, HELIOS runs entirely on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **$<25$ milliseconds** with zero cloud dependencies or supercomputing queues.
+⚡ **Rapid Sub-Second Forecasting Benchmarked against Operational Standards:**  
+Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical analytical drag models (Vršnak 2013 DBM $\pm 12.30\text{ h}$; drag prior baseline $\pm 28.95\text{ h}$) and approaching the operational accuracy of NASA's WSA-ENLIL 3D MHD supercomputer standard ($\pm 10.40\text{ h}$ at Earth; Wold et al., 2018). While numerical MHD models take hours on supercomputing clusters, HELIOS executes the full 4-tier pipeline locally on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **$<25$ milliseconds** with zero cloud dependencies or cluster queues.
 
 🤖 **Eliminating Human Bottlenecks & Full Operational Automation:**  
 Legacy space weather forecasting relies heavily on slow manual labor—requiring human operators to hand-fit geometric wireframes to coronagraph images, configure simulation grids, and wait hours for supercomputing cluster queues. HELIOS 2.0 eliminates these operational bottlenecks through **100% autonomous end-to-end execution**: from live multi-satellite telemetry ingestion (NOAA SWPC & NASA SDO/SOHO) and physical feature derivation to real-time kinematic inference, conformal uncertainty quantification, and automated NASA CCMC Scoreboard export.
@@ -55,9 +55,9 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
 
 | Gear | Operational Role | Time Horizon | Core Architecture & Data | Key Performance Metric |
 | :--- | :--- | :--- | :--- | :--- |
-| **Gear 1: Coronal Chirality** | Magnetic cloud polarity ($B_z \le -10\text{ nT}$) | **24–72 hours** | Deep MobileNetV3 visual extraction from SOHO/LASCO C2 + SDO/HMI Active Region magnetograms (Schrijver $R$-value) | Calibrated sensitivity to southward dangerous magnetic clouds |
-| **Gear 2: Storm Severity Veto** | Severe storm classification ($Dst \le -110\text{ nT}$) | **24–72 hours** | Unified 25-dim Solar Vector + Gradient-boosted Conformal Quantile Ensembles | **85.9% Accuracy** & **0.8717 ROC-AUC** on Cycle 25; **Defuses 92.1% of benign events** |
-| **Gear 3: 3D Transit Kinematics** | Interplanetary shock arrival time ($\tau$) | **12–48 hours** | Bifurcated `MoKTransitNN` + GBDT with deterministic 3D cone trajectory filter | **$\pm 7.45\text{ h}$ Median / $\pm 10.63\text{ h}$ MAE** on Cycle 25 OOD (beats DBM by 17.3h; near WSA-ENLIL 10.4h Earth std) |
+| **Gear 1: Coronal Chirality** | Magnetic cloud polarity ($B_z \le -10\text{ nT}$) | **24–72 hours** | Deep MobileNetV3 visual extraction from SOHO/LASCO C2 + SDO/HMI Active Region magnetograms (Schrijver $R$-value) | **63.7% Accuracy**, **0.6594 ROC-AUC**, **72.9% Specificity** on Cycle 25 OOD |
+| **Gear 2: Storm Severity Veto** | Severe storm classification ($Dst \le -110\text{ nT}$) | **24–72 hours** | 14 active empirical features (energy, flare flux, shear, kinematics) + Conformal Quantile Ensembles | **76.9% Accuracy** & **0.8360 ROC-AUC** on Cycle 25 OOD; **Defuses 81.6% of benign events** (62/76 false alarms avoided) |
+| **Gear 3: 3D Transit Kinematics** | Interplanetary shock arrival time ($\tau$) | **12–48 hours** | Bifurcated `MoKTransitNN` + GBDT with deterministic 3D cone trajectory filter | **$\pm 7.45\text{ h}$ Median / $\pm 10.63\text{ h}$ MAE** on Cycle 25 OOD (beats Vršnak DBM $\pm 12.30\text{ h}$; near WSA-ENLIL 10.4h Earth std) |
 | **Gear 4: L1 In-Situ Attention** | Tactical ring current nowcasting ($Dst$) | **1–6 hours** | 24-hour multivariate bidirectional LSTM (`HeliosBiLSTM`) with temporal attention on L1 DSCOVR/ACE telemetry | Calibrated inductive conformal prediction bounds on real L1 stream |
 
 ### 🚀 Legacy Space Weather vs HELIOS 2.0 Architectural Contrast
@@ -75,8 +75,8 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
 
 ## 🌟 Key Scientific Breakthroughs
 
-1. **Eliminating the 92% False Alarm Trap:**  
-   Standard kinematic-only models (like WSA-ENLIL or empirical speed alerts) trigger high-level emergency alerts whenever a CME launches at $V > 700-1500\text{ km/s}$, regardless of magnetic field orientation. When the field is northward ($B_z > 0$), the Earth's magnetosphere deflects the plasma, resulting in benign conditions ($Dst > -50\text{ nT}$). HELIOS 2.0 inspects coronal chirality at launch, **defusing 92.1% of false alarms** before sirens are sounded.
+1. **Defusing False Alarms via Coronal Chirality:**  
+   Standard kinematic-only models (like WSA-ENLIL or empirical speed alerts) trigger high-level emergency alerts whenever a CME launches at $V > 700-1500\text{ km/s}$, regardless of magnetic field orientation. When the field is northward ($B_z > 0$), the Earth's magnetosphere deflects the plasma, resulting in benign conditions ($Dst > -50\text{ nT}$). HELIOS 2.0 inspects coronal chirality at launch, **defusing 81.6% of operational false alarms** (62/76 false alarms avoided in out-of-distribution Cycle 25 testing) before sirens are sounded.
 
 2. **Aerodynamic Drag Bounding for Hypersonic CMEs:**  
    In extreme hypersonic eruptions ($V > 2000\text{ km/s}$), standard empirical models suffer from extrapolation error. By implementing closed-form aerodynamic drag limits ($v_{\text{amb}} = 420\text{ km/s}$, $\tau \ge 16.0\text{ h}$ physical solar wind saturation bound), HELIOS establishes an empirical transit lower bound on landmark events like the record October 29, 2003 Halloween storm ($19.4\text{ h}$ observed vs $16.0\text{ h}$ aerodynamic bound, $\Delta = 3.4\text{ h}$).
@@ -96,13 +96,13 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
 
 Evaluating historical landmark space weather events across Solar Cycles 23–25 with exact time-synchronized inputs and real empirical ground truth:
 
-| Landmark Event | Detection Epoch | Launch Speed | Ground Truth ($Dst / B_z$) | Observed Transit | Pipeline Alert & Status |
-| :--- | :--- | :---: | :---: | :---: | :---: |
-| **Halloween Superstorm (Oct 29, 2003)** | 2003-10-29 20:54 | $2029\text{ km/s}$ | $-383\text{ nT} / -38.5\text{ nT}$ (G5) | $19.4\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 70.0\%$, $P_{\text{south}} = 56.9\%$) |
-| **May 2024 Superstorm (AR 3664)** | 2024-05-07 03:12 | $812\text{ km/s}$ | $-406\text{ nT} / -35.3\text{ nT}$ (G5) | $85.9\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 73.3\%$, $P_{\text{south}} = 61.8\%$) |
-| **Nov 2003 Superstorm (Halloween)** | 2003-11-18 08:50 | $1824\text{ km/s}$ | $-422\text{ nT} / -50.9\text{ nT}$ (G5) | $47.2\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 74.8\%$, $P_{\text{south}} = 63.0\%$) |
-| **May 14, 2024 Moderate Eruption** | 2024-05-14 10:09 | $749\text{ km/s}$ | $-88\text{ nT} / -12.8\text{ nT}$ | $75.3\text{ h}$ | 🔴 Alert ($P_{\text{sev}} = 72.2\%$; ETA $70.7\text{ h}$, $\Delta = 4.7\text{ h}$) |
-| **Jan 17, 1998 Solar Baseline** | 1998-01-17 04:09 | $350\text{ km/s}$ | $-11\text{ nT} / -4.4\text{ nT}$ | $95.8\text{ h}$ | 🔴 Alert ($P_{\text{sev}} = 61.5\%$; ETA $70.2\text{ h}$) |
+| Landmark Event | Detection Epoch | Launch Speed | Ground Truth ($Dst / B_z$) | Observed Transit | Pipeline Alert & Status | Validation Verdict |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **May 2024 Superstorm (AR 3664)** | 2024-05-07 03:12 | $812\text{ km/s}$ | $-406\text{ nT} / -35.3\text{ nT}$ (G5) | $85.9\text{ h}$ | 🟡 Watch / South Alert ($P_{\text{sev}} = 45.4\%$, $P_{\text{south}} = 53.5\%$, ETA $70.8\text{ h}$, $\Delta = 15.1\text{ h}$) | ⚠️ Partial (Bz: PASS) |
+| **Halloween Superstorm (Oct 29, 2003)** | 2003-10-29 20:54 | $2029\text{ km/s}$ | $-383\text{ nT} / -38.5\text{ nT}$ (G5) | $19.4\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 82.2\%$, $P_{\text{south}} = 41.3\%$, ETA $49.4\text{ h}$, $\Delta = 30.0\text{ h}$) | ⚠️ Partial (G5: PASS, Hypersonic Lag) |
+| **Nov 2003 Superstorm (Halloween)** | 2003-11-18 08:50 | $2074\text{ km/s}$ | $-422\text{ nT} / -50.9\text{ nT}$ (G5) | $47.2\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 77.0\%$, $P_{\text{south}} = 56.4\%$, ETA $37.4\text{ h}$, $\Delta = 9.8\text{ h}$) | ✅ Concordant G5 Alert |
+| **May 14, 2024 Moderate Eruption** | 2024-05-14 10:09 | $749\text{ km/s}$ | $-88\text{ nT} / -12.8\text{ nT}$ | $75.3\text{ h}$ | 🟢 Safe Protocol ($P_{\text{sev}} = 30.2\%$, $P_{\text{south}} = 48.5\%$, ETA $68.7\text{ h}$, $\Delta = 6.6\text{ h}$) | ✅ Concordant Moderate Match |
+| **Jan 17, 1998 Solar Baseline** | 1998-01-17 04:09 | $350\text{ km/s}$ | $-11\text{ nT} / -4.4\text{ nT}$ | $95.8\text{ h}$ | 🟢 Safe Protocol ($P_{\text{sev}} = 42.8\%$, $P_{\text{south}} = 47.9\%$, ETA $75.8\text{ h}$, $\Delta = 20.0\text{ h}$) | ⚠️ Partial (Classes: PASS, Transit Δ: 20.0h) |
 
 *Note on Headless Evaluation:* In headless execution where raw active region magnetograms are absent from local storage, visual feature extractors default to zero, elevating baseline severity probability ($P_{\text{severe}} \approx 0.60\text{--}0.72$) for non-extreme events. Operational deployment utilizes live SDO/HMI magnetograms for full dynamic range.
 
@@ -181,15 +181,15 @@ If you utilize HELIOS 2.0 in academic research, space operations, or utility gri
 
 ```bibtex
 @article{ZarManah2026HELIOS2,
-  title={{Zar-Manah HELIOS 2.0: Single-File Plug-and-Play 4 AI Models for Real-Time Solar Storm Impact \& CME Arrival Prediction}},
+  title={{Zar-Manah HELIOS 2.0: A Unified 4-Tier Space Weather Intelligence Architecture Coupling Coronal Solar Vision, Planetary Shock Kinematics, and L1 In-Situ Attention on Apple Silicon M4}},
   author={{Zar Manah}},
   affiliation={Independent Researcher, Madrid, Spain},
   orcid={0009-0007-8443-8999},
   journal={Zenodo Preprints},
   year={2026},
   publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24179115},
-  url={https://doi.org/10.5281/zenodo.24179115}
+  doi={10.5281/zenodo.24061451},
+  url={https://doi.org/10.5281/zenodo.24061451}
 }
 ```
 
