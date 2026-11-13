@@ -335,7 +335,8 @@ def build_pdf():
         "Riley, P., et al. (2018). Forecasting CME arrival: CCor/ENLIL pipeline. <i>Space Weather</i>, 16(9), 1245–1260.",
         "Romano, Y., Patterson, E., & Cand&egrave;s, E. (2019). Conformalized quantile regression. <i>NeurIPS</i>, 32.",
         "Schrijver, C. J. (2007). Characteristic magnetic field patterns in large solar flares. <i>Astrophys. J.</i>, 655(2), L117.",
-        "Vr&scaron;nak, B., et al. (2013). Propagation of CMEs: Drag-based model. <i>Solar Phys.</i>, 285(1), 295–315."
+        "Vr&scaron;nak, B., et al. (2013). Propagation of CMEs: Drag-based model. <i>Solar Phys.</i>, 285(1), 295–315.",
+        "Wold, C., et al. (2018). Verification of CME arrivals using the WSA-ENLIL+CONE model at CCMC. <i>Space Weather</i>, 16(11), 1640–1662."
     ]
     for r in refs:
         story.append(Paragraph(f"&bull; {r}", caption_style))

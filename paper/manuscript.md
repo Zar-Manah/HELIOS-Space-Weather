@@ -336,4 +336,5 @@ Raw solar wind and imagery data are curated by NASA SPDF OMNIWeb, SDO, and ESA/N
 23. Sugiura, M. (1964). Hourly values of equatorial Dst for the IGY. *Annals of the IGY*, 35, 9–45.
 24. Vršnak, B., et al. (2013). Propagation of coronal mass ejections: Drag-based model. *Solar Physics*, 285(1), 295–315.
 25. Webb, D. F., & Howard, T. A. (2012). Coronal mass ejections: Observations. *Living Reviews in Solar Physics*, 9(1), 3.
-26. Yashiro, S., et al. (2004). A catalog of white light CMEs observed by SOHO/LASCO. *Journal of Geophysical Research*, 109(A7).
+26. Wold, C., et al. (2018). Verification of CME arrivals using the WSA-ENLIL+CONE model at the Community Coordinated Modeling Center. *Space Weather*, 16(11), 1640–1662.
+27. Yashiro, S., et al. (2004). A catalog of white light CMEs observed by SOHO/LASCO. *Journal of Geophysical Research*, 109(A7).

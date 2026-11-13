@@ -213,8 +213,8 @@ def build_pdf():
         "Zar-Manah HELIOS integrates two synchronized operational engines: <b>(1) Zar-Manah HELIOS-Tactical (1–6h):</b> Powered by "
         "gradient-boosted decision trees and bidirectional recurrent neural networks coupled to Inductive Conformalized Quantile "
         "Regression (CQR). Evaluated strictly out-of-distribution across 57,998 hourly samples in Solar Cycle 25 (2020–2026), "
-        "Zar-Manah HELIOS achieves an out-of-distribution R² of 0.972, an RMSE of 5.07 nT (+1h) and 10.34 nT (+3h), and exact 89.2% conformal "
-        "coverage (89.19% at +1h, ±12.5 nT). During the historic May 10–12, 2024 G5 Superstorm (Dst = -406 nT), Zar-Manah HELIOS dynamically scaled its "
+        "Zar-Manah HELIOS achieves an out-of-distribution R² of 0.968, an RMSE of 3.66 nT (+1h) and 7.65 nT (+3h), and exact 89.1% calibrated conformal "
+        "coverage (89.10% at +1h, ±5.0 nT; raw quantile coverage 86.43%). During the historic May 10–12, 2024 G5 Superstorm (Dst = -406 nT), Zar-Manah HELIOS dynamically scaled its "
         "uncertainty bounds from ~12.5 nT to >70 nT, capturing the catastrophic ring current collapse in real time. "
         "<b>(2) Zar-Manah HELIOS-Transit (24–72h):</b> Trained on 331 verified Earth-impacting CMEs cross-matched between "
         "NASA SOHO/LASCO CDAW and the Richardson & Cane database with zero synthetic speed leakage. HELIOS achieves an arrival MAE of "
@@ -311,19 +311,19 @@ def build_pdf():
 
     table_tactical_data = [
         ["Lead Time", "Architecture", "RMSE (nT)", "MAE (nT)", "R²", "TSS (≤ -50)", "HSS (≤ -50)", "Nominal 90% Cov.", "Mean Width"],
-        ["+1 Hour", "Persistence Baseline", "6.37", "3.61", "0.955", "0.898", "0.898", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS-Point", "5.07", "2.90", "0.972", "0.921", "0.922", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS Bi-LSTM", "5.62", "3.15", "0.965", "0.912", "0.910", "N/A", "N/A"],
-        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>89.19%</b>", "<b>12.52 nT</b>"],
-        ["+2 Hours", "Persistence Baseline", "10.21", "5.90", "0.886", "0.829", "0.828", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS-Point", "7.97", "4.84", "0.930", "0.874", "0.872", "N/A", "N/A"],
-        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>88.96%</b>", "<b>19.48 nT</b>"],
-        ["+3 Hours", "Persistence Baseline", "12.95", "7.51", "0.816", "0.769", "0.768", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS-Point", "10.34", "6.31", "0.883", "0.836", "0.834", "N/A", "N/A"],
-        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>88.71%</b>", "<b>25.01 nT</b>"],
-        ["+6 Hours", "Persistence Baseline", "19.33", "10.95", "0.590", "0.638", "0.636", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS-Point", "15.46", "9.25", "0.738", "0.705", "0.705", "N/A", "N/A"],
-        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>88.50%</b>", "<b>35.40 nT</b>"]
+        ["+1 Hour", "Persistence Baseline", "4.57", "2.87", "0.950", "0.873", "0.873", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-Point</b>", "<b>3.66</b>", "<b>2.36</b>", "<b>0.968</b>", "<b>0.894</b>", "<b>0.900</b>", "N/A", "N/A"],
+        ["", "Zar-Manah HELIOS Bi-LSTM", "4.32", "2.54", "0.955", "0.880", "0.879", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>89.10%</b>", "<b>9.98 nT</b>"],
+        ["+2 Hours", "Persistence Baseline", "7.34", "4.66", "0.870", "0.796", "0.796", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-Point</b>", "<b>5.93</b>", "<b>3.96</b>", "<b>0.915</b>", "<b>0.827</b>", "<b>0.839</b>", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>89.03%</b>", "<b>16.04 nT</b>"],
+        ["+3 Hours", "Persistence Baseline", "9.23", "5.84", "0.795", "0.742", "0.742", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-Point</b>", "<b>7.65</b>", "<b>5.11</b>", "<b>0.859</b>", "<b>0.765</b>", "<b>0.788</b>", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>88.74%</b>", "<b>20.57 nT</b>"],
+        ["+6 Hours", "Persistence Baseline", "13.16", "8.09", "0.584", "0.614", "0.614", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-Point</b>", "<b>10.91</b>", "<b>7.09</b>", "<b>0.714</b>", "<b>0.630</b>", "<b>0.662</b>", "N/A", "N/A"],
+        ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>89.05%</b>", "<b>28.48 nT</b>"]
     ]
 
     t_tactical = Table(table_tactical_data, colWidths=[0.85*inch, 1.5*inch, 0.7*inch, 0.7*inch, 0.55*inch, 0.8*inch, 0.8*inch, 1.05*inch, 0.85*inch])
@@ -381,7 +381,7 @@ def build_pdf():
     table_transit_data = [
         ["Regime / Benchmark", "Model / Architecture", "Arrival MAE (h)", "Arrival RMSE (h)", "90% Conformal Cov.", "Computational Cost"],
         ["<b>Fast CMEs (≥1000 km/s)</b>", "Empirical Kinematic Baseline", "±14.80", "18.20", "N/A", "< 0.01 s"],
-        ["", "Classical Drag-Based Model (DBM)", "±18.40", "22.10", "N/A", "0.05 s"],
+        ["", "Classical Drag-Based Model (DBM)", "±16.57", "22.10", "N/A", "0.05 s"],
         ["", "NASA WSA-ENLIL (STEREO-A, Wold 2018)", "±9.20", "12.40", "N/A", "Hours on HPC Cluster"],
         ["", "<b>HELIOS Dynamic Ensemble (Fast)</b>", "<b>±15.37</b>", "<b>18.42</b>", "<b>75.0%</b>", "<b>< 0.05 s (Local Apple M4)</b>"],
         ["<b>Global (All CMEs, Cycle 25)</b>", "Classical Drag-Based Model (DBM)", "±28.95", "33.00", "N/A", "0.05 s"],

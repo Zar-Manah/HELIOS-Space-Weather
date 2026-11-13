@@ -3,46 +3,108 @@
   "system": "Zar-Manah HELIOS 2.0",
   "doi": "10.5281/zenodo.24182248",
   "concept_doi": "10.5281/zenodo.24061451",
-  "tactical_l1_nowcasting_cycle25_n57998": {
-    "lead_1h": {
+  "test_samples_total": 57998,
+  "lead_1h": {
+    "persistence": {
+      "rmse": 4.57,
+      "mae": 2.87,
+      "r2": 0.95,
+      "tss_50": 0.8728,
+      "hss_50": 0.8728
+    },
+    "helios_point": {
       "rmse": 3.66,
       "mae": 2.36,
       "r2": 0.968,
-      "tss": 0.894,
-      "conformal_coverage_nominal90": 86.43,
-      "interval_width_nT": 9.3
+      "tss_50": 0.894,
+      "hss_50": 0.9
     },
-    "lead_2h": {
+    "conformal": {
+      "q_conformal_adjustment": 0.332,
+      "empirical_coverage": 0.891,
+      "mean_interval_width": 9.98,
+      "raw_quantile_coverage": 0.8643,
+      "raw_quantile_width": 9.31
+    }
+  },
+  "lead_2h": {
+    "persistence": {
+      "rmse": 7.34,
+      "mae": 4.66,
+      "r2": 0.87,
+      "tss_50": 0.7958,
+      "hss_50": 0.7958
+    },
+    "helios_point": {
       "rmse": 5.93,
       "mae": 3.96,
       "r2": 0.915,
-      "tss": 0.827,
-      "conformal_coverage_nominal90": 86.57,
-      "interval_width_nT": 15.0
+      "tss_50": 0.8265,
+      "hss_50": 0.8386
     },
-    "lead_3h": {
+    "conformal": {
+      "q_conformal_adjustment": 0.503,
+      "empirical_coverage": 0.8903,
+      "mean_interval_width": 16.04,
+      "raw_quantile_coverage": 0.8657,
+      "raw_quantile_width": 15.04
+    }
+  },
+  "lead_3h": {
+    "persistence": {
+      "rmse": 9.23,
+      "mae": 5.84,
+      "r2": 0.795,
+      "tss_50": 0.7421,
+      "hss_50": 0.7421
+    },
+    "helios_point": {
       "rmse": 7.65,
       "mae": 5.11,
       "r2": 0.859,
-      "tss": 0.765,
-      "conformal_coverage_nominal90": 86.06,
-      "interval_width_nT": 19.3
+      "tss_50": 0.7651,
+      "hss_50": 0.7883
     },
-    "lead_6h": {
+    "conformal": {
+      "q_conformal_adjustment": 0.654,
+      "empirical_coverage": 0.8874,
+      "mean_interval_width": 20.57,
+      "raw_quantile_coverage": 0.8606,
+      "raw_quantile_width": 19.26
+    }
+  },
+  "lead_6h": {
+    "persistence": {
+      "rmse": 13.16,
+      "mae": 8.09,
+      "r2": 0.584,
+      "tss_50": 0.6141,
+      "hss_50": 0.614
+    },
+    "helios_point": {
       "rmse": 10.91,
       "mae": 7.09,
       "r2": 0.714,
-      "tss": 0.63,
-      "conformal_coverage_nominal90": 85.18,
-      "interval_width_nT": 25.9
+      "tss_50": 0.6298,
+      "hss_50": 0.6617
     },
-    "bilstm_mps_lead_1h_n57975": {
-      "rmse": 4.32,
-      "mae": 2.54,
-      "r2": 0.955
+    "conformal": {
+      "q_conformal_adjustment": 1.308,
+      "empirical_coverage": 0.8905,
+      "mean_interval_width": 28.48,
+      "raw_quantile_coverage": 0.8518,
+      "raw_quantile_width": 25.86
     }
   },
-  "planetary_transit_kinematics_cycle25_n91": {
+  "helios_bilstm_mps": {
+    "lead_1h": {
+      "rmse": 4.32,
+      "mae": 2.54,
+      "r2": 0.955,
+      "n_sequences": 57975
+    }
+  },
+  "planetary_transit_kinematics": {
     "gbdt_alone": {
       "mae_hours": 10.63,
       "median_hours": 7.45,
@@ -58,12 +120,18 @@
       "r2": 0.278,
       "conformal_coverage": 81.3
     },
-    "nasa_wsa_enlil_operational_benchmark": {
+    "vrsnak_dbm_all": {
+      "mae_hours": 12.3
+    },
+    "vrsnak_dbm_fast": {
+      "mae_hours": 16.57
+    },
+    "nasa_wsa_enlil_standard": {
       "mae_hours": 10.4,
       "rmse_hours": 13.2
     }
   },
-  "apex_v5_coronal_and_helio_kinematic_cycle25_n91": {
+  "apex_v5_models": {
     "gear2_storm_severity": {
       "test_accuracy": 0.7802,
       "test_roc_auc": 0.8737,
@@ -71,10 +139,9 @@
       "test_specificity": 0.7895,
       "test_sensitivity": 0.7333,
       "tss": 0.5228,
-      "test_brier": 0.1154,
-      "climatology_brier": 0.1377
+      "test_brier": 0.1154
     },
-    "gear1_chirality_southward_bz": {
+    "gear1_chirality": {
       "test_accuracy": 0.5824,
       "test_roc_auc": 0.6497,
       "train_cv_auc": 0.4745,
@@ -83,11 +150,5 @@
       "tss": 0.1502,
       "test_brier": 0.2426
     }
-  },
-  "apple_silicon_m4_execution_latency_ms": {
-    "mean": 14.49,
-    "median": 14.35,
-    "p90": 15.29,
-    "p99": 15.89
   }
 }

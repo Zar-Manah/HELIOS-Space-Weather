@@ -7,8 +7,8 @@
   "local_release_version": "2.5.9",
   "status": "v2.5.9 packaged and verified with full 57,998-sample metrics, APEX V5 physical models, and 314-image catalog",
   "artifacts_sha256": {
-    "helios_processed_datasets.tar.gz": "d9e2090d3308018747a64a07b9759da6ea2eed6869cb95d9d9b5d487f5dd8818",
-    "helios_trained_models.tar.gz": "28ca4c2a005103f81f224d4f5ac9470c61ca5ae6df1d859fd6231d6015a39de6",
-    "helios_evaluation_metrics.json": "9dfe47e22e1b36912c1d48dbcc762588e2eeeb71adcdfaa2f9ac8ad50f31c233"
+    "helios_processed_datasets.tar.gz": "b9cd10eb306c76242467840a222e9e14997e050e521f0a23a5622b13db80e7c6",
+    "helios_trained_models.tar.gz": "80f618ff26e065af0c7d6258f4afd812065043a06456c23a1282baf5fad73217",
+    "helios_evaluation_metrics.json": "0b2305f321bdaf431ec158e7200ddf3fc2f3f82d5c4cedff3507c9a580208c50"
   }
 }
