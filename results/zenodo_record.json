@@ -5,10 +5,10 @@
   "record_url": "https://zenodo.org/api/records/24182248",
   "published_zenodo_version": "2.5.8",
   "local_release_version": "2.5.9",
-  "status": "v2.5.9 packaged and verified with full 57,998-sample metrics, APEX V5 physical models, and 314-image catalog",
+  "status": "v2.5.9 packaged and verified with full 57,998-sample metrics, APEX V5 physical models, and complete multi-source solar/interplanetary catalogs",
   "artifacts_sha256": {
-    "helios_processed_datasets.tar.gz": "b9cd10eb306c76242467840a222e9e14997e050e521f0a23a5622b13db80e7c6",
-    "helios_trained_models.tar.gz": "80f618ff26e065af0c7d6258f4afd812065043a06456c23a1282baf5fad73217",
-    "helios_evaluation_metrics.json": "0b2305f321bdaf431ec158e7200ddf3fc2f3f82d5c4cedff3507c9a580208c50"
+    "helios_processed_datasets.tar.gz": "0ee6536228abf3e4422b1299146a89f926d07b1d3f012f716fc5cc6022fb7a1d",
+    "helios_trained_models.tar.gz": "27a1b18928cea2b81624688d3f69648d40b416162ad3653841b1694dfbffdf7d",
+    "helios_evaluation_metrics.json": "e66de8abb706eefa61297a967508d20820ec2c481fcb787003c3ee818c13c69c"
   }
 }

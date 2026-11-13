@@ -1,7 +1,7 @@
 {
   "model_type": "MoKTransitNN",
   "base_checkpoint": "models/helios_transit_mok_mps.pt",
-  "base_sha256": "c935bada0e352f7fc571df56a71b4a100c3135b278db0bebddeaf4cfebe29e3a",
+  "base_sha256": "d04737166bb4fb854de905fc040df851738edd9e74cbdc24763e793bb6531c92",
   "edited_checkpoint": "models/helios_transit_mok_edited.pt",
   "edited_sha256": "65f39975ac22c794e0e702c71d356ba73838ece2b29b098b7e9a6fa6b4caea4e",
   "operations_count": 1,

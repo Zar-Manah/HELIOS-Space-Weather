@@ -98,10 +98,10 @@ Evaluating historical landmark space weather events across Solar Cycles 23–25 
 
 | Landmark Event | Detection Epoch | Launch Speed | Ground Truth ($Dst / B_z$) | Observed Transit | Pipeline Alert & Status | Validation Verdict |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **May 2024 Superstorm (AR 3664)** | 2024-05-07 03:12 | $812\text{ km/s}$ | $-412\text{ nT} / -35.3\text{ nT}$ (G5) | $85.9\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 30.9\%$, $P_{\text{south}} = 54.5\%$, ETA $62.7\text{ h}$, $\Delta = 23.2\text{ h}$) | ✅ Concordant G5 Alert |
-| **Halloween Superstorm (Oct 29, 2003)** | 2003-10-29 20:54 | $2293\text{ km/s}$ | $-383\text{ nT} / -38.5\text{ nT}$ (G5) | $19.4\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 68.6\%$, $P_{\text{south}} = 66.5\%$, ETA $31.4\text{ h}$, $\Delta = 12.0\text{ h}$) | ⚠️ Partial (G5: PASS, Hypersonic Lag) |
-| **Nov 2003 Superstorm (Halloween)** | 2003-11-18 08:50 | $2074\text{ km/s}$ | $-422\text{ nT} / -50.9\text{ nT}$ (G5) | $47.2\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 55.6\%$, $P_{\text{south}} = 59.9\%$, ETA $42.9\text{ h}$, $\Delta = 4.3\text{ h}$) | ✅ Concordant G5 Alert |
-| **May 14, 2024 Moderate Eruption** | 2024-05-14 10:09 | $800\text{ km/s}$ | $-88\text{ nT} / -12.8\text{ nT}$ | $75.3\text{ h}$ | 🟢 Safe Protocol ($P_{\text{sev}} = 14.9\%$, $P_{\text{south}} = 49.1\%$, ETA $70.1\text{ h}$, $\Delta = 5.3\text{ h}$) | ✅ Concordant Moderate Match |
+| **May 2024 Superstorm (AR 3664)** | 2024-05-07 03:12 | $812\text{ km/s}$ | $-412\text{ nT} / -35.3\text{ nT}$ (G5) | $85.9\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 30.9\%$, $P_{\text{south}} = 54.5\%$, ETA $61.9\text{ h}$, $\Delta = 24.0\text{ h}$) | ✅ Concordant G5 Alert |
+| **Halloween Superstorm (Oct 29, 2003)** | 2003-10-29 20:54 | $2293\text{ km/s}$ | $-383\text{ nT} / -38.5\text{ nT}$ (G5) | $19.4\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 68.6\%$, $P_{\text{south}} = 66.5\%$, ETA $49.4\text{ h}$, $\Delta = 30.0\text{ h}$) | ⚠️ Partial (G5: PASS, Hypersonic Lag) |
+| **Nov 2003 Superstorm (Halloween)** | 2003-11-18 08:50 | $2074\text{ km/s}$ | $-422\text{ nT} / -50.9\text{ nT}$ (G5) | $47.2\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 55.6\%$, $P_{\text{south}} = 59.9\%$, ETA $37.4\text{ h}$, $\Delta = 9.8\text{ h}$) | ✅ Concordant G5 Alert |
+| **May 14, 2024 Moderate Eruption** | 2024-05-14 10:09 | $800\text{ km/s}$ | $-88\text{ nT} / -12.8\text{ nT}$ | $75.3\text{ h}$ | 🟢 Safe Protocol ($P_{\text{sev}} = 14.9\%$, $P_{\text{south}} = 49.1\%$, ETA $68.7\text{ h}$, $\Delta = 6.6\text{ h}$) | ✅ Concordant Moderate Match |
 | **Jan 17, 1998 Solar Baseline** | 1998-01-17 04:09 | $350\text{ km/s}$ | $-11\text{ nT} / -4.4\text{ nT}$ | $95.8\text{ h}$ | 🟢 Safe Protocol ($P_{\text{sev}} = 12.4\%$, $P_{\text{south}} = 47.9\%$, ETA $75.8\text{ h}$, $\Delta = 20.0\text{ h}$) | ✅ Concordant Baseline Match |
 
 

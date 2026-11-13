@@ -18,7 +18,7 @@ Here, we present **Zar-Manah HELIOS 2.0**, an integrated, four-tier space weathe
 - **Gear 1 (Coronal Chirality & $B_z$ Threat):** Powered by `HELIOS-CHIRALITY-APEX`, evaluating southward magnetic threat ($B_z \le -10\text{ nT}$) and Inductive Conformal Quantile bounds $[Q_{10}, Q_{90}]$ directly at launch ($t = 0$). Evaluated out-of-distribution across unseen Solar Cycle 25 (91 CMEs), physical features achieve **$58.2\%$ accuracy**, **$0.6497$ ROC-AUC**, **$70.8\%$ specificity**, and **$44.2\%$ sensitivity** (TSS $+0.1502$). Crucially, extensive cross-validation reveals that early solar observations yield a baseline Train 5-Fold CV ROC-AUC of **$0.4745$** (near chance), demonstrating that internal microscale flux rope reconnection 150 million km away cannot be reliably forecasted from early solar observations alone, establishing that operational $B_z$ defense requires in-situ L1 telemetry.
 - **Gear 2 (Severe Storm Veto):** Powered by `HELIOS-STORM-APEX`, synthesizing 3D de-projected CME kinetic energy ($E_{3\text{D}} = \frac{1}{2} M v_{3\text{D}}^2$) and soft X-ray flare fluence across 14 verified physical dimensions. Evaluated strictly out-of-distribution across unseen Solar Cycle 25 (2020–2026, 91 CMEs with verified Kyoto WDC causal arrival labels), `HELIOS-STORM-APEX` achieves **$78.0\%$ accuracy**, **$0.8737$ ROC-AUC**, and **$78.9\%$ specificity** (avoiding 60 out of 76 historical false alarms, with **$73.3\%$ sensitivity** capturing 11 of 15 severe storms, TSS $+0.5228$). With calibrated probabilities, it achieves a Brier score of **$0.1154$**, strictly outperforming climatological baseline ($0.1377$).
 - **Gear 3 (Interplanetary Shock Kinematics):** Powered by `MoKTransitNN` and a dynamic Gradient Boosted decision tree regime trained on 331 verified empirical CME shocks without synthetic leakage. Evaluated out-of-distribution across unseen Solar Cycle 25 (91 clean CMEs), HELIOS achieves an arrival MAE of **$10.63\text{ hours}$** and a median absolute error of **$7.45\text{ hours}$** (GBDT alone) and $11.69\text{ hours}$ MAE ($8.34\text{ hours}$ median, MoK hybrid ensemble), performing on par with operational 3D MHD numerical simulations (NASA WSA-ENLIL standard of $\pm 10.40\text{ hours}$ at Earth; Wold et al., 2018) in sub-second inference on edge hardware ($<0.05\text{ s}$), alongside honest empirical conformal prediction intervals ($81.3\%$ empirical coverage on nominal 90% interval, mean width $37.5\text{ h}$).
-- **Gear 4 (Tactical L1 In-Situ Attention):** Synchronizes two complementary models on real-time solar wind streams: (1) `HELIOS-Point` (GBDT + CQR), providing multi-horizon $Dst$ forecasts across $+1\text{h}$ to $+6\text{h}$ on all 57,998 samples of Solar Cycle 25 ($R^2 = 0.968$, RMSE $= 3.66\text{ nT}$, MAE $= 2.36\text{ nT}$ at $+1\text{h}$; $R^2 = 0.714$, RMSE $= 10.91\text{ nT}$ at $+6\text{h}$, with $86.4\%$ empirical conformal coverage on nominal 90% interval); and (2) `HeliosBiLSTM`, a 14-feature bidirectional recurrent neural network with temporal attention providing standalone $+1\text{h}$ neural nowcasts directly on Apple Silicon M4 GPU ($R^2 = 0.955$, RMSE $= 4.32\text{ nT}$, MAE $= 2.54\text{ nT}$ across 57,975 rolling 24h sequences).
+- **Gear 4 (Tactical L1 In-Situ Attention):** Synchronizes two complementary models on real-time solar wind streams: (1) `HELIOS-Point` (GBDT + CQR), providing multi-horizon $Dst$ forecasts across $+1\text{h}$ to $+6\text{h}$ on all 57,998 samples of Solar Cycle 25 ($R^2 = 0.968$, RMSE $= 3.66\text{ nT}$, MAE $= 2.36\text{ nT}$ at $+1\text{h}$; $R^2 = 0.714$, RMSE $= 10.91\text{ nT}$ at $+6\text{h}$, with $89.26\%$ finite-sample calibrated CQR coverage on nominal 90% interval, $86.43\%$ raw quantile coverage); and (2) `HeliosBiLSTM`, a 14-feature bidirectional recurrent neural network with temporal attention providing standalone $+1\text{h}$ neural nowcasts directly on Apple Silicon M4 GPU ($R^2 = 0.955$, RMSE $= 4.32\text{ nT}$, MAE $= 2.54\text{ nT}$ across 57,975 rolling 24h sequences).
 
 We integrate an autonomous production client streaming live telemetry from NOAA SWPC and NASA SDO/SOHO. In operational tests on Apple Silicon M4, HELIOS 2.0 ingested live satellite feeds, executing all four tiers in **$14.5\text{ ms}$**, correctly identifying active high-speed streams as northward and non-hazardous, defusing false alerts. All checkpoints, scalers, and reproducible code are maintained open-source under the MIT license for global planetary defense.
 
@@ -169,7 +169,7 @@ Rather than relying on iterative gradient descent or backpropagation fine-tuning
 $$\mathbf{b}'_{\text{fast}} = \mathbf{b}_{\text{fast}} + \Delta b_{\text{fast}}$$
 $$\mathbf{W}'_{\text{fast}} = \mathbf{W}_{\text{fast}} \cdot (1 + g_{\text{fast}})$$
 
-By computing a microsecond analytical projection over fast CME latents, HTWS applies a closed-form bias adjustment $\Delta b_{\text{fast}} = -0.150\text{ hours}$ to prevent systematic over-prediction on hypersonic eruptions. Evaluated strictly out-of-distribution across unseen Solar Cycle 25 (92 independent CMEs with zero synthetic leakage), the single GBDT model achieves an arrival MAE of $\pm 10.63\text{ hours}$ (median absolute error of $\pm 7.45\text{ hours}$), closely approaching NASA's operational WSA-ENLIL 3D MHD supercomputer standard ($\pm 10.40\text{ hours}$ at Earth; Wold et al., 2018), while the MoK neural model and dynamic ensemble achieve $\pm 11.69\text{ hours}$ global MAE and $\pm 15.37\text{ hours}$ on fast CMEs ($\ge 1000\text{ km/s}$). Each surgery transaction is formally committed with a SHA-256 cryptographic provenance manifest.
+By computing a microsecond analytical projection over fast CME latents, HTWS applies a closed-form bias adjustment $\Delta b_{\text{fast}} = -0.150\text{ hours}$ to prevent systematic over-prediction on hypersonic eruptions. Evaluated strictly out-of-distribution across unseen Solar Cycle 25 (91 independent CMEs with zero synthetic leakage), the single GBDT model achieves an arrival MAE of $\pm 10.63\text{ hours}$ (median absolute error of $\pm 7.45\text{ hours}$), closely approaching NASA's operational WSA-ENLIL 3D MHD supercomputer standard ($\pm 10.40\text{ hours}$ at Earth; Wold et al., 2018), while the MoK neural model and dynamic ensemble achieve $\pm 11.69\text{ hours}$ global MAE and $\pm 15.37\text{ hours}$ on fast CMEs ($\ge 1000\text{ km/s}$). Each surgery transaction is formally committed with a SHA-256 cryptographic provenance manifest.
 
 The arrival time ETA is bounded by adaptive conformal hunting bounds:
 $$t_{\text{ETA}} = t_{\text{launch}} + \hat{t}_{\text{transit}}$$
@@ -197,24 +197,24 @@ guaranteeing finite-sample coverage $\mathbb{P}(y_{\text{test}} \in C(x_{\text{t
 ## 4. Empirical Results and Out-of-Distribution Validation
 
 ### 4.1 Strict Out-of-Distribution Cross-Cycle Protocol
-HELIOS 2.0 was trained exclusively on **Solar Cycles 23 and 24 (1998–2019)** and evaluated out-of-distribution (OOD) strictly on **Solar Cycle 25 (2020–2026)**, comprising 92 independent CME events and 57,998 hourly OMNI2 samples.
+HELIOS 2.0 was trained exclusively on **Solar Cycles 23 and 24 (1998–2019)** and evaluated out-of-distribution (OOD) strictly on **Solar Cycle 25 (2020–2026)**, comprising 91 independent CME events and 57,998 hourly OMNI2 samples.
 
 #### Table 1: Multi-Horizon Tactical Out-of-Distribution Benchmarks (OMNI2 Cycle 25, Full n=57,998)
-| Lead Time | Architecture | RMSE (nT) | MAE (nT) | $R^2$ | TSS ($Dst \le -50$) | HSS ($Dst \le -50$) | Nominal 90% Empirical Cov. | Mean Width (nT) |
+| Lead Time | Architecture | RMSE (nT) | MAE (nT) | $R^2$ | TSS ($Dst \le -50$) | HSS ($Dst \le -50$) | Calibrated 90% Cov. (Raw) | Calibrated Width (Raw) |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **+1 Hour** | Persistence Baseline | 4.57 | 2.78 | 0.949 | 0.865 | 0.864 | N/A | N/A |
-| | **HELIOS-Point (GBDT)** | **3.66** | **2.36** | **0.968** | **0.894** | **0.894** | N/A | N/A |
+| **+1 Hour** | Persistence Baseline | 4.57 | 2.87 | 0.950 | 0.873 | 0.873 | N/A | N/A |
+| | **HELIOS-Point (GBDT)** | **3.66** | **2.36** | **0.968** | **0.894** | **0.900** | N/A | N/A |
 | | HELIOS Bi-LSTM (MPS, n=57,975) | 4.32 | 2.54 | 0.955 | 0.880 | 0.879 | N/A | N/A |
-| | **HELIOS-CQR (Nominal 90%)** | — | — | — | — | — | **86.43%** | **9.3** |
-| **+2 Hours** | Persistence Baseline | 8.24 | 4.88 | 0.835 | 0.778 | 0.776 | N/A | N/A |
-| | **HELIOS-Point (GBDT)** | **5.93** | **3.96** | **0.915** | **0.827** | **0.825** | N/A | N/A |
-| | **HELIOS-CQR (Nominal 90%)** | — | — | — | — | — | **86.57%** | **15.0** |
-| **+3 Hours** | Persistence Baseline | 10.98 | 6.54 | 0.708 | 0.702 | 0.700 | N/A | N/A |
-| | **HELIOS-Point (GBDT)** | **7.65** | **5.11** | **0.859** | **0.765** | **0.763** | N/A | N/A |
-| | **HELIOS-CQR (Nominal 90%)** | — | — | — | — | — | **86.06%** | **19.3** |
-| **+6 Hours** | Persistence Baseline | 16.20 | 9.85 | 0.365 | 0.531 | 0.528 | N/A | N/A |
-| | **HELIOS-Point (GBDT)** | **10.91** | **7.09** | **0.714** | **0.630** | **0.628** | N/A | N/A |
-| | **HELIOS-CQR (Nominal 90%)** | — | — | — | — | — | **85.18%** | **25.9** |
+| | **HELIOS-CQR (Nominal 90%)** | — | — | — | — | — | **89.26%** (86.43%) | **10.0 nT** (9.3 nT) |
+| **+2 Hours** | Persistence Baseline | 7.34 | 4.66 | 0.870 | 0.796 | 0.796 | N/A | N/A |
+| | **HELIOS-Point (GBDT)** | **5.93** | **3.96** | **0.915** | **0.827** | **0.839** | N/A | N/A |
+| | **HELIOS-CQR (Nominal 90%)** | — | — | — | — | — | **89.19%** (86.57%) | **16.1 nT** (15.0 nT) |
+| **+3 Hours** | Persistence Baseline | 9.23 | 5.84 | 0.795 | 0.742 | 0.742 | N/A | N/A |
+| | **HELIOS-Point (GBDT)** | **7.65** | **5.11** | **0.859** | **0.765** | **0.788** | N/A | N/A |
+| | **HELIOS-CQR (Nominal 90%)** | — | — | — | — | — | **88.96%** (86.06%) | **20.7 nT** (19.3 nT) |
+| **+6 Hours** | Persistence Baseline | 13.16 | 8.09 | 0.584 | 0.614 | 0.614 | N/A | N/A |
+| | **HELIOS-Point (GBDT)** | **10.91** | **7.09** | **0.714** | **0.630** | **0.662** | N/A | N/A |
+| | **HELIOS-CQR (Nominal 90%)** | — | — | — | — | — | **89.19%** (85.18%) | **28.6 nT** (25.9 nT) |
 
 #### Table 2: 24–72h CME Transit Time Benchmark on Unseen Solar Cycle 25 (Zero Synthetic Leakage)
 | Speed Regime / Benchmark | Model / System | Arrival MAE (h) | Arrival RMSE (h) | Median Error (h) | Conformal Coverage | Compute Overhead |
@@ -243,12 +243,12 @@ To determine whether white-light coronagraph imagery carries direct predictive s
 | PHYS + C2 Coronagraph PCA | 22 | Severe Storm ($Dst \le -110\text{ nT}$) | $0.6659$ | $0.8614$ |
 | PHYS + ALL Vision PCA | 30 | Severe Storm ($Dst \le -110\text{ nT}$) | $0.6793$ | $0.8667$ |
 | Vision PCA Alone | 16 | Severe Storm ($Dst \le -110\text{ nT}$) | $0.6124$ | $0.5132$ (Near-chance) |
-| **PHYS14 (Operational Model)** | 14 | Southward Threat ($B_z \le -10\text{ nT}$) | **$0.4745$** (Near-chance) | **$0.6497$** |
-| PHYS + C2 Coronagraph PCA | 22 | Southward Threat ($B_z \le -10\text{ nT}$) | $0.4898$ | $0.6061$ |
-| PHYS + ALL Vision PCA | 30 | Southward Threat ($B_z \le -10\text{ nT}$) | $0.4968$ | $0.5635$ |
-| Vision PCA Alone | 16 | Southward Threat ($B_z \le -10\text{ nT}$) | $0.5575$ | $0.4598$ (Below chance) |
+| **PHYS14 (Operational Model)** | 14 | Southward Threat ($B_z \le -10\text{ nT}$) | **$0.4594$** (Near-chance) | **$0.6279$** |
+| PHYS + C2 Coronagraph PCA | 22 | Southward Threat ($B_z \le -10\text{ nT}$) | $0.4927$ | $0.5775$ |
+| PHYS + ALL Vision PCA | 30 | Southward Threat ($B_z \le -10\text{ nT}$) | $0.5136$ | $0.5940$ |
+| Vision PCA Alone | 16 | Southward Threat ($B_z \le -10\text{ nT}$) | $0.5662$ | $0.4603$ (Below chance) |
 
-These empirical results yield a fundamental physical conclusion: **2D white-light coronagraph expansion at $t = 0$ measures Thomson-scattered electron column density, which does not preserve internal magnetic flux rope polarity $B_z$ across 150 million kilometers of interplanetary transport.** In held-out testing, visual features alone collapse to near-chance ($AUC = 0.5132$ and $0.4598$), and adding visual features to the physical vector strictly dilutes out-of-distribution performance. Consequently, operational early-warning skill is driven by 3D de-projected kinematics, eruptive kinetic energy ($E_{3\text{D}}$), flare fluence, and background solar wind preconditioning.
+These empirical results yield a fundamental physical conclusion: **2D white-light coronagraph expansion at $t = 0$ measures Thomson-scattered electron column density, which does not preserve internal magnetic flux rope polarity $B_z$ across 150 million kilometers of interplanetary transport.** In held-out testing, visual features alone collapse to near-chance ($AUC = 0.5132$ and $0.4603$), and adding visual features to the physical vector strictly dilutes out-of-distribution performance. Consequently, operational early-warning skill is driven by 3D de-projected kinematics, eruptive kinetic energy ($E_{3\text{D}}$), flare fluence, and background solar wind preconditioning.
 
 ---
 
@@ -258,10 +258,10 @@ HELIOS 2.0 was verified against historical landmark space weather events coverin
 #### Table 4: Landmark Historical Space Weather Validation Battery
 | Event | Date | Observed $Dst / B_z$ | HELIOS $P(\text{Severe})$ | HELIOS $P(B_z \le -10\text{ nT})$ | Transit ETA & Error | Operational Verdict | Status |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **May 2024 Superstorm** | 2024-05-07 | $-412\text{ nT} / -35.3\text{ nT}$ | **$30.9\%$ (ALERT)** | **$54.5\%$ (South)** | $62.7\text{h}$ (Obs $85.9\text{h}$, $\Delta=23.2\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant Alert** |
-| **Halloween 2003 Superstorm** | 2003-10-29 | $-383\text{ nT} / -38.5\text{ nT}$ | **$68.6\%$ (ALERT)** | **$66.5\%$ (South)** | $31.4\text{h}$ (Obs $19.4\text{h}$, $\Delta=12.0\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant Alert** |
-| **Nov 2003 Superstorm** | 2003-11-18 | $-422\text{ nT} / -50.9\text{ nT}$ | **$55.6\%$ (ALERT)** | **$59.9\%$ (South)** | $42.9\text{h}$ (Obs $47.2\text{h}$, $\Delta=4.3\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant G5 Alert** |
-| **May 14, 2024 Moderate** | 2024-05-14 | $-88\text{ nT} / -12.8\text{ nT}$ | **$14.9\%$ (SAFE)** | **$49.1\%$ (Safe)** | $70.1\text{h}$ (Obs $75.3\text{h}$, $\Delta=5.3\text{h}$) | 🟢 Safe Protocol | **✅ Concordant Moderate Match** |
+| **May 2024 Superstorm** | 2024-05-07 | $-412\text{ nT} / -35.3\text{ nT}$ | **$30.9\%$ (ALERT)** | **$54.5\%$ (South)** | $61.9\text{h}$ (Obs $85.9\text{h}$, $\Delta=24.0\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant Alert** |
+| **Halloween 2003 Superstorm** | 2003-10-29 | $-383\text{ nT} / -38.5\text{ nT}$ | **$68.6\%$ (ALERT)** | **$66.5\%$ (South)** | $49.4\text{h}$ (Obs $19.4\text{h}$, $\Delta=30.0\text{h}$) | 🔴 G5 Protocol Active | **⚠️ Partial (G5: PASS, Hypersonic Lag)** |
+| **Nov 2003 Superstorm** | 2003-11-18 | $-422\text{ nT} / -50.9\text{ nT}$ | **$55.6\%$ (ALERT)** | **$59.9\%$ (South)** | $37.4\text{h}$ (Obs $47.2\text{h}$, $\Delta=9.8\text{h}$) | 🔴 G5 Protocol Active | **✅ Concordant G5 Alert** |
+| **May 14, 2024 Moderate** | 2024-05-14 | $-88\text{ nT} / -12.8\text{ nT}$ | **$14.9\%$ (SAFE)** | **$49.1\%$ (Safe)** | $68.7\text{h}$ (Obs $75.3\text{h}$, $\Delta=6.6\text{h}$) | 🟢 Safe Protocol | **✅ Concordant Moderate Match** |
 | **Jan 17, 1998 Baseline** | 1998-01-17 | $-11\text{ nT} / -4.4\text{ nT}$ | **$12.4\%$ (SAFE)** | **$47.9\%$ (Safe)** | $75.8\text{h}$ (Obs $95.8\text{h}$, $\Delta=20.0\text{h}$) | 🟢 Safe Protocol | **✅ Concordant Baseline Match** |
 
 ---
@@ -300,7 +300,7 @@ In live operational tests on Apple Silicon M4, HELIOS 2.0 parsed live high-speed
 
 Zar-Manah HELIOS 2.0 demonstrates that coupling coronal physical modeling, aerodynamic shock kinematics, and L1 in-situ attention into a unified multi-tier framework resolves the five-decade-old Southward $B_z$ Paradox. By evaluating solar eruptions at the moment of launch ($24\text{--}72\text{ hours}$ in advance), HELIOS 2.0 achieves **$78.0\%$ accuracy** and **$0.8737$ ROC-AUC** in discriminating severe geomagnetic storms from harmless events, avoiding **$78.9\%$ of operational false alarms** (60/76 false alarms avoided on unseen Solar Cycle 25 with $73.3\%$ sensitivity) while maintaining sub-second inference.
 
-Operating locally on Apple Silicon M4 with sub-22 millisecond latency and streaming live data from NASA and NOAA spacecraft, HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for planetary defense against extreme space weather.
+Operating locally on Apple Silicon M4 with sub-16 millisecond latency ($14.5\text{ ms}$ mean, $15.9\text{ ms}$ p99) and streaming live data from NASA and NOAA spacecraft, HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for planetary defense against extreme space weather.
 
 ### Data and Code Availability
 The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under the MIT license at:  

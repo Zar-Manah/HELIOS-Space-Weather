@@ -1,6 +1,6 @@
 {
   "architecture": "MoKTransitNN + GBDT Dynamic Regime",
-  "version": "2.5.8",
+  "version": "2.5.9",
   "w_base": 0.45,
   "w_fast_boost": 0.45,
   "transition_v0": 950.0,

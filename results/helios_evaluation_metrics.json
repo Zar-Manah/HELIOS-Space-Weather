@@ -3,6 +3,7 @@
   "system": "Zar-Manah HELIOS 2.0",
   "doi": "10.5281/zenodo.24182248",
   "concept_doi": "10.5281/zenodo.24061451",
+  "cal_samples_total": 34960,
   "test_samples_total": 57998,
   "lead_1h": {
     "persistence": {
@@ -20,9 +21,9 @@
       "hss_50": 0.9
     },
     "conformal": {
-      "q_conformal_adjustment": 0.332,
-      "empirical_coverage": 0.891,
-      "mean_interval_width": 9.98,
+      "q_conformal_adjustment": 0.354,
+      "empirical_coverage": 0.8926,
+      "mean_interval_width": 10.02,
       "raw_quantile_coverage": 0.8643,
       "raw_quantile_width": 9.31
     }
@@ -43,9 +44,9 @@
       "hss_50": 0.8386
     },
     "conformal": {
-      "q_conformal_adjustment": 0.503,
-      "empirical_coverage": 0.8903,
-      "mean_interval_width": 16.04,
+      "q_conformal_adjustment": 0.541,
+      "empirical_coverage": 0.8919,
+      "mean_interval_width": 16.12,
       "raw_quantile_coverage": 0.8657,
       "raw_quantile_width": 15.04
     }
@@ -66,9 +67,9 @@
       "hss_50": 0.7883
     },
     "conformal": {
-      "q_conformal_adjustment": 0.654,
-      "empirical_coverage": 0.8874,
-      "mean_interval_width": 20.57,
+      "q_conformal_adjustment": 0.711,
+      "empirical_coverage": 0.8896,
+      "mean_interval_width": 20.68,
       "raw_quantile_coverage": 0.8606,
       "raw_quantile_width": 19.26
     }
@@ -89,9 +90,9 @@
       "hss_50": 0.6617
     },
     "conformal": {
-      "q_conformal_adjustment": 1.308,
-      "empirical_coverage": 0.8905,
-      "mean_interval_width": 28.48,
+      "q_conformal_adjustment": 1.367,
+      "empirical_coverage": 0.8919,
+      "mean_interval_width": 28.6,
       "raw_quantile_coverage": 0.8518,
       "raw_quantile_width": 25.86
     }

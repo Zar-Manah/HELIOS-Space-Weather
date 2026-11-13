@@ -70,12 +70,12 @@ def main():
         abstract_section = parts.replace("\n\n", "<br><br>").replace("**", "<b>").replace("**", "</b>")
     
     desc_html = (
-        f"<p><b>Official Scientific Preprint & Open Architecture: Zar-Manah HELIOS v2.5</b></p>"
+        f"<p><b>Official Scientific Preprint & Open Architecture: Zar-Manah HELIOS v2.5.9</b></p>"
         f"<p>{abstract_section}</p>"
         f"<p><b>Primary Highlights:</b></p>"
         f"<ul>"
-        f"<li><b>Tactical Nowcasting (1–6h):</b> GBDT + Bi-LSTM coupled to Inductive Conformalized Quantile Regression (CQR) with 89.2% empirical finite-sample coverage (MAE 2.90 nT at +1h).</li>"
-        f"<li><b>Planetary CME Transit (24–72h):</b> Empirical Kinematic Regression (GBDT & MoK hybrid) achieving 10.63h MAE and 7.45h median on unseen Solar Cycle 25 (91 clean CMEs), on par with NASA WSA-ENLIL (10.40h at Earth) in sub-second execution (<0.05s on consumer hardware).</li>"
+        f"<li><b>Tactical Nowcasting (1–6h):</b> GBDT + Bi-LSTM coupled to Inductive Conformalized Quantile Regression (CQR) with 89.26% empirical finite-sample coverage (MAE 2.36 nT, RMSE 3.66 nT, R²=0.968 at +1h) evaluated across all 57,998 hourly samples of Solar Cycle 25.</li>"
+        f"<li><b>Planetary CME Transit (24–72h):</b> Empirical Kinematic Regression (GBDT & MoK hybrid) achieving 10.63h MAE and 7.45h median on unseen Solar Cycle 25 (91 clean CMEs), on par with NASA WSA-ENLIL (10.40h at Earth) in sub-second execution (<15 ms on Apple Silicon M4 / consumer hardware).</li>"
         f"<li><b>Real-Event Validation:</b> Evaluated on historical superstorms (May 2024, Halloween 2003, Nov 2003) and Solar Cycle 25 out-of-distribution eruptions with zero synthetic leakage.</li>"
         f"<li><b>Universal Cockpit:</b> Autonomous cross-platform HTML5/Canvas cockpit with real-time NOAA SWPC L1 telemetry and NASA CCMC Scoreboard JSON export.</li>"
         f"</ul>"
@@ -100,6 +100,7 @@ def main():
     meta_payload = {
         "metadata": {
             "title": "Zar-Manah HELIOS: Dual-Scale Space Weather Intelligence Coupling Tactical Conformal Nowcasting (1–6h) and Planetary CME Shock Transit (24–72h) across Solar Cycles 23–25",
+            "version": "2.5.9",
             "upload_type": "publication",
             "publication_type": "preprint",
             "description": desc_html,
@@ -132,18 +133,22 @@ def main():
     files_to_upload = [
         os.path.join(BASE_DIR, "requirements.txt"),
         os.path.join(BASE_DIR, "LICENSE"),
+        os.path.join(BASE_DIR, "paper", "HELIOS_Solar_Storm_Conformal_Forecasting.pdf"),
         os.path.join(BASE_DIR, "paper", "HELIOS_2_Solar_Vision_Swiss_Watch.pdf"),
+        os.path.join(BASE_DIR, "paper", "manuscript.md"),
         os.path.join(BASE_DIR, "Zar-Manah_HELIOS.html"),
         os.path.join(BASE_DIR, "predict.py"),
         os.path.join(BASE_DIR, "scripts", "export_ccmc_scoreboard.py"),
         os.path.join(BASE_DIR, "README.md"),
         os.path.join(BASE_DIR, "results", "helios_evaluation_metrics.json"),
+        os.path.join(BASE_DIR, "results", "ablation_study.json"),
+        os.path.join(BASE_DIR, "results", "zenodo_record.json"),
         os.path.join(BASE_DIR, "results", "figures", "fig1_multi_horizon_benchmarks.png"),
         os.path.join(BASE_DIR, "results", "figures", "fig2_may2024_superstorm_case_study.png"),
         os.path.join(BASE_DIR, "results", "figures", "fig3_feature_importance.png"),
         os.path.join(BASE_DIR, "results", "figures", "fig4_cme_transit_benchmark.png"),
-        os.path.join(BASE_DIR, "helios_trained_models.tar.gz"),
-        os.path.join(BASE_DIR, "helios_processed_datasets.tar.gz")
+        os.path.join(BASE_DIR, "results", "helios_trained_models.tar.gz"),
+        os.path.join(BASE_DIR, "results", "helios_processed_datasets.tar.gz")
     ]
 
     print("3. Uploading scientific artifacts to Zenodo bucket...")

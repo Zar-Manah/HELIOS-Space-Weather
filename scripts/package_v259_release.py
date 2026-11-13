@@ -53,12 +53,10 @@ def main():
     omni_path = os.path.join(DATA_DIR, "helios_omni_features_1998_2026.parquet")
     df_omni = pd.read_parquet(omni_path)
 
-    train_mask = (pd.to_datetime(df_omni["datetime"]) >= "1998-01-01") & (pd.to_datetime(df_omni["datetime"]) < "2020-01-01")
+    cal_mask = (pd.to_datetime(df_omni["datetime"]) >= "2016-01-01") & (pd.to_datetime(df_omni["datetime"]) < "2020-01-01")
     test_mask = pd.to_datetime(df_omni["datetime"]) >= "2020-01-01"
 
-    df_train = df_omni[train_mask]
-    cal_idx = int(len(df_train) * 0.8)
-    df_cal = df_train.iloc[cal_idx:].copy()
+    df_cal = df_omni[cal_mask].copy()
     df_test = df_omni[test_mask].copy()
 
     metrics_payload = {
@@ -66,6 +64,7 @@ def main():
         "system": "Zar-Manah HELIOS 2.0",
         "doi": "10.5281/zenodo.24182248",
         "concept_doi": "10.5281/zenodo.24061451",
+        "cal_samples_total": len(df_cal),
         "test_samples_total": len(df_test)
     }
 
@@ -176,11 +175,28 @@ def main():
 
     # 2. Package datasets tarball
     tar_datasets_path = os.path.join(RESULTS_DIR, "helios_processed_datasets.tar.gz")
+    dataset_files = [
+        ("helios_vision_matched.parquet", "data/processed/helios_vision_matched.parquet"),
+        ("helios_omni_features_1998_2026.parquet", "data/processed/helios_omni_features_1998_2026.parquet"),
+        ("helios_cme_transit_matched.parquet", "data/processed/helios_cme_transit_matched.parquet"),
+        ("helios_icme_transit_1996_2026.parquet", "data/processed/helios_icme_transit_1996_2026.parquet"),
+        ("helios_icme_transit_sample.csv", "data/processed/helios_icme_transit_sample.csv"),
+        ("helios_omni_sample.csv", "data/processed/helios_omni_sample.csv"),
+    ]
+    raw_files = [
+        ("cdaw_univ_all.txt", "data/raw/cdaw_univ_all.txt"),
+        ("icmetable2.htm", "data/raw/icmetable2.htm")
+    ]
     with tarfile.open(tar_datasets_path, "w:gz") as tar:
-        for f in ["helios_vision_matched.parquet", "helios_omni_features_1998_2026.parquet", "helios_cme_transit_matched.parquet"]:
-            full_path = os.path.join(DATA_DIR, f)
-            arcname = os.path.join("data", "processed", f)
-            tar.add(full_path, arcname=arcname)
+        for f, arc in dataset_files:
+            fp = os.path.join(DATA_DIR, f)
+            if os.path.exists(fp):
+                tar.add(fp, arcname=arc)
+        raw_dir = os.path.join(BASE_DIR, "data", "raw")
+        for f, arc in raw_files:
+            fp = os.path.join(raw_dir, f)
+            if os.path.exists(fp):
+                tar.add(fp, arcname=arc)
     print(f"✅ Created {tar_datasets_path} ({os.path.getsize(tar_datasets_path) / 1024 / 1024:.2f} MB)")
 
     # 3. Package models tarball
@@ -188,7 +204,10 @@ def main():
     model_files = [
         "helios_storm_apex.pkl", "helios_vision_apex.pkl", "helios_apex.manifest.json",
         "helios_transit_time.joblib", "helios_transit_q_low.joblib", "helios_transit_q_high.joblib", "helios_transit_dst.joblib",
-        "helios_transit_mok_mps.pt", "helios_bilstm_edited.pt", "bilstm_scaler.json", "transit_scaler.json",
+        "helios_transit_mok_mps.pt", "helios_transit_mok_edited.pt", "helios_transit_mok_edited.manifest.json",
+        "helios_transit_mps.pt", "helios_transit_edited.pt", "helios_transit_edited.manifest.json",
+        "helios_bilstm_mps.pt", "helios_bilstm_edited.pt", "helios_bilstm_edited.manifest.json",
+        "bilstm_scaler.json", "transit_scaler.json",
         "helios_point_lead_1h.joblib", "helios_point_lead_2h.joblib", "helios_point_lead_3h.joblib", "helios_point_lead_6h.joblib",
         "helios_q_low_lead_1h.joblib", "helios_q_high_lead_1h.joblib",
         "helios_q_low_lead_2h.joblib", "helios_q_high_lead_2h.joblib",
@@ -220,7 +239,7 @@ def main():
     
     rec["published_zenodo_version"] = "2.5.8"
     rec["local_release_version"] = "2.5.9"
-    rec["status"] = "v2.5.9 packaged and verified with full 57,998-sample metrics, APEX V5 physical models, and 314-image catalog"
+    rec["status"] = "v2.5.9 packaged and verified with full 57,998-sample metrics, APEX V5 physical models, and complete multi-source solar/interplanetary catalogs"
     rec["artifacts_sha256"] = {
         "helios_processed_datasets.tar.gz": get_sha256(tar_datasets_path),
         "helios_trained_models.tar.gz": get_sha256(tar_models_path),
