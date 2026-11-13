@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.8)
+Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.9)
 Author: Zar Manah (ORCID: 0009-0007-8443-8999)
 
 Dual-Scale Operational Predictions:
@@ -22,6 +22,7 @@ from datetime import datetime, timedelta, timezone
 import numpy as np
 import pandas as pd
 import joblib
+import pickle
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODELS_DIR = os.path.join(BASE_DIR, "models") if os.path.exists(os.path.join(BASE_DIR, "models")) else BASE_DIR
@@ -115,8 +116,8 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
         if as_json:
             out = {
                 "system": "Zar-Manah HELIOS 2.0",
-                "version": "2.5.6",
-                "doi": "10.5281/zenodo.24179115",
+                "version": "2.5.9",
+                "doi": "10.5281/zenodo.24182248",
                 "concept_doi": "10.5281/zenodo.24061451",
                 "type": "cme_trajectory_assessment",
                 "status": "ALL-CLEAR / MISS",
@@ -251,11 +252,69 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     
     arrival_dt = now + timedelta(hours=pred_h)
 
+    # 6. APEX 24–72h Solar Evaluation (Gear 1: Southward Bz & Gear 2: Severe Storm Veto)
+    apex_storm_path = os.path.join(MODELS_DIR, "helios_storm_apex.pkl")
+    apex_vision_path = os.path.join(MODELS_DIR, "helios_vision_apex.pkl")
+    apex_info = None
+    if os.path.exists(apex_storm_path) and os.path.exists(apex_vision_path):
+        try:
+            with open(apex_vision_path, "rb") as f:
+                pkg_m1 = pickle.load(f)
+            with open(apex_storm_path, "rb") as f:
+                pkg_m2 = pickle.load(f)
+            
+            theta = np.deg2rad(np.clip(np.sqrt(lat**2 + lon**2), 0.0, 75.0))
+            v_3d = speed / max(np.cos(theta), 0.35)
+            mass_proxy = 15.0 if is_halo else 14.5
+            e_3d = np.log10(0.5) + mass_proxy + 2.0 * np.log10(v_3d)
+            f107_val = 140.0
+            flare_proxy = np.log10(np.clip(v_3d * f107_val / 100.0, 1.0, 1e6))
+            
+            phys_vals = {
+                "v_launch_3d": v_3d, "width": width, "accel": accel, "mass": mass_proxy, "energy_3d": e_3d,
+                "is_halo": is_halo, "f107": f107_val, "r_sunspot": 80.0, "v_sw_launch": 420.0, "prior_v": 420.0,
+                "shear_angle_proxy": 35.0, "free_energy_proxy": 1.0, "helicity_proxy": 0.5, "flare_flux_proxy": flare_proxy
+            }
+            cols = pkg_m1["phys_cols"]
+            vec = np.array([phys_vals.get(c, 0.0) for c in cols], dtype=np.float32)
+            std_safe = np.where(pkg_m1["p_std"] == 0, 1.0, pkg_m1["p_std"])
+            norm_vec = ((vec - pkg_m1["p_mean"]) / std_safe).reshape(1, -1)
+            norm_vec = np.nan_to_num(norm_vec)
+            
+            p_south = float(pkg_m1["clf"].predict_proba(norm_vec)[0, 1])
+            is_south = bool(p_south >= pkg_m1["decision_threshold"])
+            q10_bz = float(pkg_m1["q10"].predict(norm_vec)[0])
+            q50_bz = float(pkg_m1["q50"].predict(norm_vec)[0])
+            q90_bz = float(pkg_m1["q90"].predict(norm_vec)[0])
+            
+            p_severe = float(pkg_m2["clf"].predict_proba(norm_vec)[0, 1])
+            is_severe = bool(p_severe >= pkg_m2["decision_threshold"])
+            q10_dst = float(pkg_m2["q10"].predict(norm_vec)[0])
+            q50_dst = float(pkg_m2["q50"].predict(norm_vec)[0])
+            q90_dst = float(pkg_m2["q90"].predict(norm_vec)[0])
+            
+            apex_info = {
+                "southward_bz_threat": {
+                    "prob_south": round(p_south, 3),
+                    "is_threat": is_south,
+                    "bz_median_nT": round(q50_bz, 1),
+                    "bz_conformal_range_nT": [round(q10_bz, 1), round(q90_bz, 1)]
+                },
+                "severe_storm_veto": {
+                    "prob_severe": round(p_severe, 3),
+                    "is_severe_alert": is_severe,
+                    "dst_median_nT": round(q50_dst, 1),
+                    "dst_conformal_range_nT": [round(q10_dst, 1), round(q90_dst, 1)]
+                }
+            }
+        except Exception:
+            apex_info = None
+
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.6",
-            "doi": "10.5281/zenodo.24179115",
+            "version": "2.5.9",
+            "doi": "10.5281/zenodo.24182248",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "transit_cme_forecast",
             "speed_km_s": float(speed),
@@ -267,7 +326,8 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
             "transit_hours": round(float(pred_h), 2),
             "conformal_window_81_hours": [round(float(low_h), 2), round(float(high_h), 2)],
             "arrival_time_utc": arrival_dt.strftime("%Y-%m-%d %H:%M UTC"),
-            "predicted_shock_dst_nT": round(float(pred_dst), 2)
+            "predicted_shock_dst_nT": round(float(pred_dst), 2),
+            "solar_apex_evaluation": apex_info
         }
         print(json.dumps(out, indent=2))
         return out
@@ -283,6 +343,18 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     print(f"• 81% Conformal Window:       [{low_h:.1f}h, {high_h:.1f}h] (Margin: ±{(high_h-low_h)/2.0:.1f}h)")
     print(f"• Expected Earth Impact:      {arrival_dt.strftime('%Y-%m-%d %H:%M UTC')}")
     print(f"• Expected Storm Shock (Dst): {pred_dst:.1f} nT")
+    
+    if apex_info:
+        print("-" * 78)
+        print("☀️  24–72H SOLAR APEX FRONTIER COGNITION (GEARS 1 & 2):")
+        sbz = apex_info["southward_bz_threat"]
+        sst = apex_info["severe_storm_veto"]
+        status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)" if sbz["is_threat"] else "🟢 NORTHWARD / SAFE"
+        status_st = "🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT)" if sst["is_severe_alert"] else "✅ NO SEVERE STORM RISK"
+        print(f"   • Coronal Southward Bz:    {status_bz} (P_south: {sbz['prob_south']*100:.1f}%) | Range: [{sbz['bz_conformal_range_nT'][0]:+.1f}, {sbz['bz_conformal_range_nT'][1]:+.1f}] nT")
+        print(f"   • Geomagnetic Severity:    {status_st} (P_severe: {sst['prob_severe']*100:.1f}%) | Range: [{sst['dst_conformal_range_nT'][0]:.0f}, {sst['dst_conformal_range_nT'][1]:.0f}] nT")
+    
+    print("-" * 78)
     
     if pred_dst <= -200:
         print("• Threat Level:               🔴 G5 EXTREME SUPERSTORM ALERT")
@@ -526,8 +598,8 @@ def run_synthetic_sample(scenario="extreme", as_json=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.8)")
-    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.8)")
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.9)")
+    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.9)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
@@ -577,8 +649,8 @@ def main():
     if args.json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.6",
-            "doi": "10.5281/zenodo.24179115",
+            "version": "2.5.9",
+            "doi": "10.5281/zenodo.24182248",
             "concept_doi": "10.5281/zenodo.24061451",
             "type": "tactical_dst_forecast",
             "horizons": {}

@@ -1,21 +1,40 @@
 {
-  "system_name": "HELIOS-SOLAR-VISION-APEX-V4",
-  "created_at": "2026-11-13 01:55:48",
-  "hardware": "mps",
-  "model1_chirality": {
-    "target": "Southward Threat Bz <= -10 nT",
-    "accuracy_ood": 0.6373626373626373,
-    "roc_auc_ood": 0.6593992248062015,
-    "tss_ood": 0.2640503599667714,
-    "mae_bz": 5.558007099694699,
-    "conformal_coverage": 0.7472527472527473
+  "version": "2.5.9",
+  "timestamp": "2026-11-13T04:31:42Z",
+  "framework": "Scikit-Learn Verified Physical Helio-Kinematic Models",
+  "hardware": "Apple Silicon M4 GPU",
+  "physical_features": [
+    "v_launch_3d",
+    "width",
+    "accel",
+    "mass",
+    "energy_3d",
+    "is_halo",
+    "f107",
+    "r_sunspot",
+    "v_sw_launch",
+    "prior_v",
+    "shear_angle_proxy",
+    "free_energy_proxy",
+    "helicity_proxy",
+    "flare_flux_proxy"
+  ],
+  "model1_chirality_bz": {
+    "acc": 0.6263736263736264,
+    "auc": 0.6511627906976744,
+    "sens": 0.6046511487290431,
+    "spec": 0.6458333198784726,
+    "tss": 0.2504844686075156,
+    "mae_bz": 5.349071935895044,
+    "cov_bz": 0.7912087912087912
   },
   "model2_storm_severity": {
-    "target": "Severe Geomagnetic Storm (Dst <= -110.0 nT)",
-    "accuracy_ood": 0.7692307692307693,
-    "roc_auc_ood": 0.8359649122807018,
-    "tss_ood": 0.3491227607279188,
-    "mae_dst": 44.164840917283755,
-    "conformal_coverage": 0.7142857142857143
+    "acc": 0.7912087912087912,
+    "auc": 0.8599999999999999,
+    "sens": 0.5624999648437522,
+    "spec": 0.8399999888000002,
+    "tss": 0.40249995364375235,
+    "mae_dst": 49.386449596210994,
+    "cov_dst": 0.7142857142857143
   }
 }

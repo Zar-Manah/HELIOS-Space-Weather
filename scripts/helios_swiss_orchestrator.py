@@ -332,6 +332,7 @@ class SwissWatchPipeline:
             # Gear 2
             "storm_prob_severe": prob_storm,
             "is_severe_storm": is_severe_storm,
+            "m2_auc": float(self.m2_pkg.get("metrics_ood", {}).get("auc", 0.860)),
             "dst_q50": q50_dst,
             "dst_conformal_range": [q10_dst, q90_dst],
             # Gear 3
@@ -370,7 +371,8 @@ def print_swiss_report(name, res):
     print(f"⚙️  GEAR 1 & 2 [24–72h HORIZON | SUN]:")
     print(f"   • Coronal Chirality:         {status_bz} (P_south: {res['bz_prob_south']*100:.1f}%)")
     print(f"   • Conformal Bz_min Range:    [{res['bz_conformal_range'][0]:.1f} nT, {res['bz_conformal_range'][1]:.1f} nT] (Median: {res['bz_q50']:.1f} nT)")
-    print(f"   • Geomagnetic Severity:      {status_st} (P_severe: {res['storm_prob_severe']*100:.1f}% | ROC-AUC: 0.836)")
+    auc_m2 = res.get("m2_auc", 0.860)
+    print(f"   • Geomagnetic Severity:      {status_st} (P_severe: {res['storm_prob_severe']*100:.1f}% | ROC-AUC: {auc_m2:.3f})")
     print(f"   • Conformal Dst_min Range:   [{res['dst_conformal_range'][0]:.0f} nT, {res['dst_conformal_range'][1]:.0f} nT] (Median: {res['dst_q50']:.0f} nT)")
     print("-" * 85)
     
@@ -620,7 +622,8 @@ def print_live_report(live_summary, res_solar, res_l1_dst):
         print(f"   • Evaluated 3D Radial Kinematics:  {res_solar['v_launch_3d']:.0f} km/s")
         print(f"   • Coronal Chirality (Gear 1):      {status_bz} (P_south: {res_solar['bz_prob_south']*100:.1f}%)")
         print(f"   • Projected Bz_min Range:          [{res_solar['bz_conformal_range'][0]:.1f} nT, {res_solar['bz_conformal_range'][1]:.1f} nT] (Median: {res_solar['bz_q50']:.1f} nT)")
-        print(f"   • Severity Veto (Gear 2):          {status_st} (P_severe: {res_solar['storm_prob_severe']*100:.1f}% | ROC-AUC: 0.836)")
+        auc_m2 = res_solar.get("m2_auc", 0.860)
+        print(f"   • Severity Veto (Gear 2):          {status_st} (P_severe: {res_solar['storm_prob_severe']*100:.1f}% | ROC-AUC: {auc_m2:.3f})")
         print(f"   • Projected Dst_min Range:         [{res_solar['dst_conformal_range'][0]:.0f} nT, {res_solar['dst_conformal_range'][1]:.0f} nT] (Median: {res_solar['dst_q50']:.0f} nT)")
         print(f"   • Estimated Flight Time:           {res_solar['transit_hours']:.1f} hours (±6.5h)")
         print(f"   • Conformal Impact Window:         [{res_solar['window_early']} -> {res_solar['window_late']}]")
