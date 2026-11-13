@@ -267,16 +267,16 @@ HELIOS 2.0 was verified against historical landmark space weather events coverin
 ---
 
 ### 4.3 Hardware Acceleration and Apple Silicon M4 Latency Budget
-To establish suitability for real-time edge deployment, the 4-tier pipeline was benchmarked over 1,000 continuous inference cycles on an Apple Silicon M4 SoC ($16\text{ GB}$ Unified Memory, Metal Performance Shaders `mps` backend; benchmark artifact recorded in `results/latency_benchmark.json`):
+To establish suitability for real-time edge deployment, the 4-tier pipeline was empirically benchmarked over 1,000 continuous inference cycles on an Apple Silicon M4 SoC ($16\text{ GB}$ Unified Memory, Metal Performance Shaders `mps` backend; benchmark artifact recorded in `results/latency_benchmark.json`):
 
-| Pipeline Stage | Model Architecture | Hardware Acceleration | Execution Latency | Unified RAM |
+| Pipeline Stage | Model Architecture | Hardware Acceleration | Execution Latency (Empirical Mean) | Unified RAM |
 | :--- | :--- | :--- | :---: | :---: |
-| **Gear 1** | HELIOS-CHIRALITY-APEX (ExtraTrees) | CPU Vectorized | $4.2\text{ ms}$ | $< 8\text{ MB}$ |
-| **Gear 2** | HELIOS-STORM-APEX (ExtraTrees) | CPU Vectorized | $4.5\text{ ms}$ | $< 8\text{ MB}$ |
-| **Gear 3** | MoKTransitNN (PyTorch) | Metal MPS Tensor Engine | $1.8\text{ ms}$ | $< 4\text{ MB}$ |
-| **Gear 4** | HeliosBiLSTM (24-step Attn) | Metal MPS Sequential | $3.2\text{ ms}$ | $< 6\text{ MB}$ |
-| **Pre/Post-Processing** | Ingestion, feature scaling, verdict dispatch | CPU Vectorized | $0.8\text{ ms}$ | $< 1\text{ MB}$ |
-| **Total Pipeline** | **End-to-End Swiss Watch** | **Apple Silicon M4 GPU** | **$14.5\text{ ms}$** (p99 $15.9\text{ ms}$) | **$< 26\text{ MB}$** |
+| **Stage 0 (Preproc)** | Input scaling & vector derivation | CPU Vectorized | $0.04\text{ ms}$ | $< 1\text{ MB}$ |
+| **Gear 1** | HELIOS-CHIRALITY-APEX (ExtraTrees) | CPU Vectorized | $6.24\text{ ms}$ | $< 8\text{ MB}$ |
+| **Gear 2** | HELIOS-STORM-APEX (ExtraTrees) | CPU Vectorized | $6.43\text{ ms}$ | $< 8\text{ MB}$ |
+| **Gear 3** | MoKTransitNN (PyTorch) + GBDT | Metal MPS Tensor Engine | $1.95\text{ ms}$ | $< 4\text{ MB}$ |
+| **Gear 4** | HeliosBiLSTM (24-step Attn) | Metal MPS Sequential | $2.93\text{ ms}$ | $< 6\text{ MB}$ |
+| **Total Pipeline** | **End-to-End Swiss Watch** | **Apple Silicon M4 GPU** | **$17.59\text{ ms}$** (median $17.32\text{ ms}$, p99 $21.27\text{ ms}$) | **$< 27\text{ MB}$** |
 
 ---
 
@@ -293,7 +293,7 @@ To achieve universal edge accessibility without demanding high-performance serve
 1. **Ephemeral Volatile Telemetry Buffering:** Satellite imagery and telemetry are fetched directly over HTTPS into volatile memory. Upon each polling cycle, previous buffers are dereferenced, triggering immediate browser garbage collection.
 2. **Deterministic Screen Fitting:** The cockpit CSS structure is bounded strictly to `100vh` viewport height (`overflow: hidden`), presenting real-time telemetry, 4-gear pipeline cards, and dual-track canvas acceleration curves simultaneously.
 
-In live operational tests on Apple Silicon M4, HELIOS 2.0 parsed live high-speed wind streams ($674\text{ km/s}$), extracted active region shear, verified northward interplanetary orientation ($B_z = -0.1\text{ nT}$), and issued a green verdict in **$14.5\text{ ms}$**, completely preventing a false alert.
+In live operational tests on Apple Silicon M4, HELIOS 2.0 parsed live high-speed wind streams ($674\text{ km/s}$), extracted active region shear, verified northward interplanetary orientation ($B_z = -0.1\text{ nT}$), and issued a green verdict in **$17.6\text{ ms}$**, completely preventing a false alert.
 
 ---
 
@@ -301,11 +301,11 @@ In live operational tests on Apple Silicon M4, HELIOS 2.0 parsed live high-speed
 
 Zar-Manah HELIOS 2.0 demonstrates that coupling coronal physical modeling, aerodynamic shock kinematics, and L1 in-situ attention into a unified multi-tier framework resolves the five-decade-old Southward $B_z$ Paradox. By evaluating solar eruptions at the moment of launch ($24\text{--}72\text{ hours}$ in advance), HELIOS 2.0 achieves **$78.0\%$ accuracy** and **$0.8737$ ROC-AUC** in discriminating severe geomagnetic storms from harmless events, avoiding **$78.9\%$ of operational false alarms** (60/76 false alarms avoided on unseen Solar Cycle 25 with $73.3\%$ sensitivity) while maintaining sub-second inference.
 
-Operating locally on Apple Silicon M4 with sub-16 millisecond latency ($14.5\text{ ms}$ mean, $15.9\text{ ms}$ p99) and streaming live data from NASA and NOAA spacecraft, HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for planetary defense against extreme space weather.
+Operating locally on Apple Silicon M4 with sub-18 millisecond latency ($17.59\text{ ms}$ mean, $17.32\text{ ms}$ median, $21.27\text{ ms}$ p99) and streaming live data from NASA and NOAA spacecraft, HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for planetary defense against extreme space weather.
 
 ### Data and Code Availability
-The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under the MIT license at:  
-`https://github.com/Zar-Manah/HELIOS-Space-Weather` (Permanent DOI: [10.5281/zenodo.24182248](https://doi.org/10.5281/zenodo.24182248) (Concept DOI: [10.5281/zenodo.24061451](https://doi.org/10.5281/zenodo.24061451))).  
+The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under dual MIT / CC BY 4.0 licensing at:  
+`https://github.com/Zar-Manah/HELIOS-Space-Weather` (Concept DOI: [10.5281/zenodo.24061451](https://doi.org/10.5281/zenodo.24061451), v2.5.8 archive: [10.5281/zenodo.24182248](https://doi.org/10.5281/zenodo.24182248)).  
 Raw solar wind and imagery data are curated by NASA SPDF OMNIWeb, SDO, and ESA/NASA SOHO.
 
 ---
@@ -337,5 +337,5 @@ Raw solar wind and imagery data are curated by NASA SPDF OMNIWeb, SDO, and ESA/N
 23. Sugiura, M. (1964). Hourly values of equatorial Dst for the IGY. *Annals of the IGY*, 35, 9–45.
 24. Vršnak, B., et al. (2013). Propagation of coronal mass ejections: Drag-based model. *Solar Physics*, 285(1), 295–315.
 25. Webb, D. F., & Howard, T. A. (2012). Coronal mass ejections: Observations. *Living Reviews in Solar Physics*, 9(1), 3.
-26. Wold, C., et al. (2018). Verification of CME arrivals using the WSA-ENLIL+CONE model at the Community Coordinated Modeling Center. *Space Weather*, 16(11), 1640–1662.
+26. Wold, A. M., Mays, M. L., Taktakishvili, A., Jian, L. K., Odstrcil, D., & MacNeice, P. (2018). Verification of CME arrival predictions using the WSA-ENLIL+Cone model with the CCMC/SWRC Scoreboard. *Journal of Space Weather and Space Climate*, 8, A05. DOI: 10.1051/swsc/2018005.
 27. Yashiro, S., et al. (2004). A catalog of white light CMEs observed by SOHO/LASCO. *Journal of Geophysical Research*, 109(A7).

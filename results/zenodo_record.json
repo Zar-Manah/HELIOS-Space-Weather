@@ -7,8 +7,17 @@
   "local_release_version": "2.5.9",
   "status": "v2.5.9 packaged and verified with full 57,998-sample metrics, APEX V5 physical models, and complete multi-source solar/interplanetary catalogs",
   "artifacts_sha256": {
-    "helios_processed_datasets.tar.gz": "d441a4e50f3bee97a6996cb9fcbc6b5987bd4afc72f3a68530c6deb062870ffa",
-    "helios_trained_models.tar.gz": "1e17f374d3d9e4baff4d1e2fe91d45c274376886db79cc61c835934428210ff1",
-    "helios_evaluation_metrics.json": "d2165f7494704d15703512b73246503f7dfc3fd64e3b386bb4ca94bbe51b0f6a"
+    "helios_processed_datasets.tar.gz": "7d7e71fd9a95082d76b045e49777ab46b9937050e48d0956b1476c9c19de8bb8",
+    "helios_trained_models.tar.gz": "dbf2bd0f5e673d176cb572cbcd167bc6daea4683c72f03fa28ca3b1d30543bed",
+    "helios_evaluation_metrics.json": "d2165f7494704d15703512b73246503f7dfc3fd64e3b386bb4ca94bbe51b0f6a",
+    "latency_benchmark.json": "61a04dc09e2a405d9e73e14322065e044a6f7b973862f9b1b58fa0cf0434f49b",
+    "ablation_study.json": "e7e07181891b4213ba7d3acd47ee71dc87d81b02d6ae80807014649b53c48dc3",
+    "HELIOS_Solar_Storm_Conformal_Forecasting.pdf": "d8b2cdd806554a9135bd06d6da3757eeaa7b0b443828dd0a463b091e9ea6e10d",
+    "HELIOS_2_Solar_Vision_Swiss_Watch.pdf": "d426e281ca9e2639c8ae6945c8d1b761e4e5dbcd0fac82b2f080b4c18c6bb8c9",
+    "manuscript.md": "6ba39ff4a1f6232f9569389436a2118501f38919d3ddc53e89d0ba78ca5662f7",
+    "predict.py": "3dd375f1631dbe0a59150417f13da8dab24322da4da8bb3678ca04cf9d2e29fd",
+    "test_helios_core.py": "945637167872ce9aed05212e34860d2bbc679a570ad34485c787acc52fb2300e",
+    "19_benchmark_latency.py": "b8284af6eb7b83513611a1d8d45611b320e0b21d1620891320fca26461956e27",
+    "helios_models_checksums.json": "37c1d6439666bdeef73468846110fd3081f586b883242d58f9ae576effa22136"
   }
 }

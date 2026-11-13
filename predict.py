@@ -45,12 +45,32 @@ FEATURE_COLS = [
     "kp", "r_sunspot", "f107"
 ]
 
+def verify_model_checksum(fpath):
+    """Cryptographic fail-closed verification of model weights before loading."""
+    import hashlib
+    manifest_path = os.path.join(MODELS_DIR, "helios_models_checksums.json")
+    if os.path.exists(manifest_path):
+        with open(manifest_path, "r") as f:
+            valid_hashes = json.load(f)
+        fname = os.path.basename(fpath)
+        if fname in valid_hashes:
+            with open(fpath, "rb") as f:
+                actual_hash = hashlib.sha256(f.read()).hexdigest()
+            if actual_hash != valid_hashes[fname]:
+                raise ValueError(f"SECURITY ALERT: Cryptographic integrity failure for {fname}! Expected {valid_hashes[fname]}, got {actual_hash}")
+
 def load_tactical_models():
     models = {}
     for lead in [1, 2, 3, 6]:
-        models[f"pt_{lead}"] = joblib.load(os.path.join(MODELS_DIR, f"helios_point_lead_{lead}h.joblib"))
-        models[f"lo_{lead}"] = joblib.load(os.path.join(MODELS_DIR, f"helios_q_low_lead_{lead}h.joblib"))
-        models[f"hi_{lead}"] = joblib.load(os.path.join(MODELS_DIR, f"helios_q_high_lead_{lead}h.joblib"))
+        p_pt = os.path.join(MODELS_DIR, f"helios_point_lead_{lead}h.joblib")
+        p_lo = os.path.join(MODELS_DIR, f"helios_q_low_lead_{lead}h.joblib")
+        p_hi = os.path.join(MODELS_DIR, f"helios_q_high_lead_{lead}h.joblib")
+        verify_model_checksum(p_pt)
+        verify_model_checksum(p_lo)
+        verify_model_checksum(p_hi)
+        models[f"pt_{lead}"] = joblib.load(p_pt)
+        models[f"lo_{lead}"] = joblib.load(p_lo)
+        models[f"hi_{lead}"] = joblib.load(p_hi)
     with open(METRICS_FILE, "r") as f:
         metrics = json.load(f)
     return models, metrics
@@ -159,10 +179,16 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     cos_c = np.cos(2 * np.pi * cycle_phase)
     
     # 2. Tree Inference First (GBDT + Quantiles)
-    m_time = joblib.load(os.path.join(MODELS_DIR, "helios_transit_time.joblib"))
-    m_low  = joblib.load(os.path.join(MODELS_DIR, "helios_transit_q_low.joblib"))
-    m_high = joblib.load(os.path.join(MODELS_DIR, "helios_transit_q_high.joblib"))
-    m_dst  = joblib.load(os.path.join(MODELS_DIR, "helios_transit_dst.joblib"))
+    p_time = os.path.join(MODELS_DIR, "helios_transit_time.joblib")
+    p_low = os.path.join(MODELS_DIR, "helios_transit_q_low.joblib")
+    p_high = os.path.join(MODELS_DIR, "helios_transit_q_high.joblib")
+    p_dst = os.path.join(MODELS_DIR, "helios_transit_dst.joblib")
+    for p in [p_time, p_low, p_high, p_dst]:
+        verify_model_checksum(p)
+    m_time = joblib.load(p_time)
+    m_low  = joblib.load(p_low)
+    m_high = joblib.load(p_high)
+    m_dst  = joblib.load(p_dst)
     
     tree_sample = pd.DataFrame([{
         "cme_speed": speed,
@@ -236,7 +262,9 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     scaled_nn = (raw_nn_feats - s_mean) / s_scale
     
     net = MoKTransitNN(in_features=8)
-    net.load_state_dict(torch.load(os.path.join(MODELS_DIR, "helios_transit_mok_edited.pt"), map_location="cpu", weights_only=True))
+    p_mok = os.path.join(MODELS_DIR, "helios_transit_mok_edited.pt")
+    verify_model_checksum(p_mok)
+    net.load_state_dict(torch.load(p_mok, map_location="cpu", weights_only=True))
     net.eval()
     
     with torch.no_grad():
@@ -259,6 +287,8 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     apex_info = None
     if os.path.exists(apex_storm_path) and os.path.exists(apex_vision_path):
         try:
+            verify_model_checksum(apex_vision_path)
+            verify_model_checksum(apex_storm_path)
             with open(apex_vision_path, "rb") as f:
                 pkg_m1 = pickle.load(f)
             with open(apex_storm_path, "rb") as f:

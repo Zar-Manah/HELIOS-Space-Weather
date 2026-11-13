@@ -222,14 +222,34 @@ def main():
                 tar.add(full_path, arcname=os.path.join("models", mf))
     print(f"✅ Created {tar_models_path} ({os.path.getsize(tar_models_path) / 1024 / 1024:.2f} MB)")
 
-    # 4. Update zenodo_record.json with exact sha256
-    import hashlib
-    def get_sha256(filepath):
-        h = hashlib.sha256()
-        with open(filepath, "rb") as f:
-            while chunk := f.read(8192):
-                h.update(chunk)
-        return h.hexdigest()
+    # 4. Generate results/checksums.txt and update zenodo_record.json
+    checksum_files = [
+        tar_datasets_path,
+        tar_models_path,
+        metrics_path,
+        os.path.join(RESULTS_DIR, "latency_benchmark.json"),
+        os.path.join(RESULTS_DIR, "ablation_study.json"),
+        os.path.join(BASE_DIR, "paper", "HELIOS_Solar_Storm_Conformal_Forecasting.pdf"),
+        os.path.join(BASE_DIR, "paper", "HELIOS_2_Solar_Vision_Swiss_Watch.pdf"),
+        os.path.join(BASE_DIR, "paper", "manuscript.md"),
+        os.path.join(BASE_DIR, "predict.py"),
+        os.path.join(BASE_DIR, "tests", "test_helios_core.py"),
+        os.path.join(BASE_DIR, "scripts", "19_benchmark_latency.py"),
+        os.path.join(MODELS_DIR, "helios_models_checksums.json")
+    ]
+    checksum_lines = []
+    sha_map = {}
+    for cp in checksum_files:
+        if os.path.exists(cp):
+            h = sha256_file(cp)
+            rel_name = os.path.relpath(cp, BASE_DIR)
+            checksum_lines.append(f"{h}  {rel_name}")
+            sha_map[os.path.basename(cp)] = h
+
+    checksum_txt_path = os.path.join(RESULTS_DIR, "checksums.txt")
+    with open(checksum_txt_path, "w") as f:
+        f.write("\n".join(checksum_lines) + "\n")
+    print(f"✅ Created {checksum_txt_path}")
 
     record_path = os.path.join(RESULTS_DIR, "zenodo_record.json")
     if os.path.exists(record_path):
@@ -241,11 +261,7 @@ def main():
     rec["published_zenodo_version"] = "2.5.8"
     rec["local_release_version"] = "2.5.9"
     rec["status"] = "v2.5.9 packaged and verified with full 57,998-sample metrics, APEX V5 physical models, and complete multi-source solar/interplanetary catalogs"
-    rec["artifacts_sha256"] = {
-        "helios_processed_datasets.tar.gz": get_sha256(tar_datasets_path),
-        "helios_trained_models.tar.gz": get_sha256(tar_models_path),
-        "helios_evaluation_metrics.json": get_sha256(metrics_path)
-    }
+    rec["artifacts_sha256"] = sha_map
     with open(record_path, "w") as f:
         json.dump(rec, f, indent=2)
     print(f"✅ Updated {record_path} with accurate SHA256 hashes.")

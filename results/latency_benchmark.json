@@ -1,18 +1,19 @@
 {
   "hardware": "Apple Silicon M4 SoC (16 GB Unified RAM, Metal MPS)",
   "n_cycles": 1000,
-  "mean_latency_ms": 15.26,
-  "median_latency_ms": 14.68,
-  "p95_latency_ms": 16.87,
-  "p99_latency_ms": 17.35,
-  "min_latency_ms": 13.4,
-  "max_latency_ms": 30.55,
-  "stage_breakdown_ms": {
-    "gear1_chirality_apex": 4.2,
-    "gear2_storm_apex": 4.5,
-    "gear3_mok_transit": 1.8,
-    "gear4_bilstm_attention": 3.2,
-    "pre_post_processing_overhead": 0.8,
-    "total_declared_budget": 14.5
+  "mean_latency_ms": 17.59,
+  "median_latency_ms": 17.32,
+  "p95_latency_ms": 19.91,
+  "p99_latency_ms": 21.27,
+  "min_latency_ms": 15.98,
+  "max_latency_ms": 36.97,
+  "stage_breakdown_empirical_ms": {
+    "stage0_preprocessing": 0.04,
+    "gear1_chirality_apex": 6.24,
+    "gear2_storm_apex": 6.43,
+    "gear3_mok_transit": 1.95,
+    "gear4_bilstm_attention": 2.93,
+    "stage5_verdict_formatting": 0.0,
+    "total_measured_sum": 17.59
   }
 }
