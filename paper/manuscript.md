@@ -70,9 +70,9 @@ Solar wind-magnetosphere coupling is governed by non-linear plasma interactions.
 7. **Integrated Coupling & Temporal Lags:** Multiscale historical lags ($t-1, 2, 3, 6, 12, 24\text{h}$) and rolling energy integrals ($\sum \text{Newell}_{3h, 6h, 12h}$).
 
 ### 2.3 Solar Vision & Planetary CME Transit Catalog
-For solar coronal vision and interplanetary transit modeling, we cross-matched 42,500+ white-light CMEs from SOHO/LASCO CDAW (Yashiro et al., 2004) with near-Earth in-situ ICME shock arrival records from the Richardson & Cane catalog (Richardson & Cane, 2010), yielding 338 verified Earth-impacting CMEs across Solar Cycles 23, 24, and 25 with Thomson-scattering mass, 20 $R_\odot$ asymptotic speeds, active region coordinates, and full-resolution imaging:
-- **Coronal White-Light Imagery:** SOHO/LASCO C2 coronagraphs ($512 \times 512$ RGB, 313 events verified on disk).
-- **Line-of-Sight Magnetograms:** SOHO/MDI and SDO/HMI full-disk magnetograms ($512 \times 512$ grayscale, 315 events verified on disk).
+For solar coronal vision and interplanetary transit modeling, we cross-matched 42,500+ white-light CMEs from SOHO/LASCO CDAW (Yashiro et al., 2004) with near-Earth in-situ ICME shock arrival records from the Richardson & Cane catalog (Richardson & Cane, 2010), yielding 331 verified Earth-impacting CME shocks across Solar Cycles 23, 24, and 25 (91 in Cycle 25 held-out OOD), alongside 314 matched coronal vision events with Thomson-scattering mass, 20 $R_\odot$ asymptotic speeds, active region coordinates, and paired solar imaging:
+- **Coronal White-Light Imagery:** SOHO/LASCO C2 coronagraphs ($512 \times 512$ RGB, 314 events verified on disk).
+- **Line-of-Sight Magnetograms:** SOHO/MDI and SDO/HMI full-disk magnetograms ($512 \times 512$ grayscale, 314 events verified on disk).
 - **Active Region Cutouts:** Automatically centered $256 \times 256$ patches isolating the primary polarity inversion line and eruptive magnetic shear.
 
 ---
@@ -267,7 +267,7 @@ HELIOS 2.0 was verified against historical landmark space weather events coverin
 ---
 
 ### 4.3 Hardware Acceleration and Apple Silicon M4 Latency Budget
-To establish suitability for real-time edge deployment, the 4-tier pipeline was benchmarked over 1,000 continuous inference cycles on an Apple Silicon M4 SoC ($16\text{ GB}$ Unified Memory, Metal Performance Shaders `mps` backend):
+To establish suitability for real-time edge deployment, the 4-tier pipeline was benchmarked over 1,000 continuous inference cycles on an Apple Silicon M4 SoC ($16\text{ GB}$ Unified Memory, Metal Performance Shaders `mps` backend; benchmark artifact recorded in `results/latency_benchmark.json`):
 
 | Pipeline Stage | Model Architecture | Hardware Acceleration | Execution Latency | Unified RAM |
 | :--- | :--- | :--- | :---: | :---: |
@@ -275,6 +275,7 @@ To establish suitability for real-time edge deployment, the 4-tier pipeline was 
 | **Gear 2** | HELIOS-STORM-APEX (ExtraTrees) | CPU Vectorized | $4.5\text{ ms}$ | $< 8\text{ MB}$ |
 | **Gear 3** | MoKTransitNN (PyTorch) | Metal MPS Tensor Engine | $1.8\text{ ms}$ | $< 4\text{ MB}$ |
 | **Gear 4** | HeliosBiLSTM (24-step Attn) | Metal MPS Sequential | $3.2\text{ ms}$ | $< 6\text{ MB}$ |
+| **Pre/Post-Processing** | Ingestion, feature scaling, verdict dispatch | CPU Vectorized | $0.8\text{ ms}$ | $< 1\text{ MB}$ |
 | **Total Pipeline** | **End-to-End Swiss Watch** | **Apple Silicon M4 GPU** | **$14.5\text{ ms}$** (p99 $15.9\text{ ms}$) | **$< 26\text{ MB}$** |
 
 ---

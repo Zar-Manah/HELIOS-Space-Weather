@@ -1,0 +1,18 @@
+{
+  "hardware": "Apple Silicon M4 SoC (16 GB Unified RAM, Metal MPS)",
+  "n_cycles": 1000,
+  "mean_latency_ms": 15.26,
+  "median_latency_ms": 14.68,
+  "p95_latency_ms": 16.87,
+  "p99_latency_ms": 17.35,
+  "min_latency_ms": 13.4,
+  "max_latency_ms": 30.55,
+  "stage_breakdown_ms": {
+    "gear1_chirality_apex": 4.2,
+    "gear2_storm_apex": 4.5,
+    "gear3_mok_transit": 1.8,
+    "gear4_bilstm_attention": 3.2,
+    "pre_post_processing_overhead": 0.8,
+    "total_declared_budget": 14.5
+  }
+}

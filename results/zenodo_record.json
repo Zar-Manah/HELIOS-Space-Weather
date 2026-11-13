@@ -7,8 +7,8 @@
   "local_release_version": "2.5.9",
   "status": "v2.5.9 packaged and verified with full 57,998-sample metrics, APEX V5 physical models, and complete multi-source solar/interplanetary catalogs",
   "artifacts_sha256": {
-    "helios_processed_datasets.tar.gz": "0ee6536228abf3e4422b1299146a89f926d07b1d3f012f716fc5cc6022fb7a1d",
-    "helios_trained_models.tar.gz": "27a1b18928cea2b81624688d3f69648d40b416162ad3653841b1694dfbffdf7d",
-    "helios_evaluation_metrics.json": "e66de8abb706eefa61297a967508d20820ec2c481fcb787003c3ee818c13c69c"
+    "helios_processed_datasets.tar.gz": "d441a4e50f3bee97a6996cb9fcbc6b5987bd4afc72f3a68530c6deb062870ffa",
+    "helios_trained_models.tar.gz": "1e17f374d3d9e4baff4d1e2fe91d45c274376886db79cc61c835934428210ff1",
+    "helios_evaluation_metrics.json": "d2165f7494704d15703512b73246503f7dfc3fd64e3b386bb4ca94bbe51b0f6a"
   }
 }

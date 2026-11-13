@@ -62,8 +62,9 @@ def main():
     metrics_payload = {
         "release": "2.5.9",
         "system": "Zar-Manah HELIOS 2.0",
-        "doi": "10.5281/zenodo.24182248",
+        "doi": "10.5281/zenodo.24061451",
         "concept_doi": "10.5281/zenodo.24061451",
+        "v258_archive_doi": "10.5281/zenodo.24182248",
         "cal_samples_total": len(df_cal),
         "test_samples_total": len(df_test)
     }

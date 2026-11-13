@@ -2,12 +2,12 @@
 
 > **An Open-Source Space Weather Architecture on Consumer Hardware (<25ms) — Predicting CME Arrival Times and Geomagnetic Storm Severity from Live Satellite Telemetry.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT / CC BY 4.0](https://img.shields.io/badge/License-MIT%20%2F%20CC%20BY%204.0-yellow.svg)](LICENSE)
+[![Release: v2.5.9](https://img.shields.io/badge/Release-v2.5.9-brightgreen.svg)](https://github.com/Zar-Manah/HELIOS-Space-Weather/releases/tag/v2.5.9)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
-[![Zenodo DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24182248-blue.svg)](https://doi.org/10.5281/zenodo.24182248)
-[![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
+[![Zenodo Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
 ---
@@ -28,7 +28,7 @@
 Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **$<25$ milliseconds on consumer-grade hardware (Apple Silicon M4 GPU)** with zero cloud dependencies or supercomputing queues.
 
 ⚡ **Rapid Sub-Second Forecasting Benchmarked against Operational Standards:**  
-Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical analytical drag models (Vršnak 2013 DBM $\pm 12.30\text{ h}$; drag prior baseline $\pm 28.95\text{ h}$) and approaching the operational accuracy of NASA's WSA-ENLIL 3D MHD supercomputer standard ($\pm 10.40\text{ h}$ at Earth; Wold et al., 2018). While numerical MHD models take hours on supercomputing clusters, HELIOS executes the full 4-tier pipeline locally on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **$<25$ milliseconds** with zero cloud dependencies or cluster queues.
+Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical analytical drag models (Vršnak 2013 DBM $\pm 12.30\text{ h}$ global, $\pm 16.57\text{ h}$ fast $\ge 1000\text{ km/s}$; drag prior baseline $\pm 28.95\text{ h}$) and approaching the operational accuracy of NASA's WSA-ENLIL 3D MHD supercomputer standard ($\pm 10.40\text{ h}$ at Earth; Wold et al., 2018). While numerical MHD models take hours on supercomputing clusters, HELIOS executes the full 4-tier pipeline locally on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **$<25$ milliseconds** with zero cloud dependencies or cluster queues.
 
 🤖 **Eliminating Human Bottlenecks & Full Operational Automation:**  
 Legacy space weather forecasting relies heavily on slow manual labor—requiring human operators to hand-fit geometric wireframes to coronagraph images, configure simulation grids, and wait hours for supercomputing cluster queues. HELIOS 2.0 eliminates these operational bottlenecks through **100% autonomous end-to-end execution**: from live multi-satellite telemetry ingestion (NOAA SWPC & NASA SDO/SOHO) and physical feature derivation to real-time kinematic inference, conformal uncertainty quantification, and automated NASA CCMC Scoreboard export.
@@ -68,7 +68,7 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
 | **Computational Footprint** | 1 to 4 hours on supercomputing HPC clusters | **$<25$ milliseconds** on Apple Silicon M4 GPU / consumer CPUs | **Eliminates cluster queue latency entirely** |
 | **Human Labor & Bottlenecks** | Manual wireframe cone fitting on coronagraphs | **100% Autonomous** multi-satellite ingestion | **Zero human response lag in severe emergencies** |
 | **False Alarm Rate** | Velocity-only sirens (up to 92% false alarms) | 3D Cone Trajectory Filter + Severity Veto | **Filters non-Earth CMEs deterministically** |
-| **Uncertainty Quantification** | Heuristic single-point deterministic output | Empirical Conformal Quantiles | **Calibrated ~81.3% coverage intervals** |
+| **Uncertainty Quantification** | Heuristic single-point deterministic output | Empirical Conformal Quantiles (CQR) | **Calibrated 89.26% coverage intervals on Cycle 25 OOD (nominal 90%)** |
 | **Standard Interoperability** | Complex manual formats | Native NASA CCMC JSON Schema export | **Instant pre-event benchmarking for global agencies** |
 
 ---
@@ -209,5 +209,5 @@ HELIOS 2.0 ingests and builds upon public open-science data from international m
 ## 📄 License & Open Science
 
 * **Software & Code:** Distributed under the **MIT License**.
-* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (DOI: [10.5281/zenodo.24179115](https://doi.org/10.5281/zenodo.24179115)).
+* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (Concept DOI: [10.5281/zenodo.24061451](https://doi.org/10.5281/zenodo.24061451)).
 * Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah** (ORCID: [0009-0007-8443-8999](https://orcid.org/0009-0007-8443-8999)).
