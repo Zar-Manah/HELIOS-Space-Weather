@@ -27,6 +27,7 @@ import torchvision.transforms as T
 from sklearn.decomposition import PCA
 from sklearn.ensemble import ExtraTreesClassifier, GradientBoostingRegressor
 from sklearn.metrics import accuracy_score, roc_auc_score, confusion_matrix, mean_absolute_error
+from sklearn.model_selection import StratifiedKFold, cross_val_predict
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "data/processed/helios_vision_matched.parquet")
@@ -45,6 +46,8 @@ device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 print(f"Hardware de Cómputo: {device} (Apple Silicon M4 GPU)")
 
 df = pd.read_parquet(DATA_PATH)
+df["dst_min"] = df["dst_min"].fillna(-10.0)
+df["bz_min"] = df["bz_min"].fillna(0.0)
 print(f"Cargado dataset con {len(df)} eventos CME.")
 
 # 1. Desproyección Geométrica 3D del Frente de Choque (Modelo Cónico GCS)
@@ -168,39 +171,34 @@ clf1 = ExtraTreesClassifier(
     class_weight="balanced",
     random_state=42
 )
-clf1.fit(X_apex[train_mask], y1_class_tr)
-
-probs1 = clf1.predict_proba(X_apex[test_mask])[:, 1]
-auc1 = roc_auc_score(y1_class_te, probs1)
+# Threshold tuning strictly on Train Split (Cycles 23 & 24) via 5-fold Stratified CV (ZERO test-set leakage)
+cv1 = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+oof_probs1 = cross_val_predict(clf1, X_apex[train_mask], y1_class_tr, cv=cv1, method="predict_proba")[:, 1]
 
 best_th1 = 0.50
-best_acc1 = 0.0
-best_tss1 = -1.0
-best_cm1 = None
-
-for th in np.linspace(0.40, 0.60, 41):
-    preds = (probs1 >= th).astype(int)
-    acc = accuracy_score(y1_class_te, preds)
-    cm = confusion_matrix(y1_class_te, preds)
-    tn, fp, fn, tp = cm.ravel()
-    sens = tp / (tp + fn + 1e-6)
-    spec = tn / (tn + fp + 1e-6)
-    tss = sens + spec - 1.0
-    if tss > best_tss1 and sens >= 0.50 and spec >= 0.50:
-        best_tss1 = tss
-        best_acc1 = acc
+best_tss_cv1 = -1.0
+for th in np.linspace(0.35, 0.65, 61):
+    cv_preds = (oof_probs1 >= th).astype(int)
+    cm_cv = confusion_matrix(y1_class_tr, cv_preds)
+    tn_c, fp_c, fn_c, tp_c = cm_cv.ravel()
+    sens_c = tp_c / (tp_c + fn_c + 1e-6)
+    spec_c = tn_c / (tn_c + fp_c + 1e-6)
+    tss_c = sens_c + spec_c - 1.0
+    if tss_c > best_tss_cv1 and sens_c >= 0.40 and spec_c >= 0.40:
+        best_tss_cv1 = tss_c
         best_th1 = th
-        best_cm1 = cm
 
-if best_cm1 is None:
-    best_th1 = 0.50
-    preds = (probs1 >= best_th1).astype(int)
-    best_acc1 = accuracy_score(y1_class_te, preds)
-    best_cm1 = confusion_matrix(y1_class_te, preds)
-    tn, fp, fn, tp = best_cm1.ravel()
-    best_tss1 = (tp/(tp+fn)) + (tn/(tn+fp)) - 1.0
+print(f"Optimal Model 1 Decision Threshold tuned on Train CV: {best_th1:.3f} (CV TSS: {best_tss_cv1:+.4f})")
 
+# Fit final model on full train split and evaluate ONCE on held-out Cycle 25 OOD
+clf1.fit(X_apex[train_mask], y1_class_tr)
+probs1 = clf1.predict_proba(X_apex[test_mask])[:, 1]
+auc1 = roc_auc_score(y1_class_te, probs1)
+preds1 = (probs1 >= best_th1).astype(int)
+best_acc1 = accuracy_score(y1_class_te, preds1)
+best_cm1 = confusion_matrix(y1_class_te, preds1)
 tn1, fp1, fn1, tp1 = best_cm1.ravel()
+best_tss1 = (tp1 / (tp1 + fn1 + 1e-6)) + (tn1 / (tn1 + fp1 + 1e-6)) - 1.0
 
 # Regresores conformales de Bz_min
 q10_bz = GradientBoostingRegressor(loss="quantile", alpha=0.10, n_estimators=120, max_depth=3, random_state=42).fit(X_apex[train_mask], y1_reg_tr)
@@ -245,37 +243,34 @@ clf2 = ExtraTreesClassifier(
 )
 clf2.fit(X_apex[train_mask], y2_class_tr)
 
-probs2 = clf2.predict_proba(X_apex[test_mask])[:, 1]
-auc2 = roc_auc_score(y2_class_te, probs2)
+# Threshold tuning strictly on Train Split (Cycles 23 & 24) via 5-fold Stratified CV (ZERO test-set leakage)
+cv2 = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+oof_probs2 = cross_val_predict(clf2, X_apex[train_mask], y2_class_tr, cv=cv2, method="predict_proba")[:, 1]
 
 best_th2 = 0.53
-best_acc2 = 0.0
-best_tss2 = -1.0
-best_cm2 = None
-
-for th in np.linspace(0.48, 0.60, 25):
-    preds = (probs2 >= th).astype(int)
-    acc = accuracy_score(y2_class_te, preds)
-    cm = confusion_matrix(y2_class_te, preds)
-    tn, fp, fn, tp = cm.ravel()
-    sens = tp / (tp + fn + 1e-6)
-    spec = tn / (tn + fp + 1e-6)
-    tss = sens + spec - 1.0
-    if acc >= 0.84 and sens >= 0.50 and acc > best_acc2:
-        best_acc2 = acc
-        best_tss2 = tss
+best_tss_cv2 = -1.0
+for th in np.linspace(0.40, 0.65, 51):
+    cv_preds = (oof_probs2 >= th).astype(int)
+    cm_cv = confusion_matrix(y2_class_tr, cv_preds)
+    tn_c, fp_c, fn_c, tp_c = cm_cv.ravel()
+    sens_c = tp_c / (tp_c + fn_c + 1e-6)
+    spec_c = tn_c / (tn_c + fp_c + 1e-6)
+    tss_c = sens_c + spec_c - 1.0
+    if tss_c > best_tss_cv2 and sens_c >= 0.40 and spec_c >= 0.70:
+        best_tss_cv2 = tss_c
         best_th2 = th
-        best_cm2 = cm
 
-if best_cm2 is None:
-    best_th2 = 0.53
-    preds = (probs2 >= best_th2).astype(int)
-    best_acc2 = accuracy_score(y2_class_te, preds)
-    best_cm2 = confusion_matrix(y2_class_te, preds)
-    tn, fp, fn, tp = best_cm2.ravel()
-    best_tss2 = (tp/(tp+fn)) + (tn/(tn+fp)) - 1.0
+print(f"Optimal Model 2 Decision Threshold tuned on Train CV: {best_th2:.3f} (CV TSS: {best_tss_cv2:+.4f})")
 
+# Fit final model on full train split and evaluate ONCE on held-out Cycle 25 OOD
+clf2.fit(X_apex[train_mask], y2_class_tr)
+probs2 = clf2.predict_proba(X_apex[test_mask])[:, 1]
+auc2 = roc_auc_score(y2_class_te, probs2)
+preds2 = (probs2 >= best_th2).astype(int)
+best_acc2 = accuracy_score(y2_class_te, preds2)
+best_cm2 = confusion_matrix(y2_class_te, preds2)
 tn2, fp2, fn2, tp2 = best_cm2.ravel()
+best_tss2 = (tp2 / (tp2 + fn2 + 1e-6)) + (tn2 / (tn2 + fp2 + 1e-6)) - 1.0
 
 # Regresores conformales de Dst_min
 q10_dst = GradientBoostingRegressor(loss="quantile", alpha=0.10, n_estimators=120, max_depth=3, random_state=42).fit(X_apex[train_mask], y2_reg_tr)

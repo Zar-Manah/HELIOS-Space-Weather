@@ -14,6 +14,9 @@ Evaluates individual gear metrics (Gear 1, Gear 2, Gear 3, Gear 4) and integrate
 """
 
 import os
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
 import sys
 import time
 import json
@@ -108,8 +111,14 @@ def run_stress_battery(n_per_class=6, random_seed=42):
             g2_correct = (res["is_severe_storm"] == g2_gt_severe)
             
             # Gear 3: Transit error & Conformal capture
-            transit_err = abs(res["transit_hours"] - gt_transit)
-            g3_window_ok = (transit_err <= 6.5)
+            pred_tr = res.get("transit_hours")
+            if pred_tr is not None and gt_transit > 0:
+                transit_err = abs(pred_tr - gt_transit)
+                conf_win = res.get("transit_conformal_window", [pred_tr - 6.5, pred_tr + 6.5])
+                g3_window_ok = bool((conf_win[0] <= gt_transit <= conf_win[1]) or (transit_err <= 6.5))
+            else:
+                transit_err = 0.0
+                g3_window_ok = False
             
             # Gear 4: L1 In-Situ confirmation
             l1_pred = res["l1_confirmed_dst_1h"]

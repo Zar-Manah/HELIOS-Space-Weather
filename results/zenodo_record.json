@@ -1,7 +1,8 @@
 {
-  "dep_id": 24179115,
-  "doi": "10.5281/zenodo.24179115",
+  "dep_id": 24181624,
+  "doi": "10.5281/zenodo.24181624",
   "conceptdoi": "10.5281/zenodo.24061451",
-  "record_url": "https://zenodo.org/records/24179115",
-  "version": "2.5.6"
+  "record_url": "https://zenodo.org/api/records/24181624",
+  "version": "2.5.7",
+  "published_at": "2026-11-13 00:13:40 UTC"
 }

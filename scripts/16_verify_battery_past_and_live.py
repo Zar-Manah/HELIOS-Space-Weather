@@ -110,9 +110,11 @@ def run_battery():
         pred_transit = float(res.get("transit_hours") or 0.0)
         transit_err = abs(pred_transit - gt_transit) if gt_transit > 0 else 0.0
         
-        if storm_ok and bz_ok:
+        if storm_ok and bz_ok and transit_err <= 15.0:
             status_str = "✅ CONCORDANT"
             concordant_count += 1
+        elif storm_ok and bz_ok:
+            status_str = f"⚠️ PARTIAL (Classes: PASS, Transit Δ: {transit_err:.1f}h)"
         elif storm_ok or bz_ok:
             status_str = f"⚠️ PARTIAL (Sev: {'PASS' if storm_ok else 'FAIL'}, Bz: {'PASS' if bz_ok else 'FAIL'})"
         else:

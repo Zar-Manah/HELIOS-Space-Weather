@@ -139,16 +139,39 @@ rmse_global = float(np.sqrt(mean_squared_error(y_te, preds_hybrid)))
 r2_global  = float(r2_score(y_te, preds_hybrid))
 dbm_baseline = float(mean_absolute_error(y_te, test_df["drag_prior_h"].values))
 
+# Analytical 1D Vršnak Drag-Based Model (Vršnak et al., 2013)
+def dbm_transit_vrsnak(v0, w=420.0, gamma=0.5e-7, R_target=1.496e8, R0=1.4e7):
+    delta_R = R_target - R0
+    t = delta_R / (0.5 * (v0 + w))
+    for _ in range(10):
+        if v0 >= w:
+            arg = max(1e-6, 1.0 + gamma * (v0 - w) * t)
+            f = w * t + (1.0 / gamma) * np.log(arg) - delta_R
+            f_prime = w + (v0 - w) / arg
+        else:
+            arg = max(1e-6, 1.0 - gamma * (w - v0) * t)
+            f = w * t - (1.0 / gamma) * np.log(arg) - delta_R
+            f_prime = w - (w - v0) / arg
+        dt = f / f_prime
+        t = t - dt
+        if abs(dt) < 1.0:
+            break
+    return t / 3600.0
+
+vrsnak_preds = [dbm_transit_vrsnak(v) for v in test_df["cme_speed"].values]
+mae_vrsnak_dbm = float(mean_absolute_error(y_te, vrsnak_preds))
+
 # Empirical conformal coverage (HONEST EVALUATION: zero artificial padding)
 in_window = (y_te >= test_df["q_low"]) & (y_te <= test_df["q_high"])
 coverage_pct = float(in_window.mean() * 100.0)
 mean_window_h = float((test_df["q_high"] - test_df["q_low"]).mean())
 
 print("\n" + "=" * 75)
-print("🏆 HELIOS-TRANSIT v2.5: UNIFIED DUAL-SCALE BENCHMARK (Cycle 25 OOD)")
+print("🏆 HELIOS-TRANSIT v2.5.7: UNIFIED DUAL-SCALE BENCHMARK (Cycle 25 OOD)")
 print("=" * 75)
-print(f"• Baseline Drag-Based Model (DBM):   MAE = ±{dbm_baseline:.2f} hours")
-print(f"• NASA WSA-ENLIL Operational Std:    MAE = ±10.40 hours (Earth), ±9.20h (STEREO-A)")
+print(f"• Baseline Drag Prior Proxy (DBM-prior): MAE = ±{dbm_baseline:.2f} hours")
+print(f"• Analytical Drag-Based Model (Vršnak):  MAE = ±{mae_vrsnak_dbm:.2f} hours")
+print(f"• NASA WSA-ENLIL Operational Std:        MAE = ±10.40 hours (Earth), ±9.20h (STEREO-A)")
 print("-" * 75)
 print(f"• Tree Model (GBDT Alone):           MAE = ±{mean_absolute_error(y_te, preds_tree_time):.2f} h | Median: ±{np.median(np.abs(y_te - preds_tree_time)):.2f} h")
 print(f"• MoK Model (Neural):                MAE = ±{mean_absolute_error(y_te, preds_mok):.2f} h | Median: ±{np.median(np.abs(y_te - preds_mok)):.2f} h")

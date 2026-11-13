@@ -1,0 +1,21 @@
+{
+  "system_name": "HELIOS-SOLAR-VISION-APEX-V4",
+  "created_at": "2026-11-13 00:47:41",
+  "hardware": "mps",
+  "model1_chirality": {
+    "target": "Southward Threat Bz <= -10 nT",
+    "accuracy_ood": 0.6373626373626373,
+    "roc_auc_ood": 0.622093023255814,
+    "tss_ood": 0.2616278794534215,
+    "mae_bz": 5.4249664825044235,
+    "conformal_coverage": 0.7472527472527473
+  },
+  "model2_storm_severity": {
+    "target": "Severe Geomagnetic Storm (Dst <= -110.0 nT)",
+    "accuracy_ood": 0.7802197802197802,
+    "roc_auc_ood": 0.8421052631578947,
+    "tss_ood": 0.4157894229501413,
+    "mae_dst": 44.62248384944222,
+    "conformal_coverage": 0.6813186813186813
+  }
+}
