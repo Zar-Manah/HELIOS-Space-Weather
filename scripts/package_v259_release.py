@@ -64,6 +64,7 @@ def main():
         "system": "Zar-Manah HELIOS 2.0",
         "doi": "10.5281/zenodo.24061451",
         "concept_doi": "10.5281/zenodo.24061451",
+        "version_doi": "10.5281/zenodo.24210315",
         "v258_archive_doi": "10.5281/zenodo.24182248",
         "cal_samples_total": len(df_cal),
         "test_samples_total": len(df_test)
@@ -256,11 +257,13 @@ def main():
         with open(record_path, "r") as f:
             rec = json.load(f)
     else:
-        rec = {"dep_id": 24182248, "doi": "10.5281/zenodo.24182248", "conceptdoi": "10.5281/zenodo.24061451"}
+        rec = {"dep_id": 24210315, "doi": "10.5281/zenodo.24210315", "conceptdoi": "10.5281/zenodo.24061451"}
     
-    rec["published_zenodo_version"] = "2.5.8"
+    rec["published_zenodo_version"] = "2.5.9"
     rec["local_release_version"] = "2.5.9"
-    rec["status"] = "v2.5.9 packaged and verified with full 57,998-sample metrics, APEX V5 physical models, and complete multi-source solar/interplanetary catalogs"
+    rec["doi"] = "10.5281/zenodo.24210315"
+    rec["conceptdoi"] = "10.5281/zenodo.24061451"
+    rec["status"] = "v2.5.9 published on Zenodo CERN OpenAIRE under permanent Concept DOI 10.5281/zenodo.24061451"
     rec["artifacts_sha256"] = sha_map
     with open(record_path, "w") as f:
         json.dump(rec, f, indent=2)
