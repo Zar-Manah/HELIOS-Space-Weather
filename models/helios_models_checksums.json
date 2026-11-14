@@ -1,6 +1,6 @@
 {
   "bilstm_scaler.json": "b287411e36af132b575178437e0a1bb43f7acb03ed6ad39de413902757383d91",
-  "helios_apex.manifest.json": "40afd1c649e438d9b676c7fbcc0ffaa08ce624ae6e4afb51b67ad81772d46fa5",
+  "helios_apex.manifest.json": "a657c52c35afebc4516e2150d5d7a5d7240eca77b98928c2070a9d7de0c75a5f",
   "helios_bilstm_edited.manifest.json": "c128cda868443207172630e6a7fe8cf16beeb9f72720a03de94370d243983e97",
   "helios_bilstm_edited.pt": "19b0e99155184ba408c5a94cc27dfbb182af050225254d085f7c82d6945d3aa5",
   "helios_bilstm_mps.pt": "455057b475bd7a82ef1d02ae9515e2965cbc21feff8cfea17cbd3010a63ca8e1",

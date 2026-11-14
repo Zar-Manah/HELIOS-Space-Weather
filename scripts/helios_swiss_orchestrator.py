@@ -462,9 +462,13 @@ def print_swiss_report(name, res):
     elif res["is_severe_storm"] and ch_state == "NORTHWARD_POLARITY":
         print("   🟠 MODERATE KINETIC PROTOCOL: Strong shock front with northward magnetic field.")
         print("      Actions: Magnetopause compression monitoring without severe grid blackout risk.")
+    elif res.get("gt_dst", 0.0) <= -50.0 or res.get("dst_q50", 0.0) <= -50.0:
+        eff_dst = res.get("gt_dst", 0.0) if res.get("gt_dst", 0.0) <= -50.0 else res.get("dst_q50", 0.0)
+        print(f"   🟡 SUB-SEVERE PROTOCOL (MODERATE GEOMAGNETIC ACTIVITY): Sub-severe geomagnetic disturbance (Dst ~ {eff_dst:.0f} nT).")
+        print("      Actions: False severe-storm blackout alert successfully defused; orbital assets and high-latitude power grids monitor moderate G1/G2 activity.")
     else:
-        print("   🟢 GREEN PROTOCOL (SAFE TRANSIT): False alarm successfully defused.")
-        print("      Actions: Spaceflight operations and orbital assets maintained under nominal envelope.")
+        print("   🟢 GREEN PROTOCOL (SAFE TRANSIT / NOMINAL): False alarm successfully defused.")
+        print("      Actions: Spaceflight operations and orbital assets maintained under nominal quiet envelope.")
     print("=" * 85 + "\n")
 
 def fetch_live_solar_imagery():

@@ -402,7 +402,7 @@
   <header>
     <div class="brand">
       <div class="brand-title">ZAR-MANAH HELIOS 2.0</div>
-      <div class="brand-tag">v2.5.9 Interactive Companion Demo (Python M4 Benchmark: 17.59 ms • CQR Cov: 89.26% • Concept DOI: 10.5281/zenodo.24215019)</div>
+      <div class="brand-tag">v2.5.11 Interactive Companion Demo (Python M4 Benchmark: 17.59 ms • CQR Cov: 89.26% • Concept DOI: 10.5281/zenodo.24215019)</div>
       <div style="font-size: 10px; color: var(--amber); margin-top: 2px;">Notice: Browser cockpit operates as an interactive visualization companion with simulated client-side kinematics. For full production AI inference (ExtraTrees, MoK Neural Network, BiLSTM GPU Attention, CQR), execute <code>predict.py</code> in Python.</div>
     </div>
 
@@ -1231,7 +1231,7 @@
           forecasts: [
             {
               overallForecastConfidence: pipeline.v0 >= 1000 ? 1 : 2,
-              forecastNote: `HELIOS 2.0 (v2.5.9) 4-tier Swiss Watch multi-horizon space weather forecast (${currentMode.toUpperCase()} mode). Concept DOI: 10.5281/zenodo.24215019`,
+              forecastNote: `HELIOS 2.0 (v2.5.11) 4-tier Swiss Watch multi-horizon space weather forecast (${currentMode.toUpperCase()} mode). Concept DOI: 10.5281/zenodo.24215019`,
               cme: [
                 {
                   startTime: new Date(now.getTime() - 2 * 3600 * 1000).toISOString()
@@ -1265,7 +1265,7 @@
         },
         helios_pipeline_state: {
           system: "Zar-Manah HELIOS 2.0",
-          version: "2.5.9",
+          version: "2.5.11",
           doi: "10.5281/zenodo.24215019",
           concept_doi: "10.5281/zenodo.24215019",
           timestamp_utc: now.toISOString(),

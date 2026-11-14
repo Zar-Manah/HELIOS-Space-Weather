@@ -4,7 +4,6 @@
   "doi": "10.5281/zenodo.24215019",
   "concept_doi": "10.5281/zenodo.24215019",
   "version_doi": "10.5281/zenodo.24215020",
-  "v258_archive_doi": "10.5281/zenodo.24182248",
   "cal_samples_total": 34960,
   "test_samples_total": 57998,
   "lead_1h": {
@@ -113,15 +112,16 @@
       "median_hours": 7.45,
       "rmse_hours": 15.29,
       "r2": 0.313,
-      "conformal_coverage": 81.3,
-      "interval_width_hours": 37.5
+      "conformal_coverage": 92.31,
+      "interval_width_hours": 59.72
     },
     "dynamic_hybrid_mok_gbdt": {
       "mae_hours": 11.69,
       "median_hours": 8.34,
       "rmse_hours": 15.68,
       "r2": 0.278,
-      "conformal_coverage": 81.3
+      "conformal_coverage": 92.31,
+      "interval_width_hours": 59.72
     },
     "vrsnak_dbm_all": {
       "mae_hours": 12.3

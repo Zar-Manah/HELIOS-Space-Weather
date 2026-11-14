@@ -9,6 +9,7 @@ import os
 import sys
 import time
 import json
+import argparse
 import numpy as np
 import pandas as pd
 import torch
@@ -19,6 +20,10 @@ sys.path.append(os.path.join(BASE_DIR, "scripts"))
 from helios_swiss_orchestrator import SwissWatchPipeline, check_cme_earth_trajectory, device
 
 def main():
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0 Latency Benchmark")
+    parser.add_argument("--save", action="store_true", help="Explicitly overwrite canonical results/latency_benchmark.json")
+    args = parser.parse_args()
+
     print("=" * 70)
     print("⚡ ZAR-MANAH HELIOS 2.0: 1,000-CYCLE EMPIRICAL LATENCY BENCHMARK (M4 GPU)")
     print("=" * 70)
@@ -174,11 +179,13 @@ def main():
         }
     }
 
-    out_path = os.path.join(BASE_DIR, "results", "latency_benchmark.json")
-    with open(out_path, "w") as f:
-        json.dump(benchmark_artifact, f, indent=2)
-
-    print(f"\n✅ Benchmark artifact saved to: {out_path}")
+    if args.save:
+        out_path = os.path.join(BASE_DIR, "results", "latency_benchmark.json")
+        with open(out_path, "w") as f:
+            json.dump(benchmark_artifact, f, indent=2)
+        print(f"\n✅ Benchmark artifact saved to: {out_path}")
+    else:
+        print("\nℹ️ Dry run completed. Canonical results/latency_benchmark.json preserved (pass --save to overwrite).")
 
 if __name__ == "__main__":
     main()

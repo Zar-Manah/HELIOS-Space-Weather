@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.9)
+Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.11)
 Author: Zar Manah (ORCID: 0009-0007-8443-8999)
 
 Dual-Scale Operational Predictions:
@@ -105,15 +105,28 @@ def predict_tactical_storm(features_df, models, metrics):
         lo_surg = lo * (1.0 + scale_factor * act)
         
         q_adj = metrics[f"lead_{lead}h"]["conformal"].get("q_conformal_adjustment", 0.5)
-        lo_adj = lo_surg - q_adj
-        hi_adj = hi + q_adj
+        # Monotonic quantile rearrangement (Chernozhukov et al.) to prevent quantile crossing on extreme OOD
+        lo_final = min(lo_surg, pt_surg) - q_adj
+        hi_final = max(hi, pt_surg) + q_adj
         results[lead] = {
             "pred": pt_surg,
-            "q10": lo_adj,
-            "q90": hi_adj,
-            "margin": (hi_adj - lo_adj) / 2.0
+            "q10": lo_final,
+            "q90": hi_final,
+            "margin": (hi_final - lo_final) / 2.0
         }
     return results
+
+
+def check_cme_physical_bounds(speed=None, lat=None, lon=None, width=None):
+    """Enforces physical celestial mechanics and solar eruptive constraints."""
+    if speed is not None and (speed < 100.0 or speed > 3500.0):
+        raise ValueError(f"Unphysical CME speed: {speed} km/s. Physical solar launch speeds must reside in [100.0, 3500.0] km/s.")
+    if lat is not None and abs(lat) > 90.0:
+        raise ValueError(f"Unphysical CME heliographic latitude: {lat}°. Must reside in [-90.0, +90.0]°.")
+    if lon is not None and abs(lon) > 180.0:
+        raise ValueError(f"Unphysical CME heliographic longitude: {lon}°. Must reside in [-180.0, +180.0]°.")
+    if width is not None and (width <= 0.0 or width > 360.0):
+        raise ValueError(f"Unphysical CME angular width: {width}°. Must reside in (0.0, 360.0]°.")
 
 
 def check_cme_earth_trajectory(lat, lon, width):
@@ -132,17 +145,19 @@ def check_cme_earth_trajectory(lat, lon, width):
 
 
 def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0.0, as_json=False):
+    # Enforce physical constraints
+    check_cme_physical_bounds(speed=speed, lat=lat, lon=lon, width=width)
+
     # 0. Deterministic Geometric Impact Verification
     is_impact, delta_alpha, half_width = check_cme_earth_trajectory(lat, lon, width)
     if not is_impact:
         if as_json:
             out = {
                 "system": "Zar-Manah HELIOS 2.0",
-                "version": "2.5.9",
+                "version": "2.5.11",
                 "doi": "10.5281/zenodo.24215019",
                 "concept_doi": "10.5281/zenodo.24215019",
                 "version_doi": "10.5281/zenodo.24215020",
-                "v258_archive_doi": "10.5281/zenodo.24182248",
                 "type": "cme_trajectory_assessment",
                 "status": "ALL-CLEAR / MISS",
                 "earth_impact": False,
@@ -375,11 +390,10 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.9",
+            "version": "2.5.11",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
             "version_doi": "10.5281/zenodo.24215020",
-            "v258_archive_doi": "10.5281/zenodo.24182248",
             "type": "transit_cme_forecast",
             "speed_km_s": float(speed),
             "angular_width_deg": float(width),
@@ -668,8 +682,8 @@ def run_synthetic_sample(scenario="extreme", as_json=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.9)")
-    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.9)")
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.11)")
+    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.11)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
@@ -683,6 +697,17 @@ def main():
     parser.add_argument("--dashboard", action="store_true", help="Launch interactive Space Weather UI Dashboard in browser")
 
     args = parser.parse_args()
+
+    # Input Physical Validation
+    if args.cme_speed is not None:
+        if args.cme_speed < 100.0 or args.cme_speed > 3500.0:
+            parser.error(f"Invalid --cme_speed ({args.cme_speed} km/s). Physical solar launch speeds must reside in [100.0, 3500.0] km/s.")
+    if abs(args.cme_lat) > 90.0:
+        parser.error(f"Invalid --cme_lat ({args.cme_lat}°). Solar heliographic latitude must reside in [-90.0, +90.0]°.")
+    if abs(args.cme_lon) > 180.0:
+        parser.error(f"Invalid --cme_lon ({args.cme_lon}°). Solar heliographic longitude must reside in [-180.0, +180.0]°.")
+    if args.cme_width <= 0.0 or args.cme_width > 360.0:
+        parser.error(f"Invalid --cme_width ({args.cme_width}°). CME angular width must reside in (0.0, 360.0]°.")
 
     # Route 0: Open Visual Dashboard
     if args.dashboard:
@@ -719,11 +744,10 @@ def main():
     if args.json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.9",
+            "version": "2.5.11",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
             "version_doi": "10.5281/zenodo.24215020",
-            "v258_archive_doi": "10.5281/zenodo.24182248",
             "type": "tactical_dst_forecast",
             "horizons": {}
         }
