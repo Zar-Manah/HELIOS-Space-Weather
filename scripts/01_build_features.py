@@ -105,18 +105,21 @@ with open(RAW_FILE, "r") as f:
 df = pd.DataFrame(records)
 print(f"Loaded {len(df):,} hourly records from 1998 to 2026.")
 
-# Construct continuous datetime index
+# Construct continuous datetime index on strict 1-hour frequency grid
 df["datetime"] = pd.to_datetime(df["year"].astype(str) + "-" + df["doy"].astype(str) + " " + df["hour"].astype(str) + ":00:00", format="%Y-%j %H:%M:%S")
-df = df.sort_values("datetime").reset_index(drop=True)
+df = df.sort_values("datetime").drop_duplicates(subset=["datetime"])
+df = df.set_index("datetime").asfreq("1h")
+
+# Re-align temporal coordinates on regular hourly grid
+df["year"] = df.index.year
+df["doy"] = df.index.dayofyear
+df["hour"] = df.index.hour
 
 # Interpolate small gaps (up to 3 consecutive missing hours) to maintain continuous time-series
 cols_to_interp = ["b_mag", "by_gsm", "bz_gsm", "np_dens", "v_flow", "temp", "pdyn", "dst"]
 for c in cols_to_interp:
-    df[c] = df[c].interpolate(method="linear", limit=3)
-
-# Filter out rows where essential targets or drivers are still missing
-df = df.dropna(subset=["dst", "bz_gsm", "v_flow"]).copy()
-print(f"Valid contiguous records after 3h gap interpolation: {len(df):,}")
+    if c in df.columns:
+        df[c] = df[c].interpolate(method="linear", limit=3)
 
 # -------------------------------------------------------------
 # ASTROPHYSICAL FEATURE ENGINEERING
@@ -207,7 +210,8 @@ def assign_cycle(year):
 
 df["solar_cycle"] = df["year"].apply(assign_cycle)
 
-# Drop rows with NaN targets due to shifts (beginning and end of dataset)
+# Reset datetime index to column and drop rows with NaN targets/features due to regular shifts
+df = df.reset_index()
 df_clean = df.dropna().copy().reset_index(drop=True)
 
 print(f"Final clean dataset: {len(df_clean):,} records with {df_clean.shape[1]} features and targets.")

@@ -680,9 +680,9 @@
       document.getElementById('btnModeSim').className = (mode === 'simulation') ? 'btn btn-active' : 'btn';
 
       if (mode === 'live') {
-        document.getElementById('liveStatusText').textContent = 'NOAA SWPC RTSW (LIVE)';
-        document.getElementById('liveDot').style.background = 'var(--green)';
-        document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--green)';
+        document.getElementById('liveStatusText').textContent = 'CONNECTING TO NOAA SWPC...';
+        document.getElementById('liveDot').style.background = 'var(--cyan)';
+        document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--cyan)';
         startLivePolling();
       } else {
         document.getElementById('liveStatusText').textContent = 'MANUAL SIMULATION';
@@ -1138,6 +1138,21 @@
           fetch('https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json').then(r => r.json()).catch(() => null)
         ]);
 
+        const hasAnySuccess = (Array.isArray(resMag) && resMag.length > 0) ||
+                              (Array.isArray(resWind) && resWind.length > 0) ||
+                              (Array.isArray(resDst) && resDst.length > 0) ||
+                              (Array.isArray(resFlares) && resFlares.length > 0);
+
+        if (hasAnySuccess) {
+          document.getElementById('liveStatusText').textContent = 'NOAA SWPC RTSW (LIVE)';
+          document.getElementById('liveDot').style.background = 'var(--green)';
+          document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--green)';
+        } else {
+          document.getElementById('liveStatusText').textContent = 'NOAA SWPC OFFLINE (SIMULATION / CACHED)';
+          document.getElementById('liveDot').style.background = 'var(--amber)';
+          document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--amber)';
+        }
+
         // 1. Process In-Situ IMF Magnetometer (RTSW)
         if (Array.isArray(resMag) && resMag.length > 0) {
           const latestMag = resMag[resMag.length - 1];
@@ -1188,6 +1203,9 @@
         recomputePipeline();
       } catch (err) {
         console.warn('NOAA SWPC direct fetch warning:', err);
+        document.getElementById('liveStatusText').textContent = 'NOAA SWPC OFFLINE (SIMULATION / CACHED)';
+        document.getElementById('liveDot').style.background = 'var(--amber)';
+        document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--amber)';
       }
     }
 

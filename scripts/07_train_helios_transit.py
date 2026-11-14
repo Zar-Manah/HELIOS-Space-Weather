@@ -116,23 +116,29 @@ model_time = lgb.LGBMRegressor(
 )
 model_time.fit(X_train, y_train_time)
 
-# Conformal quantiles for 90% confidence window
+# -------------------------------------------------------------
+# Conformal quantiles for 90% confidence window (Strictly Disjoint Split)
+# -------------------------------------------------------------
 alpha = 0.10
+# Split training data into proper training set and independent calibration set
+n_cal = int(len(X_train) * 0.25)
+X_proper = X_train.iloc[:-n_cal]
+y_proper_time = y_train_time[:-n_cal]
+X_cal = X_train.iloc[-n_cal:]
+y_cal_time = y_train_time[-n_cal:]
+
 model_q_low = lgb.LGBMRegressor(
     objective="quantile", alpha=alpha/2.0, n_estimators=140, learning_rate=0.04, num_leaves=14, subsample=0.85, random_state=42, verbose=-1
 )
 model_q_high = lgb.LGBMRegressor(
     objective="quantile", alpha=1.0 - alpha/2.0, n_estimators=140, learning_rate=0.04, num_leaves=14, subsample=0.85, random_state=42, verbose=-1
 )
-model_q_low.fit(X_train, y_train_time)
-model_q_high.fit(X_train, y_train_time)
+# Fit quantiles strictly on X_proper to avoid calibration leakage
+model_q_low.fit(X_proper, y_proper_time)
+model_q_high.fit(X_proper, y_proper_time)
 
-# Calibrate on independent calibration split (last 25% of training set)
-n_cal = int(len(X_train) * 0.25)
-X_cal = X_train.iloc[-n_cal:]
-y_cal = y_train_time[-n_cal:]
-
-scores = np.maximum(model_q_low.predict(X_cal) - y_cal, y_cal - model_q_high.predict(X_cal))
+# Calibrate on independent calibration split
+scores = np.maximum(model_q_low.predict(X_cal) - y_cal_time, y_cal_time - model_q_high.predict(X_cal))
 q_adjust = float(np.quantile(scores, np.ceil((1.0 - alpha) * (len(scores) + 1)) / len(scores)))
 
 pred_time = model_time.predict(X_test)

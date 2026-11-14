@@ -201,27 +201,20 @@ def main():
                 tar.add(fp, arcname=arc)
     print(f"✅ Created {tar_datasets_path} ({os.path.getsize(tar_datasets_path) / 1024 / 1024:.2f} MB)")
 
-    # 3. Package models tarball
+    # 3. Package models tarball (All 32 registered model and config artifacts)
     tar_models_path = os.path.join(RESULTS_DIR, "helios_trained_models.tar.gz")
-    model_files = [
-        "helios_storm_apex.pkl", "helios_vision_apex.pkl", "helios_apex.manifest.json",
-        "helios_transit_time.joblib", "helios_transit_q_low.joblib", "helios_transit_q_high.joblib", "helios_transit_dst.joblib",
-        "helios_transit_mok_mps.pt", "helios_transit_mok_edited.pt", "helios_transit_mok_edited.manifest.json",
-        "helios_transit_mps.pt", "helios_transit_edited.pt", "helios_transit_edited.manifest.json",
-        "helios_bilstm_mps.pt", "helios_bilstm_edited.pt", "helios_bilstm_edited.manifest.json",
-        "bilstm_scaler.json", "transit_scaler.json",
-        "helios_point_lead_1h.joblib", "helios_point_lead_2h.joblib", "helios_point_lead_3h.joblib", "helios_point_lead_6h.joblib",
-        "helios_q_low_lead_1h.joblib", "helios_q_high_lead_1h.joblib",
-        "helios_q_low_lead_2h.joblib", "helios_q_high_lead_2h.joblib",
-        "helios_q_low_lead_3h.joblib", "helios_q_high_lead_3h.joblib",
-        "helios_q_low_lead_6h.joblib", "helios_q_high_lead_6h.joblib"
-    ]
+    manifest_path = os.path.join(MODELS_DIR, "helios_models_checksums.json")
+    with open(manifest_path, "r") as f:
+        manifest_models = json.load(f)
+    model_files = sorted(manifest_models.keys())
     with tarfile.open(tar_models_path, "w:gz") as tar:
         for mf in model_files:
             full_path = os.path.join(MODELS_DIR, mf)
             if os.path.exists(full_path):
                 tar.add(full_path, arcname=os.path.join("models", mf))
-    print(f"✅ Created {tar_models_path} ({os.path.getsize(tar_models_path) / 1024 / 1024:.2f} MB)")
+            else:
+                print(f"⚠️ Warning: Model file {mf} not found on disk!")
+    print(f"✅ Created {tar_models_path} ({os.path.getsize(tar_models_path) / 1024 / 1024:.2f} MB - {len(model_files)} files)")
 
     # 4. Generate results/checksums.txt and update zenodo_record.json
     checksum_files = [
@@ -230,13 +223,27 @@ def main():
         metrics_path,
         os.path.join(RESULTS_DIR, "latency_benchmark.json"),
         os.path.join(RESULTS_DIR, "ablation_study.json"),
+        os.path.join(RESULTS_DIR, "helios_transit_metrics.json"),
         os.path.join(BASE_DIR, "paper", "HELIOS_Solar_Storm_Conformal_Forecasting.pdf"),
         os.path.join(BASE_DIR, "paper", "HELIOS_2_Solar_Vision_Swiss_Watch.pdf"),
         os.path.join(BASE_DIR, "paper", "manuscript.md"),
         os.path.join(BASE_DIR, "predict.py"),
         os.path.join(BASE_DIR, "tests", "test_helios_core.py"),
         os.path.join(BASE_DIR, "scripts", "19_benchmark_latency.py"),
-        os.path.join(MODELS_DIR, "helios_models_checksums.json")
+        os.path.join(BASE_DIR, "scripts", "helios_swiss_orchestrator.py"),
+        os.path.join(BASE_DIR, "scripts", "07_train_helios_transit.py"),
+        os.path.join(BASE_DIR, "scripts", "01_build_features.py"),
+        os.path.join(MODELS_DIR, "helios_models_checksums.json"),
+        os.path.join(BASE_DIR, "README.md"),
+        os.path.join(BASE_DIR, "LICENSE"),
+        os.path.join(BASE_DIR, "requirements.txt"),
+        os.path.join(BASE_DIR, "Zar-Manah_HELIOS.html"),
+        os.path.join(BASE_DIR, "results", "figures", "fig1_multi_horizon_benchmarks.png"),
+        os.path.join(BASE_DIR, "results", "figures", "fig2_may2024_superstorm_case_study.png"),
+        os.path.join(BASE_DIR, "results", "figures", "fig3_feature_importance.png"),
+        os.path.join(BASE_DIR, "results", "figures", "fig4_cme_transit_benchmark.png"),
+        os.path.join(BASE_DIR, "results", "figures", "fig1_helios_vision_benchmark.png"),
+        os.path.join(BASE_DIR, "results", "figures", "fig2_helios_apex_orchestrator.png")
     ]
     checksum_lines = []
     sha_map = {}

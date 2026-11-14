@@ -23,15 +23,15 @@
 
 ## ⚡ What is HELIOS 2.0?
 
-**HELIOS 2.0** (*Heliospheric Environment & Learning for In-situ Operational Storms*) is an open-source suite of **Artificial Intelligence (AI) models** engineered to predict dangerous **solar storms**, coronal mass ejection (CME) shock arrival times, and space weather blackouts before they impact Earth.
+**HELIOS 2.0** (*Heliospheric Environment & Learning for In-situ Operational Storms*) is an open-source suite of **Artificial Intelligence (AI) models** engineered to predict geomagnetic disturbances ($Dst$), coronal mass ejection (CME) shock arrival times, and interplanetary magnetic field ($B_z$) polarity prior to Earth impact.
 
-Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **17.59 milliseconds on consumer-grade hardware (Apple Silicon M4 GPU, 21.27 ms p99)** with zero cloud dependencies or supercomputing queues.
+Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **17.59 milliseconds mean latency on consumer-grade hardware (Apple Silicon M4 GPU, median 17.32 ms, 21.27 ms p99; sub-22 ms latency)** with zero cloud dependencies or supercomputing queues.
 
 ⚡ **Rapid Sub-Second Forecasting Benchmarked against Operational Standards:**  
-Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical analytical drag models (Vršnak 2013 DBM $\pm 12.30\text{ h}$ global, $\pm 16.57\text{ h}$ fast $\ge 1000\text{ km/s}$; drag prior baseline $\pm 28.95\text{ h}$) and approaching the operational accuracy of NASA's WSA-ENLIL 3D MHD supercomputer standard ($\pm 10.40\text{ h}$ at Earth; Wold et al., 2018). While numerical MHD models take hours on supercomputing clusters, HELIOS executes the full 4-tier pipeline locally on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **17.59 ms (median 17.32 ms)** with zero cloud dependencies or cluster queues.
+Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical analytical drag models (Vršnak 2013 DBM $\pm 12.30\text{ h}$ global, $\pm 16.57\text{ h}$ fast $\ge 1000\text{ km/s}$; drag prior baseline $\pm 28.95\text{ h}$) and approaching the operational accuracy of NASA's WSA-ENLIL 3D MHD model reported on Solar Cycle 24 ($\pm 10.40\text{ h}$ at Earth; Wold et al., 2018; Riley et al., 2018). *Note on benchmark context: Wold et al. (2018) evaluated a historical sample from 2010–2016 (Solar Cycle 24), whereas HELIOS is evaluated out-of-distribution across Cycle 25 (2020–2026).* While numerical MHD models take hours on supercomputing clusters, HELIOS executes the full 4-tier pipeline locally on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **17.59 ms (median 17.32 ms, p99 21.27 ms)** with zero cloud dependencies or cluster queues.
 
-🤖 **Eliminating Human Bottlenecks & Full Operational Automation:**  
-Legacy space weather forecasting relies heavily on slow manual labor—requiring human operators to hand-fit geometric wireframes to coronagraph images, configure simulation grids, and wait hours for supercomputing cluster queues. HELIOS 2.0 eliminates these operational bottlenecks through **100% autonomous end-to-end execution**: from live multi-satellite telemetry ingestion (NOAA SWPC & NASA SDO/SOHO) and physical feature derivation to real-time kinematic inference, conformal uncertainty quantification, and automated NASA CCMC Scoreboard export.
+🤖 **End-to-End Operational Pipeline:**  
+Legacy space weather forecasting relies heavily on slow manual labor—requiring human operators to hand-fit geometric wireframes to coronagraph images, configure simulation grids, and wait hours for supercomputing cluster queues. HELIOS 2.0 streamlines these workflows through a **scripted, end-to-end computational pipeline**: from real-time satellite telemetry ingestion (NOAA SWPC RTSW) and physical feature derivation to kinematic inference, conformal uncertainty quantification (92.3% empirical coverage), and automated NASA CCMC Scoreboard formatting.
 
 ```
        ☀️ SUN (t = 0)                    🛰️ INTERPLANETARY (24–72h)              🌍 L1 & EARTH (0–6h)
@@ -85,10 +85,10 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
    While numerical 3D MHD simulations take 1 to 4 hours to run on supercomputer clusters, HELIOS 2.0 evaluates the entire 4-tier pipeline in **17.59 milliseconds (median 17.32 ms, p99 21.27 ms)** on Apple Silicon M4 GPU (or standard CPUs), enabling continuous real-time space weather nowcasting.
 
 4. **Interactive Browser Mission Cockpit:**  
-   The interactive mission cockpit (`Zar-Manah_HELIOS.html`) provides an ephemeral visualization environment streaming live NOAA SWPC RTSW plasma and magnetic vectors directly in the browser with dual-track mission timelines and responsive aerodynamic drag modeling.
+   The interactive mission cockpit (`Zar-Manah_HELIOS.html`) provides a lightweight browser environment streaming live NOAA SWPC RTSW plasma and magnetic vectors with dual-track mission timelines and responsive aerodynamic drag modeling.
 
-5. **Eliminating Human Bottlenecks & Operational Latency:**  
-   Legacy space weather forecasting relies on human operators manually fitting geometric wireframes to coronagraph images and waiting hours in supercomputing queues. HELIOS 2.0 achieves **100% autonomous end-to-end execution**: from live satellite ingestion (NOAA SWPC & NASA SDO/SOHO) to real-time kinematic inference and automated NASA CCMC Scoreboard export with zero human-in-the-loop latency.
+5. **Operational Automation & Fast Turnaround:**  
+   HELIOS 2.0 provides scripted end-to-end processing: from satellite telemetry ingestion (NOAA SWPC RTSW) to real-time kinematic inference and automated NASA CCMC Scoreboard export without supercomputing cluster delays.
 
 ---
 
@@ -110,9 +110,9 @@ Evaluating historical landmark space weather events across Solar Cycles 23–25 
 ## 🛰️ Interactive Mission Cockpit (`Zar-Manah_HELIOS.html`)
 
 HELIOS 2.0 includes a zero-install, single-file browser cockpit running at 60 FPS on any modern browser:
-- **Live Satellite Feeds:** Auto-updates NOAA SWPC RTSW plasma and magnetic vectors every 60s, and NASA SDO/SOHO solar imagery every 5 min.
+- **Live Satellite Feeds:** Polls NOAA SWPC RTSW plasma and magnetic vectors every 60s in live mode.
 - **Master Mission Timeline:** Dual-track interactive canvas visualizing CME 3D transit and magnetospheric ring current response over a 100-hour window.
-- **Zero Disk Footprint:** Ephemeral memory management guaranteeing zero disk buildup.
+- **Lightweight Visualization:** In-browser canvas rendering with client-side caching.
 
 ```bash
 # Launch interactive Mission Cockpit

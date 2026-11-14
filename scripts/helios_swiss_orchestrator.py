@@ -18,6 +18,7 @@ import argparse
 import pickle
 import json
 import time
+import hashlib
 from datetime import datetime, timedelta
 import urllib.request
 import joblib
@@ -47,6 +48,25 @@ GBDT_LOW_PATH  = os.path.join(MODELS_DIR, "helios_transit_q_low.joblib")
 GBDT_HIGH_PATH = os.path.join(MODELS_DIR, "helios_transit_q_high.joblib")
 TRANSIT_SCALER_PATH = os.path.join(MODELS_DIR, "transit_scaler.json")
 BILSTM_SCALER_PATH = os.path.join(MODELS_DIR, "bilstm_scaler.json")
+
+
+def verify_model_checksum(fpath):
+    """Cryptographic fail-closed verification of model weights before loading."""
+    manifest_path = os.path.join(MODELS_DIR, "helios_models_checksums.json")
+    if not os.path.exists(manifest_path):
+        raise FileNotFoundError(f"SECURITY ALERT: Cryptographic model manifest missing at {manifest_path}!")
+    with open(manifest_path, "r") as f:
+        valid_hashes = json.load(f)
+    fname = os.path.basename(fpath)
+    if fname not in valid_hashes:
+        raise KeyError(f"SECURITY ALERT: Model artifact {fname} is not registered in cryptographic manifest!")
+    h = hashlib.sha256()
+    with open(fpath, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    actual_hash = h.hexdigest()
+    if actual_hash != valid_hashes[fname]:
+        raise ValueError(f"SECURITY ALERT: Cryptographic integrity failure for {fname}! Expected {valid_hashes[fname]}, got {actual_hash}")
 
 
 def check_cme_earth_trajectory(lat, lon, width, speed=500.0):
@@ -140,6 +160,18 @@ class SwissWatchPipeline:
         t0 = time.time()
         print("🇨🇭 Initializing HELIOS Swiss Watch Pipeline (Apple Silicon M4 GPU)...")
         
+        # Cryptographic fail-closed model integrity verification
+        verify_model_checksum(M1_PATH)
+        verify_model_checksum(M2_PATH)
+        verify_model_checksum(M3_PATH)
+        verify_model_checksum(M4_PATH)
+        verify_model_checksum(GBDT_TIME_PATH)
+        verify_model_checksum(GBDT_LOW_PATH)
+        verify_model_checksum(GBDT_HIGH_PATH)
+        verify_model_checksum(TRANSIT_SCALER_PATH)
+        if os.path.exists(BILSTM_SCALER_PATH):
+            verify_model_checksum(BILSTM_SCALER_PATH)
+        
         # Gear 1 & Gear 2: Solar Vision Apex
         with open(M1_PATH, "rb") as f:
             self.m1_pkg = pickle.load(f)
@@ -172,7 +204,7 @@ class SwissWatchPipeline:
             with open(BILSTM_SCALER_PATH, "r") as f:
                 self.bilstm_scaler = json.load(f)
         
-        print(f"✅ All 4 gears loaded into GPU memory in {(time.time() - t0)*1000:.1f} ms.")
+        print(f"✅ All 4 gears cryptographically verified and loaded into GPU memory in {(time.time() - t0)*1000:.1f} ms.")
 
     def run_inference(self, row, l1_sequence=None):
         """Runs the 4-tier cascaded pipeline with bidirectional feedback."""
@@ -219,9 +251,19 @@ class SwissWatchPipeline:
         X_solar = ((np.array(vals, dtype=np.float32) - self.m1_pkg["p_mean"]) / p_std).reshape(1, -1)
         X_solar = np.nan_to_num(X_solar, nan=0.0, posinf=0.0, neginf=0.0)
         
-        # --- GEAR 1 (BZ CHIRALITY) ---
+        # --- GEAR 1 (BZ CHIRALITY) WITH SELECTIVE ABSTENTION ---
         prob_bz_south = float(self.m1_pkg["clf"].predict_proba(X_solar)[0, 1])
-        is_bz_south = bool(prob_bz_south >= self.m1_pkg["decision_threshold"])
+        # Rejection zone / Selective classification policy:
+        # In regions with near-chance training CV AUC, classify with abstention to avoid false certainty
+        if prob_bz_south >= 0.60:
+            chirality_state = "SOUTHWARD_THREAT"
+            is_bz_south = True
+        elif prob_bz_south <= 0.40:
+            chirality_state = "NORTHWARD_POLARITY"
+            is_bz_south = False
+        else:
+            chirality_state = "INDETERMINATE"
+            is_bz_south = None  # Selective classification: Abstain when in indeterminate zone
         q10_bz = float(self.m1_pkg["q10"].predict(X_solar)[0])
         q50_bz = float(self.m1_pkg["q50"].predict(X_solar)[0])
         q90_bz = float(self.m1_pkg["q90"].predict(X_solar)[0])
@@ -325,6 +367,7 @@ class SwissWatchPipeline:
             # Gear 1
             "bz_prob_south": prob_bz_south,
             "is_bz_south": is_bz_south,
+            "chirality_state": chirality_state,
             "bz_q50": q50_bz,
             "bz_conformal_range": [q10_bz, q90_bz],
             # Gear 2
@@ -363,7 +406,13 @@ def print_swiss_report(name, res):
     print("-" * 85)
     
     # Gear 1 & 2
-    status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)" if res["is_bz_south"] else "🟢 NORTHWARD POLARITY (Safe)"
+    ch_state = res.get("chirality_state", "SOUTHWARD_THREAT" if res.get("is_bz_south") else "NORTHWARD_POLARITY")
+    if ch_state == "SOUTHWARD_THREAT":
+        status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)"
+    elif ch_state == "NORTHWARD_POLARITY":
+        status_bz = "🟢 NORTHWARD POLARITY (Safe)"
+    else:
+        status_bz = f"⚪ INDETERMINATE POLARITY ({res['bz_prob_south']*100:.1f}%) [Abstain: Awaiting L1 In-Situ]"
     status_st = "🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT)" if res["is_severe_storm"] else "✅ NO SEVERE STORM RISK"
     
     print(f"⚙️  GEAR 1 & 2 [24–72h HORIZON | SUN]:")
@@ -404,10 +453,13 @@ def print_swiss_report(name, res):
     if not res.get("earth_impact", True):
         print("   🟢 GREEN PROTOCOL (GEOMETRIC MISS): CME trajectory does not intercept Earth.")
         print(f"      Actions: Angular offset {res.get('cone_separation_deg', 0.0):.1f}° exceeds cone half-width {res.get('cone_half_width_deg', 0.0):.1f}°. Zero geomagnetic impact.")
-    elif res["is_severe_storm"] and res["is_bz_south"]:
+    elif res["is_severe_storm"] and ch_state == "SOUTHWARD_THREAT":
         print("   🔴 ACTIVE G5 PROTOCOL: Violent magnetospheric coupling confirmed.")
         print(f"      Actions: Grid transformer load shedding 1 hour prior to {res['arrival_eta']} UTC.")
-    elif res["is_severe_storm"] and not res["is_bz_south"]:
+    elif res["is_severe_storm"] and ch_state == "INDETERMINATE":
+        print(f"   🟡 UNRESOLVED COUPLING PROTOCOL: Severe kinetic shock front intercepted, but coronal Bz chirality is INDETERMINATE (P_south={res['bz_prob_south']*100:.1f}%).")
+        print(f"      Actions: Maintain grid emergency standby without premature load shedding; confirm Bz sign upon L1 arrival at {res['arrival_eta']} UTC.")
+    elif res["is_severe_storm"] and ch_state == "NORTHWARD_POLARITY":
         print("   🟠 MODERATE KINETIC PROTOCOL: Strong shock front with northward magnetic field.")
         print("      Actions: Magnetopause compression monitoring without severe grid blackout risk.")
     else:
@@ -615,7 +667,13 @@ def print_live_report(live_summary, res_solar, res_l1_dst):
     
     # Gears 1-3 CME Early Warning
     if res_solar is not None:
-        status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)" if res_solar["is_bz_south"] else "🟢 NORTHWARD POLARITY (Safe)"
+        ch_state_live = res_solar.get("chirality_state", "SOUTHWARD_THREAT" if res_solar.get("is_bz_south") else "NORTHWARD_POLARITY")
+        if ch_state_live == "SOUTHWARD_THREAT":
+            status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)"
+        elif ch_state_live == "NORTHWARD_POLARITY":
+            status_bz = "🟢 NORTHWARD POLARITY (Safe)"
+        else:
+            status_bz = f"⚪ INDETERMINATE POLARITY ({res_solar['bz_prob_south']*100:.1f}%) [Abstain: Awaiting L1 In-Situ]"
         status_st = "🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT)" if res_solar["is_severe_storm"] else "✅ NO SEVERE STORM RISK"
         flare_str = res_solar.get("flare_class", "C1.0")
         print("⚙️  GEARS 1, 2 AND 3 [LIVE SOLAR VISION: SDO + SOHO + GOES]:")

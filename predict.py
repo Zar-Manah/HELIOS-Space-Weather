@@ -331,7 +331,17 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
             norm_vec = np.nan_to_num(norm_vec)
             
             p_south = float(pkg_m1["clf"].predict_proba(norm_vec)[0, 1])
-            is_south = bool(p_south >= pkg_m1["decision_threshold"])
+            # Rejection zone / Selective classification policy:
+            # When 0.40 < p_south < 0.60, model is near chance and must abstain to avoid false security
+            if p_south >= 0.60:
+                chirality_state = "SOUTHWARD_THREAT"
+                is_south = True
+            elif p_south <= 0.40:
+                chirality_state = "NORTHWARD_POLARITY"
+                is_south = False
+            else:
+                chirality_state = "INDETERMINATE"
+                is_south = None
             q10_bz = float(pkg_m1["q10"].predict(norm_vec)[0])
             q50_bz = float(pkg_m1["q50"].predict(norm_vec)[0])
             q90_bz = float(pkg_m1["q90"].predict(norm_vec)[0])
@@ -346,6 +356,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
                 "southward_bz_threat": {
                     "prob_south": round(p_south, 3),
                     "is_threat": is_south,
+                    "chirality_state": chirality_state,
                     "bz_median_nT": round(q50_bz, 1),
                     "bz_conformal_range_nT": [round(q10_bz, 1), round(q90_bz, 1)]
                 },
@@ -393,7 +404,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     print("-" * 78)
     print(f"• Dynamic Hybrid Transit Time: {pred_h:.1f} hours ({pred_h/24.0:.1f} days)")
     print(f"• Kinematic Decomposition:    MoK Neural: {pred_h_mok:.1f}h ({w_dyn*100:.0f}%) | GBDT: {pred_h_tree:.1f}h ({(1-w_dyn)*100:.0f}%)")
-    print(f"• 81% Conformal Window:       [{low_h:.1f}h, {high_h:.1f}h] (Margin: ±{(high_h-low_h)/2.0:.1f}h)")
+    print(f"• 92% Conformal Window:       [{low_h:.1f}h, {high_h:.1f}h] (Margin: ±{(high_h-low_h)/2.0:.1f}h)")
     print(f"• Expected Earth Impact:      {arrival_dt.strftime('%Y-%m-%d %H:%M UTC')}")
     print(f"• Expected Storm Shock (Dst): {pred_dst:.1f} nT")
     
@@ -402,7 +413,13 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
         print("☀️  24–72H SOLAR APEX FRONTIER COGNITION (GEARS 1 & 2):")
         sbz = apex_info["southward_bz_threat"]
         sst = apex_info["severe_storm_veto"]
-        status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)" if sbz["is_threat"] else "🟢 NORTHWARD / SAFE"
+        ch_st = sbz.get("chirality_state", "SOUTHWARD_THREAT" if sbz["is_threat"] else "NORTHWARD_POLARITY")
+        if ch_st == "SOUTHWARD_THREAT":
+            status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)"
+        elif ch_st == "NORTHWARD_POLARITY":
+            status_bz = "🟢 NORTHWARD / BENIGN"
+        else:
+            status_bz = f"⚪ INDETERMINATE POLARITY ({sbz['prob_south']*100:.1f}%) [Abstain: Requires L1 In-Situ]"
         status_st = "🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT)" if sst["is_severe_alert"] else "✅ NO SEVERE STORM RISK"
         print(f"   • Coronal Southward Bz:    {status_bz} (P_south: {sbz['prob_south']*100:.1f}%) | Range: [{sbz['bz_conformal_range_nT'][0]:+.1f}, {sbz['bz_conformal_range_nT'][1]:+.1f}] nT")
         print(f"   • Geomagnetic Severity:    {status_st} (P_severe: {sst['prob_severe']*100:.1f}%) | Range: [{sst['dst_conformal_range_nT'][0]:.0f}, {sst['dst_conformal_range_nT'][1]:.0f}] nT")
@@ -419,8 +436,8 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
         print("• Threat Level:               🟢 MINOR / GLANCING BLOW")
     print("-" * 78)
     print("Note: Validated on unseen Solar Cycle 25 OOD with zero synthetic leakage.")
-    print("      Global MAE: ±11.69h (GBDT: ±10.63h, Median: ±8.34h) vs DBM: ±28.95h.")
-    print("      Operational edge-computing model within ~1.2h of NASA WSA-ENLIL (10.4h at Earth).")
+    print("      Global MAE: ±11.69h (GBDT: ±10.63h, Median: ±7.45h) vs DBM: ±28.95h.")
+    print("      Reference Context: NASA WSA-ENLIL historical Cycle 24 benchmark is ±10.4h (Wold et al. 2018).")
 
 
 def fetch_noaa_live(as_json=False):
