@@ -1138,15 +1138,16 @@
           fetch('https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json').then(r => r.json()).catch(() => null)
         ]);
 
-        const hasAnySuccess = (Array.isArray(resMag) && resMag.length > 0) ||
-                              (Array.isArray(resWind) && resWind.length > 0) ||
-                              (Array.isArray(resDst) && resDst.length > 0) ||
-                              (Array.isArray(resFlares) && resFlares.length > 0);
+        const okCount = [resMag, resWind, resDst, resFlares].filter(r => Array.isArray(r) && r.length > 0).length;
 
-        if (hasAnySuccess) {
-          document.getElementById('liveStatusText').textContent = 'NOAA SWPC RTSW (LIVE)';
+        if (okCount === 4) {
+          document.getElementById('liveStatusText').textContent = 'NOAA SWPC RTSW (ALL 4 FEEDS LIVE)';
           document.getElementById('liveDot').style.background = 'var(--green)';
           document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--green)';
+        } else if (okCount >= 2) {
+          document.getElementById('liveStatusText').textContent = `NOAA SWPC RTSW (PARTIAL: ${okCount}/4 FEEDS)`;
+          document.getElementById('liveDot').style.background = 'var(--accent)';
+          document.getElementById('liveDot').style.boxShadow = '0 0 6px var(--accent)';
         } else {
           document.getElementById('liveStatusText').textContent = 'NOAA SWPC OFFLINE (SIMULATION / CACHED)';
           document.getElementById('liveDot').style.background = 'var(--amber)';

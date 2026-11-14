@@ -1,128 +1,151 @@
 {
-  "dep_id": 24211288,
-  "doi": "10.5281/zenodo.24211288",
-  "conceptdoi": "10.5281/zenodo.24211287",
-  "record_url": "https://zenodo.org/api/records/24211288",
-  "version": "2.5.9",
-  "published_at": "2026-11-14 02:26:20 UTC",
-  "status": "v2.5.9 published on Zenodo CERN OpenAIRE under permanent Concept DOI 10.5281/zenodo.24211287",
+  "dep_id": 24211625,
+  "doi": "10.5281/zenodo.24211625",
+  "conceptdoi": "10.5281/zenodo.24061451",
+  "record_url": "https://zenodo.org/record/24211625",
+  "version": "2.5.10",
+  "published_at": "2026-11-14 03:04:15 UTC",
+  "status": "v2.5.10 published on Zenodo CERN OpenAIRE under permanent Concept DOI 10.5281/zenodo.24061451",
   "server_verified_files": {
-    "Zar-Manah_HELIOS.html": {
-      "size": 48570,
-      "md5": "dfd07d8c9cf40502770c8beeee3afd6d"
-    },
-    "checksums.txt": {
-      "size": 2601,
-      "md5": "1495883e09687e8eb9a93385a5a9ddff"
-    },
-    "ablation_study.json": {
-      "size": 1048,
-      "md5": "eb629a4351cd349c914a7413d357ba23"
-    },
-    "manuscript.md": {
-      "size": 44940,
-      "md5": "a94a1d4f74a3d0a0c9edacac7b7e2427"
-    },
     "helios_processed_datasets.tar.gz": {
       "size": 28098957,
-      "md5": "47886ed197d020fb3659e8097e8ddbaf"
-    },
-    "fig1_multi_horizon_benchmarks.png": {
-      "size": 448551,
-      "md5": "f6d70637c2d1c57adac7c646711fd55e"
-    },
-    "latency_benchmark.json": {
-      "size": 533,
-      "md5": "0ec5051a924d67d8bc04e94aaae95355"
-    },
-    "fig2_may2024_superstorm_case_study.png": {
-      "size": 780621,
-      "md5": "35df1428bf5719c8db43e6e089705eac"
-    },
-    "19_benchmark_latency.py": {
-      "size": 8502,
-      "md5": "83197b933a80ade92bee52707b0777dd"
-    },
-    "README.md": {
-      "size": 18108,
-      "md5": "40f5e00a9fcca604e06615ac6c4a853c"
-    },
-    "predict.py": {
-      "size": 37615,
-      "md5": "111089ebbb509a7f8a65538fa77757d0"
-    },
-    "fig3_feature_importance.png": {
-      "size": 164802,
-      "md5": "c536342c43368702deb82174f533edb7"
-    },
-    "fig4_cme_transit_benchmark.png": {
-      "size": 293144,
-      "md5": "79cf3e5d8f0b342f3bd51ee9caef9828"
-    },
-    "HELIOS_Solar_Storm_Conformal_Forecasting.pdf": {
-      "size": 1882967,
-      "md5": "9a7abb9e94c7b75940ecc6c8e3565ecd"
-    },
-    "helios_transit_metrics.json": {
-      "size": 431,
-      "md5": "1bd79a0fe88f718ff681691d31e60f38"
-    },
-    "helios_evaluation_metrics.json": {
-      "size": 3529,
-      "md5": "1af5c292a0a988a2f04bba7e28bf0f3c"
+      "md5": "47886ed197d020fb3659e8097e8ddbaf",
+      "sha256": "c919cd48daccef1bbdb35388bba565e0195af16889e67d31c1b5d2ebe556fb68"
     },
     "helios_trained_models.tar.gz": {
       "size": 6206063,
-      "md5": "faf60560b6f3cd5af3d7e8e28b44781a"
+      "md5": "faf60560b6f3cd5af3d7e8e28b44781a",
+      "sha256": "9744bb0314b1d07a2ef774354a887e8b8c513e54d6764ebcdf90ecd5b87e6c2b"
     },
-    "HELIOS_2_Solar_Vision_Swiss_Watch.pdf": {
-      "size": 1211342,
-      "md5": "7169c1d81a43dcae600611ab1b789464"
+    "helios_evaluation_metrics.json": {
+      "size": 3530,
+      "md5": "bef9936945acc7243c47e66c877383c1",
+      "sha256": "5b188898782d8608ccf91c3f66af3407910e1891da5b04327f762e3837b7fc2c"
+    },
+    "helios_transit_metrics.json": {
+      "size": 431,
+      "md5": "1bd79a0fe88f718ff681691d31e60f38",
+      "sha256": "3a41499b3abce74a8479b28d59114fe21d9f4f983e416c94446451eb86323e63"
+    },
+    "latency_benchmark.json": {
+      "size": 533,
+      "md5": "0ec5051a924d67d8bc04e94aaae95355",
+      "sha256": "61a04dc09e2a405d9e73e14322065e044a6f7b973862f9b1b58fa0cf0434f49b"
+    },
+    "ablation_study.json": {
+      "size": 1048,
+      "md5": "eb629a4351cd349c914a7413d357ba23",
+      "sha256": "e7e07181891b4213ba7d3acd47ee71dc87d81b02d6ae80807014649b53c48dc3"
     },
     "helios_models_checksums.json": {
       "size": 3214,
-      "md5": "b961d21d9f204b264d2ea1e1d9f6f0b7"
+      "md5": "b961d21d9f204b264d2ea1e1d9f6f0b7",
+      "sha256": "97b437fc855c13a369070cb90a1a509a84423b7e3a07dbb48409ad73566645cc"
     },
-    "requirements.txt": {
-      "size": 331,
-      "md5": "16f171d9a3c2012980722f33e604f2df"
+    "HELIOS_Solar_Storm_Conformal_Forecasting.pdf": {
+      "size": 1883033,
+      "md5": "baebf7528f7126e1bbac79c5ca7f37fd",
+      "sha256": "1c2683494ca69b099a90d70dad54bee74b866618b0454e0a47388cdd91c5057f"
     },
-    "LICENSE": {
-      "size": 1529,
-      "md5": "9ec3b78c297082bb4dfe0cd10226b760"
+    "HELIOS_2_Solar_Vision_Swiss_Watch.pdf": {
+      "size": 1211365,
+      "md5": "8595653feba607384faa1c9d9b2568a9",
+      "sha256": "664cd3511d619b5cecc45f8ad24b564a803758552d9602c34dec5b61ec4d8daf"
+    },
+    "manuscript.md": {
+      "size": 45339,
+      "md5": "e58250316eb1b5a0711216841f158837",
+      "sha256": "5e80c9c9b9b14da977f4492639408c1cc9db54fce9e09ec3f44c496188c05668"
+    },
+    "predict.py": {
+      "size": 37615,
+      "md5": "1993581760ad12f88f9f1bee5df376c2",
+      "sha256": "7aeac1e7c4dbb3d3a49f642b71ce643bfbaa4a855706de73553c6acb0833fe2d"
     },
     "test_helios_core.py": {
       "size": 14534,
-      "md5": "a9d8c0a9dd6e3557b4a4bebefd700613"
+      "md5": "a9d8c0a9dd6e3557b4a4bebefd700613",
+      "sha256": "a3b2311dda0245c1e93f58a4ec235497ff2a98b3af39d0311073222d23a911e1"
     },
     "export_ccmc_scoreboard.py": {
       "size": 6291,
-      "md5": "318e24e45d47e657ba1941a3b085087f"
+      "md5": "318e24e45d47e657ba1941a3b085087f",
+      "sha256": "9f83f598a4ea4e822eeae5494c0e75414c2beb3f7172a95740657512ae964911"
+    },
+    "19_benchmark_latency.py": {
+      "size": 8502,
+      "md5": "83197b933a80ade92bee52707b0777dd",
+      "sha256": "b8284af6eb7b83513611a1d8d45611b320e0b21d1620891320fca26461956e27"
+    },
+    "helios_swiss_orchestrator.py": {
+      "size": 40658,
+      "md5": "9a3be39103618a792a2b2e61fe423f51",
+      "sha256": "84ee9773a50343204018c095f3dd65b7a0b291c0f2074130e8facf46feedec66"
+    },
+    "07_train_helios_transit.py": {
+      "size": 11556,
+      "md5": "1d93f5fa0de8ed799379e3e1ff4932ed",
+      "sha256": "c7b4df6c3613c7bdb4f558ee5ae1fc4ca683995a3b4f0323a02203fea18b592c"
+    },
+    "01_build_features.py": {
+      "size": 9530,
+      "md5": "5575791f6255c90b18c28a219e4042d5",
+      "sha256": "c589933d71fcd8612f9495f4e986574e48035437556645cb54a8563b795feb26"
+    },
+    "README.md": {
+      "size": 18378,
+      "md5": "2b09296eafdb246446b556965adf1750",
+      "sha256": "1a1b10378e60a7e1e8ca6233a6dacf43ef73b942599b4135951773f107e5bafe"
+    },
+    "LICENSE": {
+      "size": 1529,
+      "md5": "9ec3b78c297082bb4dfe0cd10226b760",
+      "sha256": "e6a9324fe7d59241f122e3fac877ad315601b1b669ad0e10e8d76053de014a70"
+    },
+    "requirements.txt": {
+      "size": 331,
+      "md5": "16f171d9a3c2012980722f33e604f2df",
+      "sha256": "fc37155aaa30e0bb90c9a3a1b291c057317ca322e1a0e341844a90fd2b4e9aed"
+    },
+    "Zar-Manah_HELIOS.html": {
+      "size": 48697,
+      "md5": "64bebe4407b1826f4579a0531932bf58",
+      "sha256": "c7983e94fb9969e16506901d1a31bde6094007a82dc0ae8b26c55fb3f81d3307"
+    },
+    "fig1_multi_horizon_benchmarks.png": {
+      "size": 448551,
+      "md5": "f6d70637c2d1c57adac7c646711fd55e",
+      "sha256": "cac4dc811cc8b5ec8f4cd63f5c4f83e9be2e2fe10e973d5e7ce34242ffa2cb70"
+    },
+    "fig2_may2024_superstorm_case_study.png": {
+      "size": 780621,
+      "md5": "35df1428bf5719c8db43e6e089705eac",
+      "sha256": "89415f8233c44de21aab710efb4cb84e00f569cd71bc84fb7dcfa10a3b210190"
+    },
+    "fig3_feature_importance.png": {
+      "size": 164802,
+      "md5": "c536342c43368702deb82174f533edb7",
+      "sha256": "9712f3042b7728a98c60fe74112f541aeddfe90141155de0c80839550efec2de"
+    },
+    "fig4_cme_transit_benchmark.png": {
+      "size": 293144,
+      "md5": "79cf3e5d8f0b342f3bd51ee9caef9828",
+      "sha256": "02a09628f770202939be2275148421d96efb39bdf045a17c818162454ed8cc11"
+    },
+    "fig1_helios_vision_benchmark.png": {
+      "size": 487782,
+      "md5": "4806c8d07007d3aca23006e58af9f299",
+      "sha256": "545d8ffbf92e6e110ba003406274370ea8f2ebe7f0a2a794a1b80955eae9c609"
+    },
+    "fig2_helios_apex_orchestrator.png": {
+      "size": 464950,
+      "md5": "801aa4a83b66359f2107e00092501c13",
+      "sha256": "5958c9fd6bbe4537af8bfecd9426c1b6bdaa1e48e41a6f739ceaf7ef535a7d1d"
+    },
+    "checksums.txt": {
+      "size": 2693,
+      "md5": "eeabee224e6435b27c428d68b64f6868",
+      "sha256": "f2c1d122f924d546205585d9f38639e7a6a5fb9f62876c3f88bc2ff22745c026"
     }
-  },
-  "local_sha256": {
-    "requirements.txt": "fc37155aaa30e0bb90c9a3a1b291c057317ca322e1a0e341844a90fd2b4e9aed",
-    "LICENSE": "e6a9324fe7d59241f122e3fac877ad315601b1b669ad0e10e8d76053de014a70",
-    "README.md": "aa42b08e65cfe891b27d235a6f615c81143cc8d52b933eb810de229d2e26c1fc",
-    "Zar-Manah_HELIOS.html": "01ba1244fc4701d1e6fa269339e51c14f68e926c4cd9b5249fbf32f39b7fbdb8",
-    "predict.py": "8edde33c84a30b18d3623613c1eb7729e6693822c1c1d84791716597f9c8e4e8",
-    "HELIOS_Solar_Storm_Conformal_Forecasting.pdf": "affd8cf5f3c6a59ebbc30b1356e73c7a5def3a6146cb01d73be3d8be7eb0e420",
-    "HELIOS_2_Solar_Vision_Swiss_Watch.pdf": "14eed2a87f74a3d94102dec90752d01b2823292325770f95e80a744275e422e8",
-    "manuscript.md": "eb1e8ef1436488d01b7e958f0bac9ddb4ff9714e618592b2a933f3e1bc9654fa",
-    "test_helios_core.py": "a3b2311dda0245c1e93f58a4ec235497ff2a98b3af39d0311073222d23a911e1",
-    "19_benchmark_latency.py": "b8284af6eb7b83513611a1d8d45611b320e0b21d1620891320fca26461956e27",
-    "export_ccmc_scoreboard.py": "9f83f598a4ea4e822eeae5494c0e75414c2beb3f7172a95740657512ae964911",
-    "helios_evaluation_metrics.json": "e76ff63a7eda4b957e4972e2b7ba2445bec70154ed85b4223ab3a9236da738b6",
-    "latency_benchmark.json": "61a04dc09e2a405d9e73e14322065e044a6f7b973862f9b1b58fa0cf0434f49b",
-    "ablation_study.json": "e7e07181891b4213ba7d3acd47ee71dc87d81b02d6ae80807014649b53c48dc3",
-    "helios_transit_metrics.json": "3a41499b3abce74a8479b28d59114fe21d9f4f983e416c94446451eb86323e63",
-    "checksums.txt": "716199e93651e5ee5846aba4e8610956c7dd5cf8b9cee1310d9c60c875d3238e",
-    "helios_models_checksums.json": "97b437fc855c13a369070cb90a1a509a84423b7e3a07dbb48409ad73566645cc",
-    "fig1_multi_horizon_benchmarks.png": "cac4dc811cc8b5ec8f4cd63f5c4f83e9be2e2fe10e973d5e7ce34242ffa2cb70",
-    "fig2_may2024_superstorm_case_study.png": "89415f8233c44de21aab710efb4cb84e00f569cd71bc84fb7dcfa10a3b210190",
-    "fig3_feature_importance.png": "9712f3042b7728a98c60fe74112f541aeddfe90141155de0c80839550efec2de",
-    "fig4_cme_transit_benchmark.png": "02a09628f770202939be2275148421d96efb39bdf045a17c818162454ed8cc11",
-    "helios_trained_models.tar.gz": "9744bb0314b1d07a2ef774354a887e8b8c513e54d6764ebcdf90ecd5b87e6c2b",
-    "helios_processed_datasets.tar.gz": "c919cd48daccef1bbdb35388bba565e0195af16889e67d31c1b5d2ebe556fb68"
   }
 }

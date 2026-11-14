@@ -3,11 +3,12 @@
 > **An Open-Source Space Weather Architecture on Consumer Hardware (~18ms) — Predicting CME Arrival Times and Geomagnetic Storm Severity from Live Satellite Telemetry.**
 
 [![License: MIT / CC BY 4.0](https://img.shields.io/badge/License-MIT%20%2F%20CC%20BY%204.0-yellow.svg)](LICENSE)
-[![Release: v2.5.9](https://img.shields.io/badge/Release-v2.5.9-brightgreen.svg)](https://github.com/Zar-Manah/HELIOS-Space-Weather/releases/tag/v2.5.9)
+[![Release: v2.5.10](https://img.shields.io/badge/Release-v2.5.10-brightgreen.svg)](https://github.com/Zar-Manah/HELIOS-Space-Weather/releases/tag/v2.5.10)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
 [![Zenodo Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24061451-blue.svg)](https://doi.org/10.5281/zenodo.24061451)
+[![Zenodo Version DOI](https://img.shields.io/badge/Version%20DOI-10.5281%2Fzenodo.24211625-purple.svg)](https://doi.org/10.5281/zenodo.24211625)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
 ---
@@ -66,9 +67,9 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
 | :--- | :--- | :--- | :--- |
 | **CME Arrival Accuracy** | Numerical 3D MHD $\pm 10.40\text{h}$ (Earth, Wold 2018) | GBDT/MoK Ensemble **$\pm 7.45\text{h}$ median / $\pm 10.63\text{h}$ MAE** | **Comparable accuracy to HPC without cluster queues** |
 | **Computational Footprint** | 1 to 4 hours on supercomputing HPC clusters | **17.59 ms (median 17.32 ms, p99 21.27 ms)** on Apple Silicon M4 GPU / consumer CPUs | **Eliminates cluster queue latency entirely** |
-| **Human Labor & Bottlenecks** | Manual wireframe cone fitting on coronagraphs | **100% Autonomous** multi-satellite ingestion | **Zero human response lag in severe emergencies** |
+| **Human Labor & Bottlenecks** | Manual wireframe cone fitting on coronagraphs | **Automated Programmatic** multi-satellite ingestion (CLI / Python API) | **Zero human response lag in severe emergencies** |
 | **False Alarm Rate** | Velocity-only sirens (up to 92% false alarms) | 3D Cone Trajectory Filter + Severity Veto | **Filters non-Earth CMEs deterministically** |
-| **Uncertainty Quantification** | Heuristic single-point deterministic output | Empirical Conformal Quantiles (CQR) | **Calibrated 89.26% coverage intervals on Cycle 25 OOD (nominal 90%)** |
+| **Uncertainty Quantification** | Heuristic single-point deterministic output | Empirical Conformal Quantiles (CQR) | **Calibrated 92.31% coverage intervals on Cycle 25 OOD (nominal 90%, 59.72h width)** |
 | **Standard Interoperability** | Complex manual formats | Native NASA CCMC JSON Schema export | **Instant pre-event benchmarking for global agencies** |
 
 ---
@@ -209,5 +210,5 @@ HELIOS 2.0 ingests and builds upon public open-science data from international m
 ## 📄 License & Open Science
 
 * **Software & Code:** Distributed under the **MIT License**.
-* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (Concept DOI: [10.5281/zenodo.24061451](https://doi.org/10.5281/zenodo.24061451)).
+* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (Concept DOI: [10.5281/zenodo.24061451](https://doi.org/10.5281/zenodo.24061451), Version DOI: [10.5281/zenodo.24211625](https://doi.org/10.5281/zenodo.24211625)).
 * Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah** (ORCID: [0009-0007-8443-8999](https://orcid.org/0009-0007-8443-8999)).
