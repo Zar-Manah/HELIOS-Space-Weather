@@ -72,8 +72,10 @@ def build_pdf():
         rightMargin=0.65 * inch,
         topMargin=0.60 * inch,
         bottomMargin=0.60 * inch,
-        title="Zar-Manah HELIOS 2.0: Conformal Space Weather Forecasting",
-        author="Zar Manah"
+        pageCompression=0,
+        title="Zar-Manah HELIOS 2.0 (DOI: 10.5281/zenodo.24211625, Concept DOI: 10.5281/zenodo.24061451)",
+        author="Zar Manah",
+        subject="DOI: 10.5281/zenodo.24211625 — Concept DOI: 10.5281/zenodo.24061451"
     )
 
     styles = getSampleStyleSheet()
