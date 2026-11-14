@@ -64,7 +64,7 @@ def main():
         "system": "Zar-Manah HELIOS 2.0",
         "doi": "10.5281/zenodo.24061451",
         "concept_doi": "10.5281/zenodo.24061451",
-        "version_doi": "10.5281/zenodo.24210315",
+        "version_doi": "10.5281/zenodo.24211625",
         "v258_archive_doi": "10.5281/zenodo.24182248",
         "cal_samples_total": len(df_cal),
         "test_samples_total": len(df_test)
@@ -256,7 +256,7 @@ def main():
 
     checksum_txt_path = os.path.join(RESULTS_DIR, "checksums.txt")
     with open(checksum_txt_path, "w") as f:
-        f.write("\n".join(checksum_lines) + "\n")
+        f.write("# sha256\n" + "\n".join(checksum_lines) + "\n")
     print(f"✅ Created {checksum_txt_path}")
 
     record_path = os.path.join(RESULTS_DIR, "zenodo_record.json")
@@ -264,13 +264,14 @@ def main():
         with open(record_path, "r") as f:
             rec = json.load(f)
     else:
-        rec = {"dep_id": 24210315, "doi": "10.5281/zenodo.24210315", "conceptdoi": "10.5281/zenodo.24061451"}
+        rec = {"dep_id": 24211625, "doi": "10.5281/zenodo.24211625", "conceptdoi": "10.5281/zenodo.24061451"}
     
-    rec["published_zenodo_version"] = "2.5.9"
-    rec["local_release_version"] = "2.5.9"
-    rec["doi"] = "10.5281/zenodo.24210315"
+    rec["published_zenodo_version"] = "2.5.10"
+    rec["local_release_version"] = "2.5.10"
+    rec["dep_id"] = 24211625
+    rec["doi"] = "10.5281/zenodo.24211625"
     rec["conceptdoi"] = "10.5281/zenodo.24061451"
-    rec["status"] = "v2.5.9 published on Zenodo CERN OpenAIRE under permanent Concept DOI 10.5281/zenodo.24061451"
+    rec["status"] = "v2.5.10 published on Zenodo CERN OpenAIRE under permanent Concept DOI 10.5281/zenodo.24061451"
     rec["artifacts_sha256"] = sha_map
     with open(record_path, "w") as f:
         json.dump(rec, f, indent=2)

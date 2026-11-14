@@ -98,7 +98,7 @@ endobj
 endobj
 15 0 obj
 <<
-/Author (Zar Manah) /CreationDate (D:20261114042130+01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261114042130+01'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+/Author (Zar Manah) /CreationDate (D:20261114064414+01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261114064414+01'00') /Producer (ReportLab PDF Library - \(opensource\)) 
   /Subject (DOI: 10.5281/zenodo.24211625 \204 Concept DOI: 10.5281/zenodo.24061451) /Title (Zar-Manah HELIOS 2.0 \(DOI: 10.5281/zenodo.24211625, Concept DOI: 10.5281/zenodo.24061451\)) /Trapped /False
 >>
 endobj
@@ -109,7 +109,7 @@ endobj
 endobj
 17 0 obj
 <<
-/Length 9532
+/Length 9559
 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
@@ -145,7 +145,7 @@ BT /F1 10 Tf 12 TL ET
 q
 1 0 0 1 8 5 cm
 q
-BT 1 0 0 1 0 142.7 Tm 1.180206 Tw 10 TL /F3 7.3 Tf .176471 .215686 .282353 rg (Abstract:) Tj /F4 7.3 Tf ( Geomagnetic superstorms driven by solar coronal mass ejections \(CMEs\) pose acute risks to continental electrical transmission grids, LEO) Tj T* 0 Tw 1.138412 Tw (satellite constellations, and global aviation. Operational space weather infrastructure has historically suffered from the ) Tj /F3 7.3 Tf ('Southward Bz Paradox') Tj /F4 7.3 Tf (: while) Tj T* 0 Tw 1.201079 Tw (coronagraphs project arrival times across 1 AU \(24\22672h\), detecting whether the core magnetic field points southward \(driving violent reconnection\) or) Tj T* 0 Tw .478357 Tw (northward \(harmless deflection\) has required waiting for L1 satellite impact at 30\22645 minutes before arrival, yielding >) Tj (70% false alarms. Here, we present) Tj T* 0 Tw .3289 Tw /F3 7.3 Tf (Zar-Manah HELIOS 2.0) Tj /F4 7.3 Tf (, a unified 4-tier space weather intelligence architecture executing on Apple Silicon M4 GPU in ) Tj /F3 7.3 Tf (17.59 milliseconds) Tj /F4 7.3 Tf ( \(median 17.32) Tj T* 0 Tw 1.659058 Tw (ms, p99 21.27 ms\). HELIOS 2.0 couples: \(1\) HELIOS-CHIRALITY-APEX) Tj (, evaluating Bz southward threat at t=0 \(58.2% test accuracy, 0.6497 Test) Tj T* 0 Tw .188217 Tw (ROC-AUC, 0.4745 Train CV-AUC near-chance\); \(2\) HELIOS-STORM-APEX) Tj (, synthesizing 3D kinetic energy and soft X-ray flare fluence across 14 physical) Tj T* 0 Tw .780786 Tw (dimensions to predict severe storms \(Dst ) Tj /F5 7.3 Tf 10 TL (\243) Tj /F4 7.3 Tf 10 TL ( -110 nT\) with ) Tj /F3 7.3 Tf (78.0% test accuracy) Tj /F4 7.3 Tf (, ) Tj /F3 7.3 Tf (0.8737 Test ROC-AUC) Tj /F4 7.3 Tf (, ) Tj /F3 7.3 Tf (0.6611 Train CV-AUC) Tj /F4 7.3 Tf (, and ) Tj /F3 7.3 Tf (78.9% specificity) Tj /F4 7.3 Tf  T* 0 Tw .052524 Tw (\(60/76 false alarms avoided, 73.3% sensitivity, TSS +0.5228, Brier 0.1154 vs 0.1377 climatology\) on unseen Solar Cycle 25; \(3\) HELIOS-Transit) Tj (, a dynamic) Tj T* 0 Tw 1.7305 Tw (hybrid ensemble \(MoK + GBDT\) achieving \261) Tj (10.63h MAE \() Tj (\261) Tj (7.45h median error\) on unseen Solar Cycle 25 \(91 clean CMEs\), approaching NASA's) Tj T* 0 Tw .253209 Tw (operational WSA-ENLIL MHD standard \() Tj (\261) Tj (10.40h at Earth\); and \(4\) Tactical L1 Nowcasting) Tj (, coupling HELIOS-Point GBDT \(R) Tj (\262 = 0.968, RMSE = 3.66 nT at) Tj T* 0 Tw .564654 Tw (+1h; R) Tj (\262 = 0.714 at +6h\) and HeliosBiLSTM nowcasts on M4 GPU \(R) Tj (\262 = 0.955, RMSE = 4.32 nT at +1h across 57,975 samples\) with calibrated inductive) Tj T* 0 Tw .77493 Tw (conformal coverage \(89.26% on L1 Dst, 86.43% raw quantile; 81.3% on transit\). Crucially, an extensive ablation confirms that standalone 2D white-light) Tj T* 0 Tw .550186 Tw (coronagraph vision at t=0 yields near-chance skill \(AUC ) Tj /F5 7.3 Tf 10 TL (\273) Tj /F4 7.3 Tf 10 TL ( 0.46\2260.51\), establishing that space weather defense is carried by 3D kinematics and in-situ L1) Tj T* 0 Tw (telemetry.) Tj T* ET
+BT 1 0 0 1 0 142.7 Tm 1.180206 Tw 10 TL /F3 7.3 Tf .176471 .215686 .282353 rg (Abstract:) Tj /F4 7.3 Tf ( Geomagnetic superstorms driven by solar coronal mass ejections \(CMEs\) pose acute risks to continental electrical transmission grids, LEO) Tj T* 0 Tw 1.138412 Tw (satellite constellations, and global aviation. Operational space weather infrastructure has historically suffered from the ) Tj /F3 7.3 Tf ('Southward Bz Paradox') Tj /F4 7.3 Tf (: while) Tj T* 0 Tw 1.201079 Tw (coronagraphs project arrival times across 1 AU \(24\22672h\), detecting whether the core magnetic field points southward \(driving violent reconnection\) or) Tj T* 0 Tw .478357 Tw (northward \(harmless deflection\) has required waiting for L1 satellite impact at 30\22645 minutes before arrival, yielding >) Tj (70% false alarms. Here, we present) Tj T* 0 Tw .3289 Tw /F3 7.3 Tf (Zar-Manah HELIOS 2.0) Tj /F4 7.3 Tf (, a unified 4-tier space weather intelligence architecture executing on Apple Silicon M4 GPU in ) Tj /F3 7.3 Tf (17.59 milliseconds) Tj /F4 7.3 Tf ( \(median 17.32) Tj T* 0 Tw .581845 Tw (ms, p99 21.27 ms\). HELIOS 2.0 couples: \(1\) HELIOS-CHIRALITY-APEX) Tj (, evaluating Bz southward threat at t=0 \(58.2% test accuracy at threshold 0.525,) Tj T* 0 Tw .075067 Tw (0.6497 Test ROC-AUC, 0.4745 Train CV-AUC near-chance\); \(2\) HELIOS-STORM-APEX) Tj (, synthesizing 3D kinetic energy and soft X-ray flare fluence across) Tj T* 0 Tw .708464 Tw (14 physical dimensions to predict severe storms \(Dst ) Tj /F5 7.3 Tf 10 TL (\243) Tj /F4 7.3 Tf 10 TL ( -110 nT\) with ) Tj /F3 7.3 Tf (78.0% test accuracy) Tj /F4 7.3 Tf (, ) Tj /F3 7.3 Tf (0.8737 Test ROC-AUC) Tj /F4 7.3 Tf (, ) Tj /F3 7.3 Tf (0.6611 Train CV-AUC) Tj /F4 7.3 Tf (, and ) Tj /F3 7.3 Tf (78.9%) Tj T* 0 Tw -0.06676 Tw (specificity) Tj /F4 7.3 Tf ( \(60/76 false alarms avoided, 73.3% sensitivity, TSS +0.5228, Brier 0.1154 vs 0.1377 climatology\) on unseen Solar Cycle 25; \(3\) HELIOS-Transit) Tj (,) Tj T* 0 Tw -0.031159 Tw (a dynamic hybrid ensemble \(MoK + GBDT\) achieving \261) Tj (10.63h MAE \() Tj (\261) Tj (7.45h median error\) on unseen Solar Cycle 25 \(91 clean CMEs\), approaching NASA's) Tj T* 0 Tw .253209 Tw (operational WSA-ENLIL MHD standard \() Tj (\261) Tj (10.40h at Earth\); and \(4\) Tactical L1 Nowcasting) Tj (, coupling HELIOS-Point GBDT \(R) Tj (\262 = 0.968, RMSE = 3.66 nT at) Tj T* 0 Tw .564654 Tw (+1h; R) Tj (\262 = 0.714 at +6h\) and HeliosBiLSTM nowcasts on M4 GPU \(R) Tj (\262 = 0.955, RMSE = 4.32 nT at +1h across 57,975 samples\) with calibrated inductive) Tj T* 0 Tw .77493 Tw (conformal coverage \(89.26% on L1 Dst, 86.43% raw quantile; 81.3% on transit\). Crucially, an extensive ablation confirms that standalone 2D white-light) Tj T* 0 Tw .550186 Tw (coronagraph vision at t=0 yields near-chance skill \(AUC ) Tj /F5 7.3 Tf 10 TL (\273) Tj /F4 7.3 Tf 10 TL ( 0.46\2260.51\), establishing that space weather defense is carried by 3D kinematics and in-situ L1) Tj T* 0 Tw (telemetry.) Tj T* ET
 Q
 Q
 q
@@ -1413,12 +1413,12 @@ xref
 0001196439 00000 n 
 0001196849 00000 n 
 0001196924 00000 n 
-0001206508 00000 n 
-0001222971 00000 n 
+0001206535 00000 n 
+0001222998 00000 n 
 trailer
 <<
 /ID 
-[<32cc87d283c032b069560378f272bd2a><32cc87d283c032b069560378f272bd2a>]
+[<5730cace9be0bd8e31ba58026133908d><5730cace9be0bd8e31ba58026133908d>]
 % ReportLab generated PDF document -- digest (opensource)
 
 /Info 15 0 R
@@ -1426,5 +1426,5 @@ trailer
 /Size 20
 >>
 startxref
-1237052
+1237079
 %%EOF
