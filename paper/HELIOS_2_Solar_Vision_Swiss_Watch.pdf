@@ -98,8 +98,8 @@ endobj
 endobj
 15 0 obj
 <<
-/Author (Zar Manah) /CreationDate (D:20261114064414+01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261114064414+01'00') /Producer (ReportLab PDF Library - \(opensource\)) 
-  /Subject (DOI: 10.5281/zenodo.24211625 \204 Concept DOI: 10.5281/zenodo.24061451) /Title (Zar-Manah HELIOS 2.0 \(DOI: 10.5281/zenodo.24211625, Concept DOI: 10.5281/zenodo.24061451\)) /Trapped /False
+/Author (Zar Manah) /CreationDate (D:20261114081212+01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261114081212+01'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (DOI: 10.5281/zenodo.24215020 \204 Concept DOI: 10.5281/zenodo.24215019) /Title (Zar-Manah HELIOS 2.0 \(DOI: 10.5281/zenodo.24215020, Concept DOI: 10.5281/zenodo.24215019\)) /Trapped /False
 >>
 endobj
 16 0 obj
@@ -199,7 +199,7 @@ q
 BT /F1 7.5 Tf 9 TL ET
 .443137 .501961 .588235 rg
 BT 1 0 0 1 527.6375 28 Tm (Page 1 of 3) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24061451 \227 Version DOI: 10.5281/zenodo.24211625) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24215020) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -967,7 +967,7 @@ BT 1 0 0 1 46 752 Tm (Zar-Manah HELIOS 2.0: Unified 4-Tier Space Weather Intelli
 .5 w
 n 46 746 m 566 746 l S
 BT 1 0 0 1 527.6375 28 Tm (Page 2 of 3) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24061451 \227 Version DOI: 10.5281/zenodo.24211625) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24215020) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -1304,7 +1304,7 @@ Q
 q
 1 0 0 1 52.8 349 cm
 q
-BT 1 0 0 1 0 53.8 Tm 2.038235 Tw 10.2 TL /F1 7.4 Tf .101961 .12549 .172549 rg (Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for operational space weather and CME shock) Tj T* 0 Tw .6003 Tw (forecasting. By evaluating solar eruptions at the moment of launch \(24\22672h in advance\), HELIOS 2.0 achieves ) Tj /F2 7.4 Tf (78.0% accuracy) Tj /F1 7.4 Tf ( and ) Tj /F2 7.4 Tf (0.8737 ROC-AUC) Tj /F1 7.4 Tf  T* 0 Tw .670289 Tw (\(0.6611 Train CV-AUC\) in discriminating severe geomagnetic storms from harmless events, avoiding ) Tj /F2 7.4 Tf (78.9% of historical false alarms) Tj /F1 7.4 Tf ( \(60/76 avoided,) Tj T* 0 Tw 1.342837 Tw (73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology\) in out-of-distribution testing. The complete open-source codebase, trained neural checkpoints,) Tj T* 0 Tw 10.00685 Tw (interactive mission cockpit, and reproduction scripts are released under dual CC BY 4.0 / MIT licensing at:) Tj T* 0 Tw /F4 7.4 Tf (https://github.com/Zar-Manah/HELIOS-Space-Weather) Tj /F1 7.4 Tf ( \(Concept DOI: 10.5281/zenodo.24061451, Version DOI: 10.5281/zenodo.24211625\).) Tj T* ET
+BT 1 0 0 1 0 53.8 Tm 2.038235 Tw 10.2 TL /F1 7.4 Tf .101961 .12549 .172549 rg (Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for operational space weather and CME shock) Tj T* 0 Tw .6003 Tw (forecasting. By evaluating solar eruptions at the moment of launch \(24\22672h in advance\), HELIOS 2.0 achieves ) Tj /F2 7.4 Tf (78.0% accuracy) Tj /F1 7.4 Tf ( and ) Tj /F2 7.4 Tf (0.8737 ROC-AUC) Tj /F1 7.4 Tf  T* 0 Tw .670289 Tw (\(0.6611 Train CV-AUC\) in discriminating severe geomagnetic storms from harmless events, avoiding ) Tj /F2 7.4 Tf (78.9% of historical false alarms) Tj /F1 7.4 Tf ( \(60/76 avoided,) Tj T* 0 Tw 1.342837 Tw (73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology\) in out-of-distribution testing. The complete open-source codebase, trained neural checkpoints,) Tj T* 0 Tw 10.00685 Tw (interactive mission cockpit, and reproduction scripts are released under dual CC BY 4.0 / MIT licensing at:) Tj T* 0 Tw /F4 7.4 Tf (https://github.com/Zar-Manah/HELIOS-Space-Weather) Tj /F1 7.4 Tf ( \(Concept DOI: 10.5281/zenodo.24215019, Version DOI: 10.5281/zenodo.24215020\).) Tj T* ET
 Q
 Q
 q
@@ -1385,7 +1385,7 @@ BT 1 0 0 1 46 752 Tm (Zar-Manah HELIOS 2.0: Unified 4-Tier Space Weather Intelli
 .5 w
 n 46 746 m 566 746 l S
 BT 1 0 0 1 527.6375 28 Tm (Page 3 of 3) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24061451 \227 Version DOI: 10.5281/zenodo.24211625) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24215020) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -1418,7 +1418,7 @@ xref
 trailer
 <<
 /ID 
-[<5730cace9be0bd8e31ba58026133908d><5730cace9be0bd8e31ba58026133908d>]
+[<b924ef2a425909a38bb7d83e955e98d8><b924ef2a425909a38bb7d83e955e98d8>]
 % ReportLab generated PDF document -- digest (opensource)
 
 /Info 15 0 R

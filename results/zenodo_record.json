@@ -1,11 +1,11 @@
 {
-  "dep_id": 24211625,
-  "doi": "10.5281/zenodo.24211625",
-  "conceptdoi": "10.5281/zenodo.24061451",
-  "record_url": "https://zenodo.org/record/24211625",
-  "version": "2.5.10",
-  "published_at": "2026-11-14 03:04:15 UTC",
-  "status": "v2.5.10 published on Zenodo CERN OpenAIRE under permanent Concept DOI 10.5281/zenodo.24061451",
+  "dep_id": 24215020,
+  "doi": "10.5281/zenodo.24215020",
+  "conceptdoi": "10.5281/zenodo.24215019",
+  "record_url": "https://zenodo.org/record/24215020",
+  "version": "2.5.11",
+  "published_at": "2026-11-14 07:13:52 UTC",
+  "status": "v2.5.11 published on Zenodo CERN OpenAIRE under permanent Concept DOI 10.5281/zenodo.24215019",
   "server_verified_files": {
     "helios_processed_datasets.tar.gz": {
       "size": 28098957,
@@ -19,8 +19,8 @@
     },
     "helios_evaluation_metrics.json": {
       "size": 3530,
-      "md5": "bef9936945acc7243c47e66c877383c1",
-      "sha256": "5b188898782d8608ccf91c3f66af3407910e1891da5b04327f762e3837b7fc2c"
+      "md5": "5624c095b0027c48aaea0da04beb3d05",
+      "sha256": "bae7af629858a94f1e76c42359bd6bdf8a5fee0818113d013846230a19a6d132"
     },
     "helios_transit_metrics.json": {
       "size": 431,
@@ -43,24 +43,24 @@
       "sha256": "97b437fc855c13a369070cb90a1a509a84423b7e3a07dbb48409ad73566645cc"
     },
     "HELIOS_Solar_Storm_Conformal_Forecasting.pdf": {
-      "size": 1883033,
-      "md5": "baebf7528f7126e1bbac79c5ca7f37fd",
-      "sha256": "1c2683494ca69b099a90d70dad54bee74b866618b0454e0a47388cdd91c5057f"
+      "size": 1907081,
+      "md5": "b324e96432d56fafaab7cd43d33fe34b",
+      "sha256": "882ae529b8d431c25b4e4e67fd2cc45006b1e075d5df19b86b6030accb73858e"
     },
     "HELIOS_2_Solar_Vision_Swiss_Watch.pdf": {
-      "size": 1211365,
-      "md5": "8595653feba607384faa1c9d9b2568a9",
-      "sha256": "664cd3511d619b5cecc45f8ad24b564a803758552d9602c34dec5b61ec4d8daf"
+      "size": 1237697,
+      "md5": "01d5a8690e5c3ff586874e5bf8db6ad4",
+      "sha256": "b3c7c1f7993162a972df720bddf1338a35522255db8c56dac6043555eb88b34f"
     },
     "manuscript.md": {
-      "size": 45339,
-      "md5": "e58250316eb1b5a0711216841f158837",
-      "sha256": "5e80c9c9b9b14da977f4492639408c1cc9db54fce9e09ec3f44c496188c05668"
+      "size": 45358,
+      "md5": "80a353c46664511d16192f89323d232b",
+      "sha256": "6076e667ef585c4af783e584f1cd8400600da15ed296555b5425cd63cf371927"
     },
     "predict.py": {
       "size": 37615,
-      "md5": "1993581760ad12f88f9f1bee5df376c2",
-      "sha256": "7aeac1e7c4dbb3d3a49f642b71ce643bfbaa4a855706de73553c6acb0833fe2d"
+      "md5": "5b52b4f17a19e2961532ca566fae7878",
+      "sha256": "ca8a642f18ac760af87f5498320290e24b8008e06aaacd52bec8259f810fca5c"
     },
     "test_helios_core.py": {
       "size": 14534,
@@ -93,9 +93,9 @@
       "sha256": "c589933d71fcd8612f9495f4e986574e48035437556645cb54a8563b795feb26"
     },
     "README.md": {
-      "size": 18378,
-      "md5": "2b09296eafdb246446b556965adf1750",
-      "sha256": "1a1b10378e60a7e1e8ca6233a6dacf43ef73b942599b4135951773f107e5bafe"
+      "size": 18396,
+      "md5": "e66272d9faae59d5294f25565c77f74b",
+      "sha256": "50a730447a3cd6dc1325e5011fd904afc3928a38f0eaa816fe2169c80bc9b2bb"
     },
     "LICENSE": {
       "size": 1529,
@@ -109,8 +109,8 @@
     },
     "Zar-Manah_HELIOS.html": {
       "size": 48697,
-      "md5": "64bebe4407b1826f4579a0531932bf58",
-      "sha256": "c7983e94fb9969e16506901d1a31bde6094007a82dc0ae8b26c55fb3f81d3307"
+      "md5": "1dedba67ba501a402d1f44cc8777ebba",
+      "sha256": "1f817dd0599f3548435168af38f9db176d0bb5793964f6e23c4bf0afd3cd2175"
     },
     "fig1_multi_horizon_benchmarks.png": {
       "size": 448551,
@@ -143,9 +143,9 @@
       "sha256": "5958c9fd6bbe4537af8bfecd9426c1b6bdaa1e48e41a6f739ceaf7ef535a7d1d"
     },
     "checksums.txt": {
-      "size": 2693,
-      "md5": "eeabee224e6435b27c428d68b64f6868",
-      "sha256": "f2c1d122f924d546205585d9f38639e7a6a5fb9f62876c3f88bc2ff22745c026"
+      "size": 2495,
+      "md5": "49270c06328c0e4cdb510667fc65294c",
+      "sha256": "83d59b87391e043bb01e77e3de024b70246630cb9f8291b516bdf81d30a8f768"
     }
   }
 }

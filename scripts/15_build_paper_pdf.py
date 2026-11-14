@@ -54,7 +54,7 @@ class NumberedCanvas(canvas.Canvas):
         # Running footer on all pages
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(566, 28, page_str)
-        self.drawString(46, 28, "Preprint — Independent Research — CC BY 4.0 / MIT — Concept DOI: 10.5281/zenodo.24061451 — Version DOI: 10.5281/zenodo.24211625")
+        self.drawString(46, 28, "Preprint — Independent Research — CC BY 4.0 / MIT — Concept DOI: 10.5281/zenodo.24215019 — Version DOI: 10.5281/zenodo.24215020")
         self.setStrokeColor(colors.HexColor("#cbd5e0"))
         self.setLineWidth(0.5)
         self.line(46, 38, 566, 38)
@@ -71,9 +71,9 @@ def build_pdf():
         topMargin=0.60 * inch,
         bottomMargin=0.60 * inch,
         pageCompression=0,
-        title="Zar-Manah HELIOS 2.0 (DOI: 10.5281/zenodo.24211625, Concept DOI: 10.5281/zenodo.24061451)",
+        title="Zar-Manah HELIOS 2.0 (DOI: 10.5281/zenodo.24215020, Concept DOI: 10.5281/zenodo.24215019)",
         author="Zar Manah",
-        subject="DOI: 10.5281/zenodo.24211625 — Concept DOI: 10.5281/zenodo.24061451"
+        subject="DOI: 10.5281/zenodo.24215020 — Concept DOI: 10.5281/zenodo.24215019"
     )
 
     styles = getSampleStyleSheet()
@@ -324,7 +324,7 @@ def build_pdf():
     # 6. Conclusions & References
     story.append(Paragraph("6. Conclusions & Open Data Availability", h1_style))
     story.append(Paragraph(
-        "Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for operational space weather and CME shock forecasting. By evaluating solar eruptions at the moment of launch (24–72h in advance), HELIOS 2.0 achieves <b>78.0% accuracy</b> and <b>0.8737 ROC-AUC</b> (0.6611 Train CV-AUC) in discriminating severe geomagnetic storms from harmless events, avoiding <b>78.9% of historical false alarms</b> (60/76 avoided, 73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology) in out-of-distribution testing. The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under dual CC BY 4.0 / MIT licensing at: <i>https://github.com/Zar-Manah/HELIOS-Space-Weather</i> (Concept DOI: 10.5281/zenodo.24061451, Version DOI: 10.5281/zenodo.24211625).",
+        "Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for operational space weather and CME shock forecasting. By evaluating solar eruptions at the moment of launch (24–72h in advance), HELIOS 2.0 achieves <b>78.0% accuracy</b> and <b>0.8737 ROC-AUC</b> (0.6611 Train CV-AUC) in discriminating severe geomagnetic storms from harmless events, avoiding <b>78.9% of historical false alarms</b> (60/76 avoided, 73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology) in out-of-distribution testing. The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under dual CC BY 4.0 / MIT licensing at: <i>https://github.com/Zar-Manah/HELIOS-Space-Weather</i> (Concept DOI: 10.5281/zenodo.24215019, Version DOI: 10.5281/zenodo.24215020).",
         body_style
     ))
     story.append(Spacer(1, 3))

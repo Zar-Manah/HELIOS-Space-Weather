@@ -307,7 +307,7 @@ Operating locally on Apple Silicon M4 with sub-22 millisecond latency ($17.59\te
 
 ### Data and Code Availability
 The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under dual MIT / CC BY 4.0 licensing at:  
-`https://github.com/Zar-Manah/HELIOS-Space-Weather` (Concept DOI: [10.5281/zenodo.24061451](https://doi.org/10.5281/zenodo.24061451), v2.5.10 archive: [10.5281/zenodo.24211625](https://doi.org/10.5281/zenodo.24211625)).  
+`https://github.com/Zar-Manah/HELIOS-Space-Weather` (Concept DOI: [10.5281/zenodo.24215019](https://doi.org/10.5281/zenodo.24215019), v2.5.11 archive: [10.5281/zenodo.24215020](https://doi.org/10.5281/zenodo.24215020)).  
 Raw solar wind and imagery data are curated by NASA SPDF OMNIWeb, SDO, and ESA/NASA SOHO.
 
 ---
