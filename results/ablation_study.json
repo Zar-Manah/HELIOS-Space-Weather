@@ -1,0 +1,46 @@
+{
+  "storm_severity_dst_110": {
+    "PHYS14 (Operational Model)": {
+      "n_features": 14,
+      "train_cv_auc": 0.6611,
+      "test_roc_auc": 0.8737
+    },
+    "PHYS + C2 Coronagraph PCA": {
+      "n_features": 22,
+      "train_cv_auc": 0.6659,
+      "test_roc_auc": 0.8614
+    },
+    "PHYS + ALL Vision PCA": {
+      "n_features": 30,
+      "train_cv_auc": 0.6793,
+      "test_roc_auc": 0.8667
+    },
+    "Vision PCA Alone": {
+      "n_features": 16,
+      "train_cv_auc": 0.6124,
+      "test_roc_auc": 0.5132
+    }
+  },
+  "chirality_southward_bz_10": {
+    "PHYS14 (Operational Model)": {
+      "n_features": 14,
+      "train_cv_auc": 0.4594,
+      "test_roc_auc": 0.6279
+    },
+    "PHYS + C2 Coronagraph PCA": {
+      "n_features": 22,
+      "train_cv_auc": 0.4927,
+      "test_roc_auc": 0.5775
+    },
+    "PHYS + ALL Vision PCA": {
+      "n_features": 30,
+      "train_cv_auc": 0.5136,
+      "test_roc_auc": 0.594
+    },
+    "Vision PCA Alone": {
+      "n_features": 16,
+      "train_cv_auc": 0.5662,
+      "test_roc_auc": 0.4603
+    }
+  }
+}

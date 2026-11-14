@@ -1,0 +1,184 @@
+{
+  "release": "2.5.14",
+  "system": "Zar-Manah HELIOS 2.0",
+  "doi": "10.5281/zenodo.24215019",
+  "concept_doi": "10.5281/zenodo.24215019",
+  "version_doi": "10.5281/zenodo.24215019",
+  "cal_samples_total": 34960,
+  "test_samples_total": 57998,
+  "lead_1h": {
+    "persistence": {
+      "rmse": 4.574450883197792,
+      "mae": 2.8690816924721543,
+      "r2": 0.9496421614964764,
+      "tss_50": 0.8727605457968308,
+      "hss_50": 0.8727605457968308,
+      "tpr_50": 0.8773764258555133,
+      "fpr_50": 0.004615880058682506
+    },
+    "helios_point": {
+      "rmse": 3.6553836512355065,
+      "mae": 2.359399629167366,
+      "r2": 0.9678445143450425,
+      "tss_50": 0.8939927845496792,
+      "hss_50": 0.8999615231919604,
+      "tpr_50": 0.8973384030418251,
+      "fpr_50": 0.0033456184921458474
+    },
+    "conformal": {
+      "nominal_coverage": 0.9,
+      "empirical_coverage": 0.892616986792648,
+      "q_conformal_adjustment": 0.3538117990997558,
+      "mean_interval_width": 10.020680382905123,
+      "raw_quantile_coverage": 0.8643056657126108,
+      "raw_quantile_width": 9.31305678470561
+    }
+  },
+  "lead_2h": {
+    "persistence": {
+      "rmse": 7.343857231913323,
+      "mae": 4.660712438359943,
+      "r2": 0.8701694438091081,
+      "tss_50": 0.7958250618600309,
+      "hss_50": 0.7958250618600308,
+      "tpr_50": 0.8032319391634981,
+      "fpr_50": 0.007406877303467277
+    },
+    "helios_point": {
+      "rmse": 5.9330152906877185,
+      "mae": 3.9631612243740606,
+      "r2": 0.9152617673107076,
+      "tss_50": 0.8265427661076554,
+      "hss_50": 0.8386256136201953,
+      "tpr_50": 0.8317490494296578,
+      "fpr_50": 0.005206283322002361
+    },
+    "conformal": {
+      "nominal_coverage": 0.9,
+      "empirical_coverage": 0.8918583399427567,
+      "q_conformal_adjustment": 0.5402580362890201,
+      "mean_interval_width": 16.117342772189858,
+      "raw_quantile_coverage": 0.865667781647643,
+      "raw_quantile_width": 15.036826699611819
+    }
+  },
+  "lead_3h": {
+    "persistence": {
+      "rmse": 9.225435432502527,
+      "mae": 5.8420980033794265,
+      "r2": 0.795145846156197,
+      "tss_50": 0.7420688583400873,
+      "hss_50": 0.7420688583400873,
+      "tpr_50": 0.751425855513308,
+      "fpr_50": 0.009356997173220739
+    },
+    "helios_point": {
+      "rmse": 7.645945132509693,
+      "mae": 5.108018774493851,
+      "r2": 0.8592872723535644,
+      "tss_50": 0.7650901978908746,
+      "hss_50": 0.7883479796961612,
+      "tpr_50": 0.7713878326996197,
+      "fpr_50": 0.0062976348087451246
+    },
+    "conformal": {
+      "nominal_coverage": 0.9,
+      "empirical_coverage": 0.8895651574192214,
+      "q_conformal_adjustment": 0.710002193129898,
+      "mean_interval_width": 20.681601862955663,
+      "raw_quantile_coverage": 0.8606331252801821,
+      "raw_quantile_width": 19.261597476695865
+    }
+  },
+  "lead_6h": {
+    "persistence": {
+      "rmse": 13.161389747104026,
+      "mae": 8.09007207145074,
+      "r2": 0.5838386801382531,
+      "tss_50": 0.6141418529078344,
+      "hss_50": 0.6140013631065506,
+      "tpr_50": 0.628150261531146,
+      "fpr_50": 0.014008408623311566
+    },
+    "helios_point": {
+      "rmse": 10.914183047606086,
+      "mae": 7.089839775111729,
+      "r2": 0.7138190778659099,
+      "tss_50": 0.6297763234398169,
+      "hss_50": 0.6617236541551829,
+      "tpr_50": 0.6395625297194484,
+      "fpr_50": 0.009786206279631452
+    },
+    "conformal": {
+      "nominal_coverage": 0.9,
+      "empirical_coverage": 0.891892823890479,
+      "q_conformal_adjustment": 1.3649505244480276,
+      "mean_interval_width": 28.593792874258252,
+      "raw_quantile_coverage": 0.8518224766371254,
+      "raw_quantile_width": 25.8638918253622
+    }
+  },
+  "helios_bilstm_mps": {
+    "lead_1h": {
+      "rmse": 4.32,
+      "mae": 2.54,
+      "r2": 0.955,
+      "n_sequences": 57975
+    }
+  },
+  "planetary_transit_kinematics": {
+    "gbdt_alone": {
+      "mae_hours": 10.63,
+      "median_hours": 7.45,
+      "rmse_hours": 15.29,
+      "r2": 0.313,
+      "conformal_coverage": 92.31,
+      "interval_width_hours": 59.72
+    },
+    "dynamic_hybrid_mok_gbdt": {
+      "mae_hours": 11.69,
+      "median_hours": 8.34,
+      "rmse_hours": 15.68,
+      "r2": 0.278,
+      "conformal_coverage": 92.31,
+      "interval_width_hours": 59.72
+    },
+    "vrsnak_dbm_all": {
+      "mae_hours": 12.3
+    },
+    "vrsnak_dbm_fast": {
+      "mae_hours": 16.57
+    },
+    "nasa_wsa_enlil_standard": {
+      "mae_hours": 10.4,
+      "rmse_hours": 13.2
+    }
+  },
+  "apex_v5_models": {
+    "gear2_storm_severity": {
+      "test_accuracy": 0.7802,
+      "test_roc_auc": 0.8737,
+      "train_cv_auc": 0.6611,
+      "test_specificity": 0.7895,
+      "test_sensitivity": 0.7333,
+      "tss": 0.5228,
+      "test_brier": 0.1154
+    },
+    "gear1_chirality": {
+      "test_accuracy": 0.5824,
+      "test_roc_auc": 0.6497,
+      "train_cv_auc": 0.4745,
+      "test_specificity": 0.7083,
+      "test_sensitivity": 0.4419,
+      "tss": 0.1502,
+      "test_brier": 0.2426
+    }
+  },
+  "verification": {
+    "tactical_metrics": {
+      "script": "scripts/20_verify_tactical_metrics.py",
+      "method": "recomputed from published joblib models + published feature parquet (no retraining)",
+      "metrics_file": "tactical_metrics_verified.json"
+    }
+  }
+}
