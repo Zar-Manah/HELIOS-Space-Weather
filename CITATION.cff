@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite both the concept DOI (all versions) and the exact version DOI below."
+title: "Zar-Manah HELIOS: Dual-Scale Space Weather Intelligence Coupling Tactical Conformal Nowcasting (1-6h) and Planetary CME Shock Transit (24-72h) across Solar Cycles 23-25"
+abstract: >-
+  HELIOS 2.0 is an open, locally executable four-tier space weather intelligence
+  architecture. It couples de-projected 3D CME kinematics and coronal magnetic
+  proxies (HELIOS-CHIRALITY-APEX, HELIOS-STORM-APEX), a dynamic MoK + GBDT shock
+  transit ensemble (HELIOS-Transit), and calibrated conformal nowcasting of the
+  ring current at L1 (HELIOS-Tactical). All models are evaluated out-of-distribution
+  on Solar Cycle 25 and released with reproducible artifacts, checksums, and a
+  command-line inference client.
+authors:
+  - family-names: "Manah"
+    given-names: "Zar"
+    orcid: "https://orcid.org/0009-0007-8443-8999"
+version: "2.5.12"
+date-released: "2026-11-14"
+doi: "10.5281/zenodo.24224088"
+license: "CC-BY-4.0"
+repository-code: "https://github.com/Zar-Manah/HELIOS-Space-Weather"
+url: "https://doi.org/10.5281/zenodo.24215019"
+keywords:
+  - space weather
+  - coronal mass ejection
+  - conformal prediction
+  - geomagnetic storm
+  - Dst index
+  - solar cycle 25
+  - machine learning
+  - open science
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24224088"
+    description: "Version DOI (v2.5.12)"
+  - type: doi
+    value: "10.5281/zenodo.24215019"
+    description: "Concept DOI (all versions)"

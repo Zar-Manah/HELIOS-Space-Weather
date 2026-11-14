@@ -1,6 +1,6 @@
 {
   "architecture": "MoKTransitNN + GBDT Dynamic Regime",
-  "version": "2.5.8",
+  "version": "2.5.12",
   "w_base": 0.45,
   "w_fast_boost": 0.45,
   "transition_v0": 950.0,
@@ -12,10 +12,11 @@
   "fast_cme_mae": 15.37,
   "global_rmse": 15.68,
   "r2_score": 0.278,
-  "conformal_coverage_pct": 81.3,
-  "mean_window_hours": 37.5,
   "benchmark_vrsnak_dbm": 12.3,
   "benchmark_nasa_enlil_earth": 10.4,
   "benchmark_nasa_enlil_stereo_a": 9.2,
-  "benchmark_dbm_prior": 29.0
+  "benchmark_dbm_prior": 29.0,
+  "ensemble_raw_quantile_coverage_pct": 81.3,
+  "ensemble_raw_quantile_mean_window_hours": 37.5,
+  "conformal_coverage_reference": "results/helios_transit_metrics.json (conformalized GBDT interval: 92.31% coverage, 59.72 h mean width)"
 }

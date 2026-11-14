@@ -54,7 +54,7 @@ class NumberedCanvas(canvas.Canvas):
         # Running footer on all pages
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(566, 28, page_str)
-        self.drawString(46, 28, "Preprint — Independent Research — CC BY 4.0 / MIT — Concept DOI: 10.5281/zenodo.24215019 — Version DOI: 10.5281/zenodo.24215020")
+        self.drawString(46, 28, "Preprint — Independent Research — CC BY 4.0 / MIT — Concept DOI: 10.5281/zenodo.24215019 — Version DOI: 10.5281/zenodo.24224088")
         self.setStrokeColor(colors.HexColor("#cbd5e0"))
         self.setLineWidth(0.5)
         self.line(46, 38, 566, 38)
@@ -71,9 +71,9 @@ def build_pdf():
         topMargin=0.60 * inch,
         bottomMargin=0.60 * inch,
         pageCompression=0,
-        title="Zar-Manah HELIOS 2.0 (DOI: 10.5281/zenodo.24215020, Concept DOI: 10.5281/zenodo.24215019)",
+        title="Zar-Manah HELIOS 2.0 (DOI: 10.5281/zenodo.24224088, Concept DOI: 10.5281/zenodo.24215019)",
         author="Zar Manah",
-        subject="DOI: 10.5281/zenodo.24215020 — Concept DOI: 10.5281/zenodo.24215019"
+        subject="DOI: 10.5281/zenodo.24224088 — Concept DOI: 10.5281/zenodo.24215019"
     )
 
     styles = getSampleStyleSheet()
@@ -185,7 +185,7 @@ def build_pdf():
 
     # Abstract Callout Box
     abstract_html = (
-        "<b>Abstract:</b> Geomagnetic superstorms driven by solar coronal mass ejections (CMEs) pose acute risks to continental electrical transmission grids, LEO satellite constellations, and global aviation. Operational space weather infrastructure has historically suffered from the <b>'Southward Bz Paradox'</b>: while coronagraphs project arrival times across 1 AU (24–72h), detecting whether the core magnetic field points southward (driving violent reconnection) or northward (harmless deflection) has required waiting for L1 satellite impact at 30–45 minutes before arrival, yielding &gt;70% false alarms. Here, we present <b>Zar-Manah HELIOS 2.0</b>, a unified 4-tier space weather intelligence architecture executing on Apple Silicon M4 GPU in <b>17.59 milliseconds</b> (median 17.32 ms, p99 21.27 ms). HELIOS 2.0 couples: (1) <i>HELIOS-CHIRALITY-APEX</i>, evaluating Bz southward threat at t=0 (58.2% test accuracy at threshold 0.525, 0.6497 Test ROC-AUC, 0.4745 Train CV-AUC near-chance); (2) <i>HELIOS-STORM-APEX</i>, synthesizing 3D kinetic energy and soft X-ray flare fluence across 14 physical dimensions to predict severe storms (Dst &le; -110 nT) with <b>78.0% test accuracy</b>, <b>0.8737 Test ROC-AUC</b>, <b>0.6611 Train CV-AUC</b>, and <b>78.9% specificity</b> (60/76 false alarms avoided, 73.3% sensitivity, TSS +0.5228, Brier 0.1154 vs 0.1377 climatology) on unseen Solar Cycle 25; (3) <i>HELIOS-Transit</i>, a dynamic hybrid ensemble (MoK + GBDT) achieving &plusmn;10.63h MAE (&plusmn;7.45h median error) on unseen Solar Cycle 25 (91 clean CMEs), approaching NASA's operational WSA-ENLIL MHD standard (&plusmn;10.40h at Earth); and (4) <i>Tactical L1 Nowcasting</i>, coupling HELIOS-Point GBDT (R&sup2; = 0.968, RMSE = 3.66 nT at +1h; R&sup2; = 0.714 at +6h) and HeliosBiLSTM nowcasts on M4 GPU (R&sup2; = 0.955, RMSE = 4.32 nT at +1h across 57,975 samples) with calibrated inductive conformal coverage (89.26% on L1 Dst, 86.43% raw quantile; 81.3% on transit). Crucially, an extensive ablation confirms that standalone 2D white-light coronagraph vision at t=0 yields near-chance skill (AUC &approx; 0.46–0.51), establishing that space weather defense is carried by 3D kinematics and in-situ L1 telemetry."
+        "<b>Abstract:</b> Geomagnetic superstorms driven by solar coronal mass ejections (CMEs) pose acute risks to continental electrical transmission grids, LEO satellite constellations, and global aviation. Operational space weather infrastructure has historically suffered from the <b>'Southward Bz Paradox'</b>: while coronagraphs project arrival times across 1 AU (24–72h), detecting whether the core magnetic field points southward (driving violent reconnection) or northward (harmless deflection) has required waiting for L1 satellite impact at 30–45 minutes before arrival, yielding &gt;70% false alarms. Here, we present <b>Zar-Manah HELIOS 2.0</b>, a unified 4-tier space weather intelligence architecture executing on Apple Silicon M4 GPU in <b>16.55 milliseconds</b> (median 16.54 ms, p99 17.34 ms). HELIOS 2.0 couples: (1) <i>HELIOS-CHIRALITY-APEX</i>, evaluating Bz southward threat at t=0 (58.2% test accuracy at threshold 0.525, 0.6497 Test ROC-AUC, 0.4745 Train CV-AUC near-chance); (2) <i>HELIOS-STORM-APEX</i>, synthesizing 3D kinetic energy and soft X-ray flare fluence across 14 physical dimensions to predict severe storms (Dst &le; -110 nT) with <b>78.0% test accuracy</b>, <b>0.8737 Test ROC-AUC</b>, <b>0.6611 Train CV-AUC</b>, and <b>78.9% specificity</b> (60/76 false alarms avoided, 73.3% sensitivity, TSS +0.5228, Brier 0.1154 vs 0.1377 climatology) on unseen Solar Cycle 25; (3) <i>HELIOS-Transit</i>, a dynamic hybrid ensemble (MoK + GBDT) achieving &plusmn;10.63h MAE (&plusmn;7.45h median error) on unseen Solar Cycle 25 (91 clean CMEs), approaching NASA's operational WSA-ENLIL MHD standard (&plusmn;10.40h at Earth); and (4) <i>Tactical L1 Nowcasting</i>, coupling HELIOS-Point GBDT (R&sup2; = 0.968, RMSE = 3.66 nT at +1h; R&sup2; = 0.714 at +6h) and HeliosBiLSTM nowcasts on M4 GPU (R&sup2; = 0.955, RMSE = 4.32 nT at +1h across 57,975 samples) with calibrated inductive conformal coverage (89.26% on L1 Dst, 86.43% raw quantile; 92.3% on transit, mean window 59.7 h). Crucially, an extensive ablation confirms that standalone 2D white-light coronagraph vision at t=0 yields near-chance skill (AUC &approx; 0.46–0.51), establishing that space weather defense is carried by 3D kinematics and in-situ L1 telemetry."
     )
     abstract_table = Table([[Paragraph(abstract_html, abstract_style)]], colWidths=[520])
     abstract_table.setStyle(TableStyle([
@@ -271,8 +271,8 @@ def build_pdf():
         [Paragraph("Fast CMEs (&ge; 1000 km/s)", table_cell_style), Paragraph("<b>HELIOS Dynamic Ensemble</b>", table_cell_style), Paragraph("<b>&plusmn; 15.37 h</b>", table_cell_style), Paragraph("<b>18.42 h</b>", table_cell_style), Paragraph("<b>75.0%</b>", table_cell_style), Paragraph("<b>&lt; 0.05 s (Apple M4)</b>", table_cell_style)],
         [Paragraph("All CMEs (Global OOD)", table_cell_style), Paragraph("Classical Drag-Based (DBM)", table_cell_style), Paragraph("&plusmn; 12.30 h", table_cell_style), Paragraph("16.10 h", table_cell_style), Paragraph("N/A", table_cell_style), Paragraph("0.05 s", table_cell_style)],
         [Paragraph("All CMEs (Global OOD)", table_cell_style), Paragraph("<b>NASA WSA-ENLIL (Earth Std)</b>", table_cell_style), Paragraph("&plusmn; 10.40 h", table_cell_style), Paragraph("13.20 h", table_cell_style), Paragraph("N/A", table_cell_style), Paragraph("Hours on HPC Cluster", table_cell_style)],
-        [Paragraph("All CMEs (Global OOD)", table_cell_style), Paragraph("<b>HELIOS Single GBDT</b>", table_cell_style), Paragraph("<b>&plusmn; 10.63 h</b>", table_cell_style), Paragraph("<b>15.29 h</b>", table_cell_style), Paragraph("<b>81.3%</b>", table_cell_style), Paragraph("<b>&lt; 0.01 s (Apple M4)</b>", table_cell_style)],
-        [Paragraph("All CMEs (Global OOD)", table_cell_style), Paragraph("<b>HELIOS Dynamic Ensemble</b>", table_cell_style), Paragraph("<b>&plusmn; 11.69 h</b>", table_cell_style), Paragraph("<b>15.68 h</b>", table_cell_style), Paragraph("<b>81.3%</b>", table_cell_style), Paragraph("<b>&lt; 0.05 s (Apple M4)</b>", table_cell_style)]
+        [Paragraph("All CMEs (Global OOD)", table_cell_style), Paragraph("<b>HELIOS Single GBDT</b>", table_cell_style), Paragraph("<b>&plusmn; 10.63 h</b>", table_cell_style), Paragraph("<b>15.29 h</b>", table_cell_style), Paragraph("<b>92.3%</b>", table_cell_style), Paragraph("<b>&lt; 0.01 s (Apple M4)</b>", table_cell_style)],
+        [Paragraph("All CMEs (Global OOD)", table_cell_style), Paragraph("<b>HELIOS Dynamic Ensemble</b>", table_cell_style), Paragraph("<b>&plusmn; 11.69 h</b>", table_cell_style), Paragraph("<b>15.68 h</b>", table_cell_style), Paragraph("<b>92.3%</b>", table_cell_style), Paragraph("<b>&lt; 0.05 s (Apple M4)</b>", table_cell_style)]
     ]
     t2 = Table(t2_data, colWidths=[110, 125, 75, 75, 65, 70])
     t2.setStyle(TableStyle([
@@ -289,7 +289,7 @@ def build_pdf():
     fig2_path = os.path.join(FIGURES_DIR, "fig2_helios_apex_orchestrator.png")
     if os.path.exists(fig2_path):
         story.append(Image(fig2_path, width=7.2*inch, height=2.1*inch))
-        story.append(Paragraph("<b>Figure 2:</b> <i>Dual APEX Architecture and Latency Budget.</i> (A) ROC curves for Severe Storm Veto (AUC 0.8737, CV 0.6611) and Bz Threat (AUC 0.6497, CV 0.4745) on Cycle 25 OOD. (B) Severe storm probability across critical benchmark events. (C) Apple Silicon M4 GPU execution latency (17.59 ms mean, 17.32 ms median, 21.27 ms p99).", caption_style))
+        story.append(Paragraph("<b>Figure 2:</b> <i>Dual APEX Architecture and Latency Budget.</i> (A) ROC curves for Severe Storm Veto (AUC 0.8737, CV 0.6611) and Bz Threat (AUC 0.6497, CV 0.4745) on Cycle 25 OOD. (B) Severe storm probability across critical benchmark events. (C) Apple Silicon M4 GPU execution latency (16.55 ms mean, 16.54 ms median, 17.34 ms p99).", caption_style))
 
     # Table 3 & 4: APEX Dual System and Landmark Case Studies
     story.append(Paragraph("<b>Table 3: Helio-Physical Dual APEX System & Landmark Historical Case Studies</b>", body_style))
@@ -324,7 +324,7 @@ def build_pdf():
     # 6. Conclusions & References
     story.append(Paragraph("6. Conclusions & Open Data Availability", h1_style))
     story.append(Paragraph(
-        "Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for operational space weather and CME shock forecasting. By evaluating solar eruptions at the moment of launch (24–72h in advance), HELIOS 2.0 achieves <b>78.0% accuracy</b> and <b>0.8737 ROC-AUC</b> (0.6611 Train CV-AUC) in discriminating severe geomagnetic storms from harmless events, avoiding <b>78.9% of historical false alarms</b> (60/76 avoided, 73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology) in out-of-distribution testing. The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under dual CC BY 4.0 / MIT licensing at: <i>https://github.com/Zar-Manah/HELIOS-Space-Weather</i> (Concept DOI: 10.5281/zenodo.24215019, Version DOI: 10.5281/zenodo.24215020).",
+        "Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for operational space weather and CME shock forecasting. By evaluating solar eruptions at the moment of launch (24–72h in advance), HELIOS 2.0 achieves <b>78.0% accuracy</b> and <b>0.8737 ROC-AUC</b> (0.6611 Train CV-AUC) in discriminating severe geomagnetic storms from harmless events, avoiding <b>78.9% of historical false alarms</b> (60/76 avoided, 73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology) in out-of-distribution testing. The complete open-source codebase, trained neural checkpoints, interactive mission cockpit, and reproduction scripts are released under dual CC BY 4.0 / MIT licensing at: <i>https://github.com/Zar-Manah/HELIOS-Space-Weather</i> (Concept DOI: 10.5281/zenodo.24215019, Version DOI: 10.5281/zenodo.24224088).",
         body_style
     ))
     story.append(Spacer(1, 3))

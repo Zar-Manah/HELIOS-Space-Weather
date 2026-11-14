@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.11)
+Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.12)
 Author: Zar Manah (ORCID: 0009-0007-8443-8999)
 
 Dual-Scale Operational Predictions:
@@ -154,10 +154,10 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
         if as_json:
             out = {
                 "system": "Zar-Manah HELIOS 2.0",
-                "version": "2.5.11",
+                "version": "2.5.12",
                 "doi": "10.5281/zenodo.24215019",
                 "concept_doi": "10.5281/zenodo.24215019",
-                "version_doi": "10.5281/zenodo.24215020",
+                "version_doi": "10.5281/zenodo.24224088",
                 "type": "cme_trajectory_assessment",
                 "status": "ALL-CLEAR / MISS",
                 "earth_impact": False,
@@ -390,10 +390,10 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.11",
+            "version": "2.5.12",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
-            "version_doi": "10.5281/zenodo.24215020",
+            "version_doi": "10.5281/zenodo.24224088",
             "type": "transit_cme_forecast",
             "speed_km_s": float(speed),
             "angular_width_deg": float(width),
@@ -402,7 +402,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
             "is_halo": bool(is_halo),
             "earth_impact": True,
             "transit_hours": round(float(pred_h), 2),
-            "conformal_window_81_hours": [round(float(low_h), 2), round(float(high_h), 2)],
+            "conformal_window_hours": [round(float(low_h), 2), round(float(high_h), 2)],
             "arrival_time_utc": arrival_dt.strftime("%Y-%m-%d %H:%M UTC"),
             "predicted_shock_dst_nT": round(float(pred_dst), 2),
             "solar_apex_evaluation": apex_info
@@ -682,8 +682,8 @@ def run_synthetic_sample(scenario="extreme", as_json=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.11)")
-    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.11)")
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.12)")
+    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.12)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
@@ -711,10 +711,14 @@ def main():
 
     # Route 0: Open Visual Dashboard
     if args.dashboard:
-        import webbrowser
         dash_path = os.path.join(os.path.dirname(__file__), "Zar-Manah_HELIOS.html")
         print(f"🚀 Opening Zar-Manah HELIOS Space Weather Cockpit: {dash_path}")
-        webbrowser.open(f"file://{os.path.abspath(dash_path)}")
+        if sys.platform == "darwin":
+            import subprocess
+            subprocess.run(["open", os.path.abspath(dash_path)], check=False)
+        else:
+            import webbrowser
+            webbrowser.open(f"file://{os.path.abspath(dash_path)}")
         return
 
     # Route 1: Transit Prediction (24-72h CME)
@@ -727,16 +731,20 @@ def main():
     # Route 2: Tactical Prediction (1-6h Nowcasting)
     models, metrics = load_tactical_models()
     
+    fallback_reason = None
     if args.sample:
+        data_source = "synthetic_benchmark"
         features_df = run_synthetic_sample(args.sample, as_json=args.json)
     else:
-        # Default mode: Live NOAA SWPC L1 telemetry (or graceful nominal quiet fallback)
+        # Default mode: Live NOAA SWPC L1 telemetry (or explicitly flagged synthetic fallback)
         try:
             features_df = fetch_noaa_live(as_json=args.json)
+            data_source = "live_noaa_swpc"
         except Exception as e:
-            if not args.json:
-                print(f"⚠️ Live telemetry stream error: {e}")
-                print("🔄 Falling back gracefully to nominal quiet baseline scenario...")
+            data_source = "synthetic_fallback"
+            fallback_reason = str(e)
+            print(f"⚠️ Live telemetry stream error: {e}", file=sys.stderr)
+            print("🔄 Falling back to synthetic quiet baseline scenario (flagged in JSON).", file=sys.stderr)
             features_df = run_synthetic_sample("quiet", as_json=args.json)
 
     results = predict_tactical_storm(features_df[FEATURE_COLS], models, metrics)
@@ -744,13 +752,16 @@ def main():
     if args.json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.11",
+            "version": "2.5.12",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
-            "version_doi": "10.5281/zenodo.24215020",
+            "version_doi": "10.5281/zenodo.24224088",
             "type": "tactical_dst_forecast",
+            "data_source": data_source,
             "horizons": {}
         }
+        if fallback_reason:
+            out["fallback_reason"] = fallback_reason
         for lead in [1, 2, 3, 6]:
             r = results[lead]
             pt = float(r["pred"])

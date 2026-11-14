@@ -3,11 +3,13 @@
   "rmse_arrival_hours": 15.288036965117929,
   "r2_arrival": 0.3131191166391578,
   "mae_dbm_baseline": 28.953236523591627,
-  "nasa_enlil_reported_mae": 9.2,
   "conformal_coverage_pct": 92.3076923076923,
   "mean_window_hours": 59.72270558504857,
   "dst_mae": 48.02027233515417,
   "dst_rmse": 70.15804211990408,
   "severe_storm_tss": 0.04337899543378995,
-  "q_adjust": 10.905095804163963
+  "q_adjust": 10.905095804163963,
+  "nasa_enlil_wold2018_mae_h_earth": 10.4,
+  "nasa_enlil_wold2018_mae_h_stereo_a": 9.2,
+  "nasa_enlil_wold2018_doi": "10.1051/swsc/2018005"
 }

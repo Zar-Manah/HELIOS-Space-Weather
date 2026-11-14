@@ -3,12 +3,12 @@
 > **An Open-Source Space Weather Architecture on Consumer Hardware (~18ms) — Predicting CME Arrival Times and Geomagnetic Storm Severity from Live Satellite Telemetry.**
 
 [![License: MIT / CC BY 4.0](https://img.shields.io/badge/License-MIT%20%2F%20CC%20BY%204.0-yellow.svg)](LICENSE)
-[![Release: v2.5.11](https://img.shields.io/badge/Release-v2.5.11-brightgreen.svg)](https://github.com/Zar-Manah/HELIOS-Space-Weather/releases/tag/v2.5.11)
+[![Release: v2.5.12](https://img.shields.io/badge/Release-v2.5.12-brightgreen.svg)](https://github.com/Zar-Manah/HELIOS-Space-Weather/releases/tag/v2.5.12)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
 [![Zenodo Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24215019-blue.svg)](https://doi.org/10.5281/zenodo.24215019)
-[![Zenodo Version DOI](https://img.shields.io/badge/Version%20DOI-10.5281%2Fzenodo.24215020-purple.svg)](https://doi.org/10.5281/zenodo.24215020)
+[![Zenodo Version DOI](https://img.shields.io/badge/Version%20DOI-10.5281%2Fzenodo.24224088-purple.svg)](https://doi.org/10.5281/zenodo.24224088)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
 ---
@@ -26,10 +26,10 @@
 
 **HELIOS 2.0** (*Heliospheric Environment & Learning for In-situ Operational Storms*) is an open-source suite of **Artificial Intelligence (AI) models** engineered to predict geomagnetic disturbances ($Dst$), coronal mass ejection (CME) shock arrival times, and interplanetary magnetic field ($B_z$) polarity prior to Earth impact.
 
-Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **17.59 milliseconds mean latency on consumer-grade hardware (Apple Silicon M4 GPU, median 17.32 ms, 21.27 ms p99; sub-22 ms latency)** with zero cloud dependencies or supercomputing queues.
+Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **16.55 milliseconds mean latency on consumer-grade hardware (Apple Silicon M4 GPU, median 16.54 ms, 17.34 ms p99; sub-18 ms latency)** with zero cloud dependencies or supercomputing queues.
 
 ⚡ **Rapid Sub-Second Forecasting Benchmarked against Operational Standards:**  
-Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical analytical drag models (Vršnak 2013 DBM $\pm 12.30\text{ h}$ global, $\pm 16.57\text{ h}$ fast $\ge 1000\text{ km/s}$; drag prior baseline $\pm 28.95\text{ h}$) and approaching the operational accuracy of NASA's WSA-ENLIL 3D MHD model reported on Solar Cycle 24 ($\pm 10.40\text{ h}$ at Earth; Wold et al., 2018; Riley et al., 2018). *Note on benchmark context: Wold et al. (2018) evaluated a historical sample from 2010–2016 (Solar Cycle 24), whereas HELIOS is evaluated out-of-distribution across Cycle 25 (2020–2026).* While numerical MHD models take hours on supercomputing clusters, HELIOS executes the full 4-tier pipeline locally on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **17.59 ms (median 17.32 ms, p99 21.27 ms)** with zero cloud dependencies or cluster queues.
+Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical analytical drag models (Vršnak 2013 DBM $\pm 12.30\text{ h}$ global, $\pm 16.57\text{ h}$ fast $\ge 1000\text{ km/s}$; drag prior baseline $\pm 28.95\text{ h}$) and approaching the operational accuracy of NASA's WSA-ENLIL 3D MHD model reported on Solar Cycle 24 ($\pm 10.40\text{ h}$ at Earth; Wold et al., 2018; Riley et al., 2018). *Note on benchmark context: Wold et al. (2018) evaluated a historical sample from 2010–2016 (Solar Cycle 24), whereas HELIOS is evaluated out-of-distribution across Cycle 25 (2020–2026).* While numerical MHD models take hours on supercomputing clusters, HELIOS executes the full 4-tier pipeline locally on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **16.55 ms (median 16.54 ms, p99 17.34 ms)** with zero cloud dependencies or cluster queues.
 
 🤖 **End-to-End Operational Pipeline:**  
 Legacy space weather forecasting relies heavily on slow manual labor—requiring human operators to hand-fit geometric wireframes to coronagraph images, configure simulation grids, and wait hours for supercomputing cluster queues. HELIOS 2.0 streamlines these workflows through a **scripted, end-to-end computational pipeline**: from real-time satellite telemetry ingestion (NOAA SWPC RTSW) and physical feature derivation to kinematic inference, conformal uncertainty quantification (92.3% empirical coverage), and automated NASA CCMC Scoreboard formatting.
@@ -66,7 +66,7 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
 | Dimension | Legacy Standard (WSA-ENLIL / NOAA) | HELIOS 2.0 Autonomous AI | Operational Advantage |
 | :--- | :--- | :--- | :--- |
 | **CME Arrival Accuracy** | Numerical 3D MHD $\pm 10.40\text{h}$ (Earth, Wold 2018) | GBDT/MoK Ensemble **$\pm 7.45\text{h}$ median / $\pm 10.63\text{h}$ MAE** | **Comparable accuracy to HPC without cluster queues** |
-| **Computational Footprint** | 1 to 4 hours on supercomputing HPC clusters | **17.59 ms (median 17.32 ms, p99 21.27 ms)** on Apple Silicon M4 GPU / consumer CPUs | **Eliminates cluster queue latency entirely** |
+| **Computational Footprint** | 1 to 4 hours on supercomputing HPC clusters | **16.55 ms (median 16.54 ms, p99 17.34 ms)** on Apple Silicon M4 GPU / consumer CPUs | **Eliminates cluster queue latency entirely** |
 | **Human Labor & Bottlenecks** | Manual wireframe cone fitting on coronagraphs | **Automated Programmatic** multi-satellite ingestion (CLI / Python API) | **Zero human response lag in severe emergencies** |
 | **False Alarm Rate** | Velocity-only sirens (up to 92% false alarms) | 3D Cone Trajectory Filter + Severity Veto | **Filters non-Earth CMEs deterministically** |
 | **Uncertainty Quantification** | Heuristic single-point deterministic output | Empirical Conformal Quantiles (CQR) | **Calibrated 92.31% coverage intervals on Cycle 25 OOD (nominal 90%, 59.72h width)** |
@@ -83,7 +83,7 @@ Legacy space weather forecasting relies heavily on slow manual labor—requiring
    In extreme hypersonic eruptions ($V > 2000\text{ km/s}$), standard empirical models suffer from extrapolation error. By implementing closed-form aerodynamic drag limits ($v_{\text{amb}} = 420\text{ km/s}$, $\tau \ge 16.0\text{ h}$ physical solar wind saturation bound), HELIOS establishes an empirical transit lower bound on landmark events like the record October 29, 2003 Halloween storm ($19.4\text{ h}$ observed vs $16.0\text{ h}$ aerodynamic bound, $\Delta = 3.4\text{ h}$).
 
 3. **Sub-Second Execution on Consumer Hardware:**  
-   While numerical 3D MHD simulations take 1 to 4 hours to run on supercomputer clusters, HELIOS 2.0 evaluates the entire 4-tier pipeline in **17.59 milliseconds (median 17.32 ms, p99 21.27 ms)** on Apple Silicon M4 GPU (or standard CPUs), enabling continuous real-time space weather nowcasting.
+   While numerical 3D MHD simulations take 1 to 4 hours to run on supercomputer clusters, HELIOS 2.0 evaluates the entire 4-tier pipeline in **16.55 milliseconds (median 16.54 ms, p99 17.34 ms)** on Apple Silicon M4 GPU (or standard CPUs), enabling continuous real-time space weather nowcasting.
 
 4. **Interactive Browser Mission Cockpit:**  
    The interactive mission cockpit (`Zar-Manah_HELIOS.html`) provides a lightweight browser environment streaming live NOAA SWPC RTSW plasma and magnetic vectors with dual-track mission timelines and responsive aerodynamic drag modeling.
@@ -173,6 +173,21 @@ python3 scripts/17_randomized_stress_battery.py
 python3 scripts/export_ccmc_scoreboard.py --demo
 ```
 
+### 5. Reproduce Published Metrics, Latency and Tests
+```bash
+# Recompute tactical CQR coverage / interval width from the published models + feature parquet
+python3 scripts/20_verify_tactical_metrics.py
+
+# Latency benchmark (dry run; add --save to refresh the canonical artifact)
+python3 scripts/19_benchmark_latency.py
+
+# Unit and artifact-integrity tests
+python3 -m unittest tests.test_helios_core -v
+```
+`scripts/20_verify_tactical_metrics.py` exits non-zero if the values stored in
+`results/helios_evaluation_metrics.json` ever drift from what the published
+models actually produce.
+
 ---
 
 ## 📜 Scientific Publication & Citation
@@ -188,10 +203,13 @@ If you utilize HELIOS 2.0 in academic research, space operations, or utility gri
   journal={Zenodo Preprints},
   year={2026},
   publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24215019},
-  url={https://doi.org/10.5281/zenodo.24215019}
+  doi={10.5281/zenodo.24224088},
+  url={https://doi.org/10.5281/zenodo.24224088},
+  note={Concept DOI: 10.5281/zenodo.24215019}
 }
 ```
+
+Machine-readable citation metadata is provided in [`CITATION.cff`](CITATION.cff).
 
 ---
 
@@ -210,5 +228,5 @@ HELIOS 2.0 ingests and builds upon public open-science data from international m
 ## 📄 License & Open Science
 
 * **Software & Code:** Distributed under the **MIT License**.
-* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (Concept DOI: [10.5281/zenodo.24215019](https://doi.org/10.5281/zenodo.24215019), Version DOI: [10.5281/zenodo.24215020](https://doi.org/10.5281/zenodo.24215020)).
+* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (Concept DOI: [10.5281/zenodo.24215019](https://doi.org/10.5281/zenodo.24215019), Version DOI: [10.5281/zenodo.24224088](https://doi.org/10.5281/zenodo.24224088)).
 * Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah** (ORCID: [0009-0007-8443-8999](https://orcid.org/0009-0007-8443-8999)).

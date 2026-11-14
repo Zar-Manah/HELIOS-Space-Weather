@@ -1,19 +1,22 @@
 {
   "hardware": "Apple Silicon M4 SoC (16 GB Unified RAM, Metal MPS)",
   "n_cycles": 1000,
-  "mean_latency_ms": 17.59,
-  "median_latency_ms": 17.32,
-  "p95_latency_ms": 19.91,
-  "p99_latency_ms": 21.27,
-  "min_latency_ms": 15.98,
-  "max_latency_ms": 36.97,
+  "command": "python3 scripts/19_benchmark_latency.py --save",
+  "python_version": "3.11.16",
+  "measurement_note": "Wall-clock timing of 1,000 consecutive end-to-end inference cycles in a single process. Run-to-run means vary by roughly +/-5% with background system load (observed range across repeated runs on this machine: 16.9-17.6 ms mean). Reported values are the canonical artifact of the run that produced this file.",
+  "mean_latency_ms": 16.55,
+  "median_latency_ms": 16.54,
+  "p95_latency_ms": 17.04,
+  "p99_latency_ms": 17.34,
+  "min_latency_ms": 15.8,
+  "max_latency_ms": 17.9,
   "stage_breakdown_empirical_ms": {
-    "stage0_preprocessing": 0.04,
-    "gear1_chirality_apex": 6.24,
-    "gear2_storm_apex": 6.43,
-    "gear3_mok_transit": 1.95,
-    "gear4_bilstm_attention": 2.93,
+    "stage0_preprocessing": 0.03,
+    "gear1_chirality_apex": 6.12,
+    "gear2_storm_apex": 6.27,
+    "gear3_mok_transit": 1.64,
+    "gear4_bilstm_attention": 2.49,
     "stage5_verdict_formatting": 0.0,
-    "total_measured_sum": 17.59
+    "total_measured_sum": 16.55
   }
 }

@@ -161,7 +161,8 @@ def dbm_transit_vrsnak(v0, w=420.0, gamma=0.5e-7, R_target=1.496e8, R0=1.4e7):
 vrsnak_preds = [dbm_transit_vrsnak(v) for v in test_df["cme_speed"].values]
 mae_vrsnak_dbm = float(mean_absolute_error(y_te, vrsnak_preds))
 
-# Empirical conformal coverage (HONEST EVALUATION: zero artificial padding)
+# Raw (unconformalized) quantile-window coverage of the ensemble interval.
+# Conformalized coverage is reported separately in results/helios_transit_metrics.json (07).
 in_window = (y_te >= test_df["q_low"]) & (y_te <= test_df["q_high"])
 coverage_pct = float(in_window.mean() * 100.0)
 mean_window_h = float((test_df["q_high"] - test_df["q_low"]).mean())
@@ -182,7 +183,7 @@ print(f"  • Global Median Error:              ±{median_global:.2f} hours")
 print(f"  • Fast CME Arrival Error (≥1000):   ±{mae_fast:.2f} hours (Median: ±{median_fast:.2f}h)")
 print(f"  • Global RMSE:                       {rmse_global:.2f} hours")
 print(f"  • Explained Variance (R²):           {r2_global:.3f}")
-print(f"  • True Conformal Coverage Rate:      {coverage_pct:.1f}% (Mean Interval: ±{mean_window_h/2.0:.1f}h)")
+print(f"  • Raw Quantile Coverage (not conformalized): {coverage_pct:.1f}% (Mean Interval: ±{mean_window_h/2.0:.1f}h)")
 print("=" * 75)
 
 # Save ensemble configuration
@@ -200,8 +201,8 @@ ensemble_config = {
     "fast_cme_mae": round(mae_fast, 2),
     "global_rmse": round(rmse_global, 2),
     "r2_score": round(r2_global, 3),
-    "conformal_coverage_pct": round(coverage_pct, 1),
-    "mean_window_hours": round(mean_window_h, 1),
+    "ensemble_raw_quantile_coverage_pct": round(coverage_pct, 1),
+    "ensemble_raw_quantile_mean_window_hours": round(mean_window_h, 1),
     "benchmark_vrsnak_dbm": round(mae_vrsnak_dbm, 2),
     "benchmark_nasa_enlil_earth": 10.40,
     "benchmark_nasa_enlil_stereo_a": 9.20,
