@@ -49,15 +49,17 @@ def verify_model_checksum(fpath):
     """Cryptographic fail-closed verification of model weights before loading."""
     import hashlib
     manifest_path = os.path.join(MODELS_DIR, "helios_models_checksums.json")
-    if os.path.exists(manifest_path):
-        with open(manifest_path, "r") as f:
-            valid_hashes = json.load(f)
-        fname = os.path.basename(fpath)
-        if fname in valid_hashes:
-            with open(fpath, "rb") as f:
-                actual_hash = hashlib.sha256(f.read()).hexdigest()
-            if actual_hash != valid_hashes[fname]:
-                raise ValueError(f"SECURITY ALERT: Cryptographic integrity failure for {fname}! Expected {valid_hashes[fname]}, got {actual_hash}")
+    if not os.path.exists(manifest_path):
+        raise FileNotFoundError(f"SECURITY ALERT: Cryptographic model manifest missing at {manifest_path}!")
+    with open(manifest_path, "r") as f:
+        valid_hashes = json.load(f)
+    fname = os.path.basename(fpath)
+    if fname not in valid_hashes:
+        raise KeyError(f"SECURITY ALERT: Model artifact {fname} is not registered in cryptographic manifest!")
+    with open(fpath, "rb") as f:
+        actual_hash = hashlib.sha256(f.read()).hexdigest()
+    if actual_hash != valid_hashes[fname]:
+        raise ValueError(f"SECURITY ALERT: Cryptographic integrity failure for {fname}! Expected {valid_hashes[fname]}, got {actual_hash}")
 
 def load_tactical_models():
     models = {}

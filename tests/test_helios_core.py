@@ -21,6 +21,22 @@ MODELS_DIR = os.path.join(BASE_DIR, "models")
 DATA_DIR = os.path.join(BASE_DIR, "data", "processed")
 RAW_IMG_DIR = os.path.join(BASE_DIR, "data", "raw", "images")
 
+def verify_model_checksum(fpath):
+    """Cryptographic fail-closed verification of model weights before loading."""
+    import hashlib
+    manifest_path = os.path.join(MODELS_DIR, "helios_models_checksums.json")
+    if not os.path.exists(manifest_path):
+        raise FileNotFoundError(f"SECURITY ALERT: Cryptographic model manifest missing at {manifest_path}!")
+    with open(manifest_path, "r") as f:
+        valid_hashes = json.load(f)
+    fname = os.path.basename(fpath)
+    if fname not in valid_hashes:
+        raise KeyError(f"SECURITY ALERT: Model artifact {fname} is not registered in cryptographic manifest!")
+    with open(fpath, "rb") as f:
+        actual_hash = hashlib.sha256(f.read()).hexdigest()
+    if actual_hash != valid_hashes[fname]:
+        raise ValueError(f"SECURITY ALERT: Cryptographic integrity failure for {fname}! Expected {valid_hashes[fname]}, got {actual_hash}")
+
 
 class TestHeliosDatasetIntegrity(unittest.TestCase):
     """Verifies empirical catalog schemas, sample counts, and image existence."""
@@ -41,7 +57,10 @@ class TestHeliosDatasetIntegrity(unittest.TestCase):
             self.assertIn(col, df.columns, f"Feature column {col} missing from parquet!")
             self.assertEqual(df[col].isna().sum(), 0, f"Column {col} has NaN values!")
 
+    @unittest.skipUnless(os.path.exists(RAW_IMG_DIR) and len(os.listdir(RAW_IMG_DIR)) > 0, "Local data/raw/images directory not unpacked in this environment; see helios_coronal_images.tar.gz")
     def test_coronal_and_magnetic_images_exist(self):
+        if not os.path.exists(RAW_IMG_DIR) or len(os.listdir(RAW_IMG_DIR)) == 0:
+            self.skipTest("Local data/raw/images directory not present; see helios_coronal_images.tar.gz")
         parquet_path = os.path.join(DATA_DIR, "helios_vision_matched.parquet")
         df = pd.read_parquet(parquet_path)
         c2_count = 0
@@ -75,7 +94,9 @@ class TestHeliosModelReproducibility(unittest.TestCase):
         X_test = test_df[phys_cols].values
 
         # 1. Gear 2: Storm Severity (Dst <= -110 nT)
-        with open(os.path.join(MODELS_DIR, "helios_storm_apex.pkl"), "rb") as f:
+        p_storm_apex = os.path.join(MODELS_DIR, "helios_storm_apex.pkl")
+        verify_model_checksum(p_storm_apex)
+        with open(p_storm_apex, "rb") as f:
             m2_pkg = pickle.load(f)
         clf_storm = m2_pkg["clf"]
         p_mean2 = m2_pkg["p_mean"]
@@ -91,7 +112,9 @@ class TestHeliosModelReproducibility(unittest.TestCase):
         self.assertAlmostEqual(acc_storm, 0.780219, places=4, msg="Storm Accuracy mismatch!")
 
         # 2. Gear 1: Chirality (Bz <= -10 nT)
-        with open(os.path.join(MODELS_DIR, "helios_vision_apex.pkl"), "rb") as f:
+        p_vision_apex = os.path.join(MODELS_DIR, "helios_vision_apex.pkl")
+        verify_model_checksum(p_vision_apex)
+        with open(p_vision_apex, "rb") as f:
             m1_pkg = pickle.load(f)
         clf_chir = m1_pkg["clf"]
         p_mean1 = m1_pkg["p_mean"]
@@ -129,7 +152,9 @@ class TestHeliosTransitAndTacticalNowcasting(unittest.TestCase):
 
         test_df = df[df["solar_cycle"] == "Cycle 25"].copy().reset_index(drop=True)
 
-        gbdt = joblib.load(os.path.join(MODELS_DIR, "helios_transit_time.joblib"))
+        p_transit_gbdt = os.path.join(MODELS_DIR, "helios_transit_time.joblib")
+        verify_model_checksum(p_transit_gbdt)
+        gbdt = joblib.load(p_transit_gbdt)
         tree_feats = gbdt.booster_.feature_name()
 
         preds = gbdt.predict(test_df[tree_feats], num_threads=1)
@@ -172,7 +197,9 @@ class TestHeliosTransitAndTacticalNowcasting(unittest.TestCase):
         train_df = df[df["solar_cycle"].isin(["Cycle 23", "Cycle 24"])].copy().reset_index(drop=True)
 
         # 1. GBDT Predictions (num_threads=1 prevents OpenMP conflict on macOS)
-        gbdt = joblib.load(os.path.join(MODELS_DIR, "helios_transit_time.joblib"))
+        p_transit_gbdt = os.path.join(MODELS_DIR, "helios_transit_time.joblib")
+        verify_model_checksum(p_transit_gbdt)
+        gbdt = joblib.load(p_transit_gbdt)
         tree_feats = gbdt.booster_.feature_name()
         preds_tree = gbdt.predict(test_df[tree_feats], num_threads=1)
 
@@ -207,6 +234,7 @@ class TestHeliosTransitAndTacticalNowcasting(unittest.TestCase):
         net = MoKTransitNN(in_features=len(nn_feats))
         edited_ckpt = os.path.join(MODELS_DIR, "helios_transit_mok_edited.pt")
         self.assertTrue(os.path.exists(edited_ckpt), "Weight-edited checkpoint missing!")
+        verify_model_checksum(edited_ckpt)
         net.load_state_dict(torch.load(edited_ckpt, map_location="cpu", weights_only=True))
         net.eval()
 
@@ -231,7 +259,9 @@ class TestHeliosTransitAndTacticalNowcasting(unittest.TestCase):
         test_df = df[pd.to_datetime(df["datetime"]) >= "2020-01-01"].copy()
         self.assertEqual(len(test_df), 57998, f"Expected 57,998 test samples, got {len(test_df)}")
 
-        m1 = joblib.load(os.path.join(MODELS_DIR, "helios_point_lead_1h.joblib"))
+        p_m1 = os.path.join(MODELS_DIR, "helios_point_lead_1h.joblib")
+        verify_model_checksum(p_m1)
+        m1 = joblib.load(p_m1)
         feat_cols = m1.booster_.feature_name()
         preds = m1.predict(test_df[feat_cols], num_threads=1)
         y_true = test_df["target_dst_lead_1h"].values

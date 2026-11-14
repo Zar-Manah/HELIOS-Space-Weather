@@ -12,12 +12,12 @@
 
 ---
 
-> ### ⚡ Universal Plug-and-Play Execution (Zero Install, All Devices)
-> **Run the full synchronized 4-gear AI architecture in 1 click on any platform (Mac, Windows, Linux, iOS, Android):**  
+> ### 🌐 Interactive Mission Cockpit (Browser Companion Demo)
+> **Explore the real-time space weather mission cockpit directly in any web browser (zero installation):**  
 > 📥 **Single File to Download & Open:** **[`Zar-Manah_HELIOS.html`](Zar-Manah_HELIOS.html)** (double-click to open in any web browser).  
-> *• Zero dependencies / Zero Python setup • Live NOAA SWPC & NASA SDO/SOHO streaming in volatile RAM • Sub-18ms inference (17.59 ms mean, 21.27 ms p99).*  
+> *• Companion visualization with live NOAA SWPC streaming & kinematic simulation • Zero dependencies.*  
 >  
-> *Prefer CLI / Terminal? Run:* `python3 scripts/helios_swiss_orchestrator.py`
+> *For operational AI inference (full PyTorch/LightGBM 4-gear pipeline): Run:* `python3 predict.py --live` *or* `python3 scripts/helios_swiss_orchestrator.py`
 
 ---
 

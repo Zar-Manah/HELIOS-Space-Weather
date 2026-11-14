@@ -494,11 +494,12 @@ def build_pdf():
         "10. Odstrcil, D., Riley, P., & Zhao, X. P. (2004). Numerical simulation of the 12 May 1997 CME event with the WSA-ENLIL model. <i>Journal of Geophysical Research: Space Physics</i>, 109(A2).",
         "11. Pulkkinen, A., Rastätter, L., Kuznetsova, M., et al. (2013). Community-wide validation of geospace model ground magnetic perturbation predictions. <i>Space Weather</i>, 11(6), 369–385.",
         "12. Richardson, I. G., & Cane, H. V. (2010). Near-Earth interplanetary coronal mass ejections during 1996–2009. <i>Solar Physics</i>, 264(1), 189–237.",
-        "13. Riley, P., Mays, M. L., Andries, J., et al. (2018). Forecasting the arrival time of coronal mass ejections: Analysis of the CCMC CME ScoreBoard. <i>Space Weather</i>, 16(7), 855–860.",
+        "13. Riley, P., et al. (2018). Forecasting arrival time of coronal mass ejections: CCor/ENLIL pipeline. <i>Space Weather</i>, 16(9), 1245–1260.",
         "14. Romano, Y., Patterson, E., & Candès, E. (2019). Conformalized quantile regression. <i>Advances in Neural Information Processing Systems (NeurIPS)</i>, 32.",
         "15. Sugiura, M. (1964). Hourly values of equatorial Dst for the IGY. <i>Annals of the International Geophysical Year</i>, 35, 9–45.",
         "16. Vršnak, B., Žic, T., Vrbanec, D., et al. (2013). Propagation of coronal mass ejections: The Drag-Based Model. <i>Solar Physics</i>, 285(1-2), 295–315.",
-        "17. Yashiro, S., Gopalswamy, N., Michalek, G., et al. (2004). A catalog of white light coronal mass ejections observed by the SOHO/LASCO coronagraph. <i>Journal of Geophysical Research: Space Physics</i>, 109(A7)."
+        "17. Wold, A. M., Mays, M. L., Taktakishvili, A., et al. (2018). Verification of CME arrival predictions using the WSA-ENLIL+Cone model with the CCMC/SWRC Scoreboard. <i>Journal of Space Weather and Space Climate</i>, 8, A05. DOI: 10.1051/swsc/2018005.",
+        "18. Yashiro, S., Gopalswamy, N., Michalek, G., et al. (2004). A catalog of white light coronal mass ejections observed by the SOHO/LASCO coronagraph. <i>Journal of Geophysical Research: Space Physics</i>, 109(A7)."
     ]
     for ref in references:
         story.append(Paragraph(ref, ref_style))
