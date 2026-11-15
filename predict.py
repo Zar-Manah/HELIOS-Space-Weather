@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.16)
+Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.17)
 Author: Zar Manah
 
 Dual-Scale Operational Predictions:
@@ -157,7 +157,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
         if as_json:
             out = {
                 "system": "Zar-Manah HELIOS 2.0",
-                "version": "2.5.16",
+                "version": "2.5.17",
                 "doi": "10.5281/zenodo.24215019",
                 "concept_doi": "10.5281/zenodo.24215019",
                 "version_doi": "10.5281/zenodo.24215019",
@@ -396,7 +396,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.16",
+            "version": "2.5.17",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
             "version_doi": "10.5281/zenodo.24215019",
@@ -688,8 +688,8 @@ def run_synthetic_sample(scenario="extreme", as_json=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.16)")
-    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.16)")
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.17)")
+    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.17)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
@@ -758,7 +758,7 @@ def main():
     if args.json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.16",
+            "version": "2.5.17",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
             "version_doi": "10.5281/zenodo.24215019",

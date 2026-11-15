@@ -12,9 +12,9 @@ abstract: >-
 authors:
   - family-names: "Manah"
     given-names: "Zar"
-version: "2.5.16"
+version: "2.5.17"
 date-released: "2026-11-14"
-doi: "10.5281/zenodo.24253862"
+doi: "10.5281/zenodo.24254201"
 license:
   - "MIT"
   - "CC-BY-4.0"
@@ -31,8 +31,8 @@ keywords:
   - open science
 identifiers:
   - type: doi
-    value: "10.5281/zenodo.24253862"
-    description: "Version DOI (v2.5.16)"
+    value: "10.5281/zenodo.24254201"
+    description: "Version DOI (v2.5.17)"
   - type: doi
     value: "10.5281/zenodo.24215019"
     description: "Concept DOI (all versions)"
