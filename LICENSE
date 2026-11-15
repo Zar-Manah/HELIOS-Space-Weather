@@ -1,6 +1,4 @@
-# Open Science Licensing
-
-## 1. Software, CLI & Algorithms (MIT License)
+MIT License
 
 Copyright (c) 2026 Zar Manah
 
@@ -24,11 +22,13 @@ SOFTWARE.
 
 ---
 
-## 2. Scientific Manuscripts, Preprints & Data Compilations (CC BY 4.0)
+SCOPE AND DUAL LICENSING
 
-Copyright (c) 2026 Zar Manah
+This repository is dual-licensed by content type:
 
-The scientific preprint manuscripts, figures, and compiled space weather datasets in this
-repository are licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0).
-To view a copy of this license, visit: https://creativecommons.org/licenses/by/4.0/
+1. Software, CLI, algorithms and source code: MIT License (text above).
+2. Scientific manuscripts, preprints, figures and compiled data compilations:
+   Creative Commons Attribution 4.0 International (CC BY 4.0).
+   https://creativecommons.org/licenses/by/4.0/
 
+Copyright (c) 2026 Zar Manah. All rights reserved under the terms above.
