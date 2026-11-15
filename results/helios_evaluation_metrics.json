@@ -1,9 +1,9 @@
 {
-  "release": "2.5.17",
+  "release": "2.5.18",
   "system": "Zar-Manah HELIOS 2.0",
   "doi": "10.5281/zenodo.24215019",
   "concept_doi": "10.5281/zenodo.24215019",
-  "version_doi": "10.5281/zenodo.24215019",
+  "version_doi": "10.5281/zenodo.24260407",
   "cal_samples_total": 34960,
   "test_samples_total": 57998,
   "lead_1h": {

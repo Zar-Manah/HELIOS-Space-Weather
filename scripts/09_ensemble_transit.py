@@ -168,7 +168,7 @@ coverage_pct = float(in_window.mean() * 100.0)
 mean_window_h = float((test_df["q_high"] - test_df["q_low"]).mean())
 
 print("\n" + "=" * 75)
-print("🏆 HELIOS-TRANSIT v2.5.8: UNIFIED DUAL-SCALE BENCHMARK (Cycle 25 OOD)")
+print("🏆 HELIOS-TRANSIT v2.5.18: UNIFIED DUAL-SCALE BENCHMARK (Cycle 25 OOD)")
 print("=" * 75)
 print(f"• Baseline Drag Prior Proxy (DBM-prior): MAE = ±{dbm_baseline:.2f} hours")
 print(f"• Analytical Drag-Based Model (Vršnak):  MAE = ±{mae_vrsnak_dbm:.2f} hours")
@@ -189,7 +189,7 @@ print("=" * 75)
 # Save ensemble configuration
 ensemble_config = {
     "architecture": "MoKTransitNN + GBDT Dynamic Regime",
-    "version": "2.5.8",
+    "version": "2.5.18",
     "w_base": 0.45,
     "w_fast_boost": 0.45,
     "transition_v0": 950.0,
@@ -212,7 +212,7 @@ ensemble_config = {
 with open(os.path.join(MODELS_DIR, "helios_transit_ensemble_config.json"), "w") as f:
     json.dump(ensemble_config, f, indent=2)
 
-metrics_file = os.path.join(RESULTS_DIR, "helios_transit_metrics.json")
+metrics_file = os.path.join(RESULTS_DIR, "transit_ensemble_benchmark.json")
 with open(metrics_file, "w") as f:
     json.dump(ensemble_config, f, indent=2)
 

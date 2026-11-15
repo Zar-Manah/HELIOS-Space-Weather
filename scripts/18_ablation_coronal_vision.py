@@ -29,7 +29,7 @@ MAG_COLS = [f"pca_mag_{i}" for i in range(8)]
 ALL_VIS_COLS = C2_COLS + MAG_COLS
 
 
-def evaluate_config(df, feature_cols, target_col, train_mask, test_mask):
+def evaluate_config(df, feature_cols, target_col, train_mask, test_mask, max_depth=4):
     X_df = df[feature_cols].copy()
     for c in feature_cols:
         X_df[c] = X_df[c].fillna(X_df[c].median())
@@ -44,7 +44,7 @@ def evaluate_config(df, feature_cols, target_col, train_mask, test_mask):
 
     clf = ExtraTreesClassifier(
         n_estimators=300,
-        max_depth=4,
+        max_depth=max_depth,
         min_samples_split=4,
         random_state=42
     )
@@ -85,7 +85,7 @@ def main():
     print(f"{'Configuration':<32} | {'Dims':<5} | {'Train 5-Fold CV AUC':<20} | {'Test Cycle 25 AUC':<18}")
     print("-" * 85)
     for name, cols in configs:
-        cv_auc, te_auc = evaluate_config(df, cols, "is_severe_storm", train_mask, test_mask)
+        cv_auc, te_auc = evaluate_config(df, cols, "is_severe_storm", train_mask, test_mask, max_depth=4)
         results["storm_severity_dst_110"][name] = {
             "n_features": len(cols),
             "train_cv_auc": round(cv_auc, 4),
@@ -97,7 +97,7 @@ def main():
     print(f"{'Configuration':<32} | {'Dims':<5} | {'Train 5-Fold CV AUC':<20} | {'Test Cycle 25 AUC':<18}")
     print("-" * 85)
     for name, cols in configs:
-        cv_auc, te_auc = evaluate_config(df, cols, "is_dangerous_southward", train_mask, test_mask)
+        cv_auc, te_auc = evaluate_config(df, cols, "is_dangerous_southward", train_mask, test_mask, max_depth=3)
         results["chirality_southward_bz_10"][name] = {
             "n_features": len(cols),
             "train_cv_auc": round(cv_auc, 4),

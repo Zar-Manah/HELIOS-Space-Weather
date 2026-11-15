@@ -402,7 +402,7 @@
   <header>
     <div class="brand">
       <div class="brand-title">ZAR-MANAH HELIOS 2.0</div>
-      <div class="brand-tag">v2.5.17 Interactive Companion Demo (Python M4 Benchmark: 16.55 ms • CQR Cov: 89.26% • Concept DOI: 10.5281/zenodo.24215019)</div>
+      <div class="brand-tag">v2.5.18 Interactive Companion Demo (Python M4 Benchmark: 16.55 ms • CQR Cov: 89.26% • Concept DOI: 10.5281/zenodo.24215019)</div>
       <div style="font-size: 10px; color: var(--amber); margin-top: 2px;">Notice: Browser cockpit operates as an interactive visualization companion with simulated client-side kinematics. For full production AI inference (ExtraTrees, MoK Neural Network, BiLSTM GPU Attention, CQR), execute <code>predict.py</code> in Python.</div>
     </div>
 
@@ -761,7 +761,7 @@
       const v_mean = v_amb + (v0 - v_amb) * 0.632 / (1.0 + Math.max(0, v0 - v_amb) / 1200.0);
       const transitHours = Math.max(16.0, L_AU / (v_mean * 3600.0));
       const arrivalSpeed = Math.max(v_amb, v0 - (v0 - v_amb) * 0.65);
-      const conformalMargin = 18.8; // Calibrated empirical coverage window on OOD Cycle 25 (±18.8h)
+      const conformalMargin = 29.9; // Mean 90% conformal half-width on OOD Cycle 25 (59.72 h total window; ±33.5 h at 1500 km/s)
       const windowEarly = Math.max(12.0, transitHours - conformalMargin);
       const windowLate = transitHours + conformalMargin;
 
@@ -1128,6 +1128,23 @@
       liveTimer = setInterval(fetchLiveSwpcData, 60000); // 1 min poll
     }
 
+    // NOAA RTSW feeds are DESCENDING (newest first): pick the newest valid row by time_tag.
+    function newestRow(rows, field) {
+      if (!Array.isArray(rows) || rows.length === 0) return null;
+      let best = null, bestT = -Infinity;
+      for (const r of rows) {
+        if (!r) continue;
+        if (field) {
+          const raw = r[field];
+          if (raw === null || raw === undefined || isNaN(parseFloat(raw))) continue;
+        }
+        const t = Date.parse(r.time_tag || r.begin_time || "");
+        const score = isNaN(t) ? -Infinity : t;
+        if (best === null || score > bestT) { best = r; bestT = score; }
+      }
+      return best || rows[rows.length - 1];
+    }
+
     async function fetchLiveSwpcData() {
       if (currentMode !== 'live') return;
       try {
@@ -1155,15 +1172,15 @@
         }
 
         // 1. Process In-Situ IMF Magnetometer (RTSW)
-        if (Array.isArray(resMag) && resMag.length > 0) {
-          const latestMag = resMag[resMag.length - 1];
+        const latestMag = newestRow(resMag, 'bz_gsm');
+        if (latestMag) {
           const bz = parseFloat(latestMag.bz_gsm ?? latestMag.bz_gse ?? latestMag.bz ?? 0.0);
           if (!isNaN(bz)) pipeline.bzLive = bz;
         }
 
         // 2. Process In-Situ Solar Wind Plasma (RTSW)
-        if (Array.isArray(resWind) && resWind.length > 0) {
-          const latestWind = resWind[resWind.length - 1];
+        const latestWind = newestRow(resWind, 'proton_speed');
+        if (latestWind) {
           const vsw = parseFloat(latestWind.proton_speed ?? latestWind.solar_wind_speed ?? latestWind.speed ?? 450.0);
           const density = parseFloat(latestWind.proton_density ?? latestWind.solar_wind_density ?? latestWind.density ?? 3.0);
           if (!isNaN(vsw)) pipeline.vswLive = vsw;
@@ -1173,15 +1190,15 @@
         }
 
         // 3. Process Geomagnetic Kyoto Dst
-        if (Array.isArray(resDst) && resDst.length > 0) {
-          const latestDst = resDst[resDst.length - 1];
+        const latestDst = newestRow(resDst, 'dst');
+        if (latestDst) {
           const dstVal = parseFloat(latestDst.dst ?? 0.0);
           if (!isNaN(dstVal)) pipeline.dstCurrent = dstVal;
         }
 
         // 4. Process GOES Solar Flare X-ray Telemetry (Stage 1 & Stage 2 CME Kinematics)
-        if (Array.isArray(resFlares) && resFlares.length > 0) {
-          const latestFlare = resFlares[resFlares.length - 1];
+        const latestFlare = newestRow(resFlares, 'max_xrlong');
+        if (latestFlare) {
           const maxFlux = parseFloat(latestFlare.max_xrlong ?? 1e-8);
 
           if (!isNaN(maxFlux)) {
@@ -1231,7 +1248,7 @@
           forecasts: [
             {
               overallForecastConfidence: pipeline.v0 >= 1000 ? 1 : 2,
-              forecastNote: `HELIOS 2.0 (v2.5.17) 4-tier Swiss Watch multi-horizon space weather forecast (${currentMode.toUpperCase()} mode). Concept DOI: 10.5281/zenodo.24215019`,
+              forecastNote: `HELIOS 2.0 (v2.5.18) 4-tier Swiss Watch multi-horizon space weather forecast (${currentMode.toUpperCase()} mode). Concept DOI: 10.5281/zenodo.24215019`,
               cme: [
                 {
                   startTime: new Date(now.getTime() - 2 * 3600 * 1000).toISOString()
@@ -1265,7 +1282,7 @@
         },
         helios_pipeline_state: {
           system: "Zar-Manah HELIOS 2.0",
-          version: "2.5.17",
+          version: "2.5.18",
           doi: "10.5281/zenodo.24215019",
           concept_doi: "10.5281/zenodo.24215019",
           timestamp_utc: now.toISOString(),

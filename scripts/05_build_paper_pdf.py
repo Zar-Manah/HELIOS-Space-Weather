@@ -57,7 +57,7 @@ class NumberedCanvas(canvas.Canvas):
         # Running footer on all pages
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(566, 28, page_str)
-        self.drawString(46, 28, "Preprint — Independent Research — CC BY 4.0 / MIT — Concept DOI: 10.5281/zenodo.24215019 — Version DOI: 10.5281/zenodo.24215019")
+        self.drawString(46, 28, "Preprint — Independent Research — CC BY 4.0 / MIT — Concept DOI: 10.5281/zenodo.24215019 — Version DOI: 10.5281/zenodo.24260407")
         self.setStrokeColor(colors.HexColor("#cbd5e0"))
         self.setLineWidth(0.5)
         self.line(46, 38, 566, 38)
@@ -73,9 +73,9 @@ def build_pdf():
         topMargin=0.60 * inch,
         bottomMargin=0.60 * inch,
         pageCompression=0,
-        title="Zar-Manah HELIOS 2.0 (DOI: 10.5281/zenodo.24215019, Concept DOI: 10.5281/zenodo.24215019)",
+        title="Zar-Manah HELIOS 2.0 (DOI: 10.5281/zenodo.24260407, Concept DOI: 10.5281/zenodo.24215019)",
         author="Zar Manah",
-        subject="DOI: 10.5281/zenodo.24215019 — Concept DOI: 10.5281/zenodo.24215019"
+        subject="DOI: 10.5281/zenodo.24260407 — Concept DOI: 10.5281/zenodo.24215019"
     )
 
     styles = getSampleStyleSheet()
@@ -220,7 +220,7 @@ def build_pdf():
         "Zar-Manah HELIOS achieves an out-of-distribution R² of 0.968, an RMSE of 3.66 nT (+1h) and 7.65 nT (+3h), and exact 89.26% calibrated conformal "
         "coverage at +1h (±5.0 nT; raw quantile coverage 86.43%). During the historic May 10–12, 2024 G5 Superstorm (Dst = -406 nT), Zar-Manah HELIOS dynamically scaled its "
         "uncertainty bounds from ~12.5 nT to >70 nT, capturing the catastrophic ring current collapse in real time. "
-        "<b>(2) Zar-Manah HELIOS-Transit (24–72h):</b> Trained on 331 verified Earth-impacting CMEs cross-matched between "
+        "<b>(2) Zar-Manah HELIOS-Transit (24–72h):</b> Trained on 240 verified Earth-impacting CMEs (331-event catalog; 91 Cycle 25 events held out) cross-matched between "
         "NASA SOHO/LASCO CDAW and the Richardson & Cane database with zero synthetic speed leakage. HELIOS achieves an arrival MAE of "
         "<b>10.63 hours and median of 7.45 hours (GBDT)</b> and 11.69 hours MAE (dynamic hybrid ensemble) on unseen Cycle 25 (91 clean CMEs), "
         "on par with NASA's operational WSA-ENLIL MHD supercomputing benchmark (±10.40 hours at Earth) "
@@ -476,7 +476,7 @@ def build_pdf():
     p_avail = (
         "<b>Data and Code Availability:</b> All source code, preprocessing pipelines, model checkpoints, the interactive mission cockpit "
         "(<code>Zar-Manah_HELIOS.html</code>), and publication figures are open-sourced under dual CC BY 4.0 / MIT licensing at: "
-        "<b>https://github.com/Zar-Manah/HELIOS-Space-Weather</b> (Concept DOI: <b>10.5281/zenodo.24215019</b>, Version DOI: <b>10.5281/zenodo.24215019</b>). "
+        "<b>https://github.com/Zar-Manah/HELIOS-Space-Weather</b> (Concept DOI: <b>10.5281/zenodo.24215019</b>, Version DOI: <b>10.5281/zenodo.24260407</b>). "
         "Raw solar wind data are curated by NASA SPDF OMNIWeb (https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/)."
     )
     story.append(Paragraph(p_avail, body_style))

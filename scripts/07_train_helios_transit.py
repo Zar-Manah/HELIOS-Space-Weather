@@ -64,7 +64,7 @@ features = [
     "is_fast_cme", "sin_cycle", "cos_cycle"
 ]
 
-# Split: Cycles 23 & 24 for train (247 CMEs), Cycle 25 for test (91 CMEs)
+# Split: Cycles 23 & 24 for train (240 CMEs), Cycle 25 for test (91 CMEs)
 train_mask = df["solar_cycle"].isin(["Cycle 23", "Cycle 24"])
 test_mask  = df["solar_cycle"] == "Cycle 25"
 

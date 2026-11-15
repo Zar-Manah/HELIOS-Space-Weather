@@ -167,8 +167,8 @@ endobj
 endobj
 22 0 obj
 <<
-/Author (Zar Manah) /CreationDate (D:20261114200420+01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261114200420+01'00') /Producer (ReportLab PDF Library - \(opensource\)) 
-  /Subject (DOI: 10.5281/zenodo.24215019 \204 Concept DOI: 10.5281/zenodo.24215019) /Title (Zar-Manah HELIOS 2.0 \(DOI: 10.5281/zenodo.24215019, Concept DOI: 10.5281/zenodo.24215019\)) /Trapped /False
+/Author (Zar Manah) /CreationDate (D:20261115213358+01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261115213358+01'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (DOI: 10.5281/zenodo.24260407 \204 Concept DOI: 10.5281/zenodo.24215019) /Title (Zar-Manah HELIOS 2.0 \(DOI: 10.5281/zenodo.24260407, Concept DOI: 10.5281/zenodo.24215019\)) /Trapped /False
 >>
 endobj
 23 0 obj
@@ -178,7 +178,7 @@ endobj
 endobj
 24 0 obj
 <<
-/Length 7035
+/Length 7110
 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
@@ -212,35 +212,35 @@ BT 1 0 0 1 0 3 Tm /F2 10.5 Tf 13.5 TL (Abstract) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 386.3 cm
+1 0 0 1 52.8 375.1 cm
 q
-BT 1 0 0 1 12 216 Tm 11.2 TL /F1 8 Tf .101961 .12549 .172549 rg (Geomagnetic storms induced by solar coronal mass ejections \(CMEs\) and high-speed solar wind streams pose catastrophic risks to) Tj T* (satellite constellations, power transmission networks, and trans-polar aviation. While machine learning has emerged as a promising tool) Tj T* (for space weather forecasting, existing literature frequently suffers from three operational limitations: \(1\) intra-cycle data leakage that) Tj T* (masks severe performance degradation across 11-year solar dynamo transitions; \(2\) deterministic point predictions devoid of) Tj T* (distribution-free, finite-sample uncertainty quantification; and \(3\) a disconnect between short-term magnetospheric nowcasting at L1 and) Tj T* (long-range planetary transit forecasting from solar launch coronagraphs. Here, we present ) Tj /F2 8 Tf (Zar-Manah HELIOS) Tj /F1 8 Tf ( \() Tj /F3 8 Tf (Heliospheric) Tj T* (Environment & Learning for In-situ Operational Storms) Tj /F1 8 Tf (\), an open-source, dual-scale space weather forecasting intelligence architecture) Tj T* (designed to operate locally on modern edge hardware \(Apple Silicon M4\) with sub-second latency. Zar-Manah HELIOS integrates two) Tj T* (synchronized operational engines: ) Tj /F2 8 Tf (\(1\) Zar-Manah HELIOS-Tactical \(1\2266h\):) Tj /F1 8 Tf ( Powered by gradient-boosted decision trees and) Tj T* (bidirectional recurrent neural networks coupled to Inductive Conformalized Quantile Regression \(CQR\). Evaluated strictly) Tj T* (out-of-distribution across 57,998 hourly samples in Solar Cycle 25 \(2020\2262026\), Zar-Manah HELIOS achieves an out-of-distribution R\262) Tj T* (of 0.968, an RMSE of 3.66 nT \(+1h\) and 7.65 nT \(+3h\), and exact 89.26% calibrated conformal coverage at +1h \(\2615.0 nT; raw quantile) Tj T* (coverage 86.43%\). During the historic May 10\22612, 2024 G5 Superstorm \(Dst = -406 nT\), Zar-Manah HELIOS dynamically scaled its) Tj T* (uncertainty bounds from ~12.5 nT to >70 nT, capturing the catastrophic ring current collapse in real time. ) Tj /F2 8 Tf (\(2\) Zar-Manah) Tj T* (HELIOS-Transit \(24\22672h\):) Tj /F1 8 Tf ( Trained on 331 verified Earth-impacting CMEs cross-matched between NASA SOHO/LASCO CDAW and) Tj T* (the Richardson & Cane database with zero synthetic speed leakage. HELIOS achieves an arrival MAE of ) Tj /F2 8 Tf (10.63 hours and median of) Tj T* (7.45 hours \(GBDT\)) Tj /F1 8 Tf ( and 11.69 hours MAE \(dynamic hybrid ensemble\) on unseen Cycle 25 \(91 clean CMEs\), on par with NASA's) Tj T* (operational WSA-ENLIL MHD supercomputing benchmark \(\26110.40 hours at Earth\) in sub-second execution \() Tj (< 0.05 s\) without numerical) Tj T* (supercomputing overhead and with 92.3% unpadded conformal coverage \(mean window 59.7 h\). We provide open-source code, neural) Tj T* (weights, and an automated NOAA SWPC real-time satellite CLI for immediate operational deployment.) Tj T* ET
+BT 1 0 0 1 12 227.2 Tm 11.2 TL /F1 8 Tf .101961 .12549 .172549 rg (Geomagnetic storms induced by solar coronal mass ejections \(CMEs\) and high-speed solar wind streams pose catastrophic risks to) Tj T* (satellite constellations, power transmission networks, and trans-polar aviation. While machine learning has emerged as a promising tool) Tj T* (for space weather forecasting, existing literature frequently suffers from three operational limitations: \(1\) intra-cycle data leakage that) Tj T* (masks severe performance degradation across 11-year solar dynamo transitions; \(2\) deterministic point predictions devoid of) Tj T* (distribution-free, finite-sample uncertainty quantification; and \(3\) a disconnect between short-term magnetospheric nowcasting at L1 and) Tj T* (long-range planetary transit forecasting from solar launch coronagraphs. Here, we present ) Tj /F2 8 Tf (Zar-Manah HELIOS) Tj /F1 8 Tf ( \() Tj /F3 8 Tf (Heliospheric) Tj T* (Environment & Learning for In-situ Operational Storms) Tj /F1 8 Tf (\), an open-source, dual-scale space weather forecasting intelligence architecture) Tj T* (designed to operate locally on modern edge hardware \(Apple Silicon M4\) with sub-second latency. Zar-Manah HELIOS integrates two) Tj T* (synchronized operational engines: ) Tj /F2 8 Tf (\(1\) Zar-Manah HELIOS-Tactical \(1\2266h\):) Tj /F1 8 Tf ( Powered by gradient-boosted decision trees and) Tj T* (bidirectional recurrent neural networks coupled to Inductive Conformalized Quantile Regression \(CQR\). Evaluated strictly) Tj T* (out-of-distribution across 57,998 hourly samples in Solar Cycle 25 \(2020\2262026\), Zar-Manah HELIOS achieves an out-of-distribution R\262) Tj T* (of 0.968, an RMSE of 3.66 nT \(+1h\) and 7.65 nT \(+3h\), and exact 89.26% calibrated conformal coverage at +1h \(\2615.0 nT; raw quantile) Tj T* (coverage 86.43%\). During the historic May 10\22612, 2024 G5 Superstorm \(Dst = -406 nT\), Zar-Manah HELIOS dynamically scaled its) Tj T* (uncertainty bounds from ~12.5 nT to >70 nT, capturing the catastrophic ring current collapse in real time. ) Tj /F2 8 Tf (\(2\) Zar-Manah) Tj T* (HELIOS-Transit \(24\22672h\):) Tj /F1 8 Tf ( Trained on 240 verified Earth-impacting CMEs \(331-event catalog; 91 Cycle 25 events held out\)) Tj T* -0.0015 Tw (cross-matched between NASA SOHO/LASCO CDAW and the Richardson & Cane database with zero synthetic speed leakage. HELIOS) Tj T* 0 Tw (achieves an arrival MAE of ) Tj /F2 8 Tf (10.63 hours and median of 7.45 hours \(GBDT\)) Tj /F1 8 Tf ( and 11.69 hours MAE \(dynamic hybrid ensemble\) on) Tj T* (unseen Cycle 25 \(91 clean CMEs\), on par with NASA's operational WSA-ENLIL MHD supercomputing benchmark \(\26110.40 hours at) Tj T* (Earth\) in sub-second execution \() Tj (< 0.05 s\) without numerical supercomputing overhead and with 92.3% unpadded conformal coverage) Tj T* (\(mean window 59.7 h\). We provide open-source code, neural weights, and an automated NOAA SWPC real-time satellite CLI for) Tj T* (immediate operational deployment.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 358.7 cm
+1 0 0 1 52.8 347.5 cm
 q
 BT 1 0 0 1 0 12.2 Tm -0.04468 Tw 9.8 TL /F4 7.4 Tf .290196 .333333 .407843 rg (Keywords:) Tj /F3 7.4 Tf ( Space Weather, Geomagnetic Storms, Dst Index, Coronal Mass Ejections, Conformal Prediction, Mixture-of-Kinematics, Weight Surgery, Edge) Tj T* 0 Tw (Computing.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 349.7 cm
+1 0 0 1 52.8 338.5 cm
 Q
 q
-1 0 0 1 52.8 328.2 cm
+1 0 0 1 52.8 317 cm
 q
 .101961 .211765 .364706 rg
 BT 1 0 0 1 0 3 Tm /F2 10.5 Tf 13.5 TL (1. Introduction) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 245.4 cm
+1 0 0 1 52.8 234.2 cm
 q
 BT 1 0 0 1 0 71.6 Tm 11.4 TL /F1 8.2 Tf .176471 .215686 .282353 rg (Geomagnetic storms represent the magnetospheric manifestation of explosive solar activity, initiated when coronal mass ejections \(CMEs\)) Tj T* (or co-rotating interaction regions \(CIRs\) drive strong, sustained southward interplanetary magnetic fields \() Tj /F3 8.2 Tf (B) Tj /F3 6.56 Tf -4.1 Ts (z) Tj /F3 8.2 Tf 0 Ts ( < 0) Tj /F1 8.2 Tf (\) into Earth's dayside) Tj T* (magnetopause \(Gonzalez et al., 1994\). Through magnetic reconnection, energy and plasma are transferred into the terrestrial) Tj T* (magnetosphere, accelerating ions into the equatorial ring current and depressing the horizontal geomagnetic field component globally,) Tj T* (quantified by the Disturbance Storm Time \() Tj /F3 8.2 Tf (Dst) Tj /F1 8.2 Tf (\) index \(Sugiura, 1964\). Severe storms \() Tj /F3 8.2 Tf (Dst ) Tj /F5 8.2 Tf 11.4 TL (\243) Tj /F3 8.2 Tf 11.4 TL ( -100) Tj /F1 8.2 Tf ( nT\) and extreme superstorms \() Tj /F3 8.2 Tf (Dst ) Tj /F5 8.2 Tf 11.4 TL (\243) Tj /F3 8.2 Tf 11.4 TL ( -200) Tj /F1 8.2 Tf  T* (nT\) induce geomagnetically induced currents \(GICs\) that threaten high-voltage transformers, trigger uncontrolled atmospheric satellite drag,) Tj T* (and disrupt navigation \(Pulkkinen et al., 2013\).) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 160.6 cm
+1 0 0 1 52.8 149.4 cm
 q
 BT 1 0 0 1 0 71.6 Tm 11.4 TL /F1 8.2 Tf .176471 .215686 .282353 rg (Historically, space weather forecasting has been fractured into two disconnected operational domains: \(1\) empirical and deep learning) Tj T* (nowcasting at L1 \(1\2266h ahead\), which typically relies on deterministic point estimates \(Camporeale, 2019; Gruet et al., 2018\) vulnerable to) Tj T* (intra-cycle evaluation leakage; and \(2\) numerical 3D magnetohydrodynamic \(MHD\) simulations such as the WSA-ENLIL model \(Odstrcil et) Tj T* (al., 2004\), which require high-performance computing clusters and average arrival uncertainties of \261) Tj (10\22612 hours \(Riley et al., 2018\). To) Tj T* (resolve these operational deficits, this work presents ) Tj /F2 8.2 Tf (Zar-Manah HELIOS) Tj /F1 8.2 Tf (, a unified dual-scale space weather intelligence architecture) Tj T* (providing mathematically guaranteed finite-sample conformal uncertainty bounds, hypersonic kinematic mixture routing, and local edge) Tj T* (execution on Apple Silicon.) Tj T* ET
 Q
@@ -249,7 +249,7 @@ q
 BT /F1 7.5 Tf 9 TL ET
 .443137 .501961 .588235 rg
 BT 1 0 0 1 527.6375 28 Tm (Page 1 of 6) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24215019) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24260407) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -538,7 +538,7 @@ BT 1 0 0 1 46 752 Tm (Zar-Manah HELIOS: Dual-Scale Space Weather Intelligence \2
 .5 w
 n 46 746 m 566 746 l S
 BT 1 0 0 1 527.6375 28 Tm (Page 2 of 6) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24215019) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24260407) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -599,7 +599,7 @@ BT 1 0 0 1 46 752 Tm (Zar-Manah HELIOS: Dual-Scale Space Weather Intelligence \2
 .5 w
 n 46 746 m 566 746 l S
 BT 1 0 0 1 527.6375 28 Tm (Page 3 of 6) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24215019) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24260407) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -769,7 +769,7 @@ BT 1 0 0 1 46 752 Tm (Zar-Manah HELIOS: Dual-Scale Space Weather Intelligence \2
 .5 w
 n 46 746 m 566 746 l S
 BT 1 0 0 1 527.6375 28 Tm (Page 4 of 6) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24215019) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24260407) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -841,7 +841,7 @@ BT 1 0 0 1 46 752 Tm (Zar-Manah HELIOS: Dual-Scale Space Weather Intelligence \2
 .5 w
 n 46 746 m 566 746 l S
 BT 1 0 0 1 527.6375 28 Tm (Page 5 of 6) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24215019) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24260407) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -871,7 +871,7 @@ Q
 q
 1 0 0 1 52.8 618.7 cm
 q
-BT 1 0 0 1 0 48.8 Tm 11.4 TL /F2 8.2 Tf .176471 .215686 .282353 rg (Data and Code Availability:) Tj /F1 8.2 Tf ( All source code, preprocessing pipelines, model checkpoints, the interactive mission cockpit) Tj T* (\() Tj (Zar-Manah_HELIOS.html) Tj (\), and publication figures are open-sourced under dual CC BY 4.0 / MIT licensing at:) Tj T* /F2 8.2 Tf (https://github.com/Zar-Manah/HELIOS-Space-Weather) Tj /F1 8.2 Tf ( \(Concept DOI: ) Tj /F2 8.2 Tf (10.5281/zenodo.24215019) Tj /F1 8.2 Tf (, Version DOI:) Tj T* /F2 8.2 Tf (10.5281/zenodo.24215019) Tj /F1 8.2 Tf (\). Raw solar wind data are curated by NASA SPDF OMNIWeb) Tj T* (\(https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/\).) Tj T* ET
+BT 1 0 0 1 0 48.8 Tm 11.4 TL /F2 8.2 Tf .176471 .215686 .282353 rg (Data and Code Availability:) Tj /F1 8.2 Tf ( All source code, preprocessing pipelines, model checkpoints, the interactive mission cockpit) Tj T* (\() Tj (Zar-Manah_HELIOS.html) Tj (\), and publication figures are open-sourced under dual CC BY 4.0 / MIT licensing at:) Tj T* /F2 8.2 Tf (https://github.com/Zar-Manah/HELIOS-Space-Weather) Tj /F1 8.2 Tf ( \(Concept DOI: ) Tj /F2 8.2 Tf (10.5281/zenodo.24215019) Tj /F1 8.2 Tf (, Version DOI:) Tj T* /F2 8.2 Tf (10.5281/zenodo.24260407) Tj /F1 8.2 Tf (\). Raw solar wind data are curated by NASA SPDF OMNIWeb) Tj T* (\(https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/\).) Tj T* ET
 Q
 Q
 q
@@ -1000,7 +1000,7 @@ BT 1 0 0 1 46 752 Tm (Zar-Manah HELIOS: Dual-Scale Space Weather Intelligence \2
 .5 w
 n 46 746 m 566 746 l S
 BT 1 0 0 1 527.6375 28 Tm (Page 6 of 6) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24215019) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24260407) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -1035,15 +1035,15 @@ xref
 0001862792 00000 n 
 0001863202 00000 n 
 0001863298 00000 n 
-0001870385 00000 n 
-0001884621 00000 n 
-0001886996 00000 n 
-0001893671 00000 n 
-0001897899 00000 n 
+0001870460 00000 n 
+0001884696 00000 n 
+0001887071 00000 n 
+0001893746 00000 n 
+0001897974 00000 n 
 trailer
 <<
 /ID 
-[<8038b01ea2d9e0141ca1ace63518f477><8038b01ea2d9e0141ca1ace63518f477>]
+[<64c127fd474ecf372e15abd9741f8c0a><64c127fd474ecf372e15abd9741f8c0a>]
 % ReportLab generated PDF document -- digest (opensource)
 
 /Info 22 0 R
@@ -1051,5 +1051,5 @@ trailer
 /Size 30
 >>
 startxref
-1906166
+1906241
 %%EOF
