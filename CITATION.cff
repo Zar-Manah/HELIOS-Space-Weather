@@ -14,8 +14,10 @@ authors:
     given-names: "Zar"
 version: "2.5.15"
 date-released: "2026-11-14"
-doi: "10.5281/zenodo.24215019"
-license: "CC-BY-4.0"
+doi: "10.5281/zenodo.24227364"
+license:
+  - "MIT"
+  - "CC-BY-4.0"
 repository-code: "https://github.com/Zar-Manah/HELIOS-Space-Weather"
 url: "https://doi.org/10.5281/zenodo.24215019"
 keywords:
@@ -28,6 +30,9 @@ keywords:
   - machine learning
   - open science
 identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24227364"
+    description: "Version DOI (v2.5.15)"
   - type: doi
     value: "10.5281/zenodo.24215019"
     description: "Concept DOI (all versions)"
