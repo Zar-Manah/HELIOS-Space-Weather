@@ -98,8 +98,8 @@ endobj
 endobj
 15 0 obj
 <<
-/Author (Zar Manah) /CreationDate (D:20261115213359+01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261115213359+01'00') /Producer (ReportLab PDF Library - \(opensource\)) 
-  /Subject (DOI: 10.5281/zenodo.24260407 \204 Concept DOI: 10.5281/zenodo.24215019) /Title (Zar-Manah HELIOS 2.0 \(DOI: 10.5281/zenodo.24260407, Concept DOI: 10.5281/zenodo.24215019\)) /Trapped /False
+/Author (Zar Manah) /CreationDate (D:20261115223027+01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261115223027+01'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (DOI: 10.5281/zenodo.24262095 \204 Concept DOI: 10.5281/zenodo.24215019) /Title (Zar-Manah HELIOS 2.0 \(DOI: 10.5281/zenodo.24262095, Concept DOI: 10.5281/zenodo.24215019\)) /Trapped /False
 >>
 endobj
 16 0 obj
@@ -109,7 +109,7 @@ endobj
 endobj
 17 0 obj
 <<
-/Length 9532
+/Length 9665
 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
@@ -145,7 +145,7 @@ BT /F1 10 Tf 12 TL ET
 q
 1 0 0 1 8 5 cm
 q
-BT 1 0 0 1 0 142.7 Tm 1.180206 Tw 10 TL /F3 7.3 Tf .176471 .215686 .282353 rg (Abstract:) Tj /F4 7.3 Tf ( Geomagnetic superstorms driven by solar coronal mass ejections \(CMEs\) pose acute risks to continental electrical transmission grids, LEO) Tj T* 0 Tw 1.138412 Tw (satellite constellations, and global aviation. Operational space weather infrastructure has historically suffered from the ) Tj /F3 7.3 Tf ('Southward Bz Paradox') Tj /F4 7.3 Tf (: while) Tj T* 0 Tw 1.201079 Tw (coronagraphs project arrival times across 1 AU \(24\22672h\), detecting whether the core magnetic field points southward \(driving violent reconnection\) or) Tj T* 0 Tw .478357 Tw (northward \(harmless deflection\) has required waiting for L1 satellite impact at 30\22645 minutes before arrival, yielding >) Tj (70% false alarms. Here, we present) Tj T* 0 Tw .3289 Tw /F3 7.3 Tf (Zar-Manah HELIOS 2.0) Tj /F4 7.3 Tf (, a unified 4-tier space weather intelligence architecture executing on Apple Silicon M4 GPU in ) Tj /F3 7.3 Tf (16.55 milliseconds) Tj /F4 7.3 Tf ( \(median 16.54) Tj T* 0 Tw .581845 Tw (ms, p99 17.34 ms\). HELIOS 2.0 couples: \(1\) HELIOS-CHIRALITY-APEX) Tj (, evaluating Bz southward threat at t=0 \(58.2% test accuracy at threshold 0.525,) Tj T* 0 Tw .075067 Tw (0.6497 Test ROC-AUC, 0.4745 Train CV-AUC near-chance\); \(2\) HELIOS-STORM-APEX) Tj (, synthesizing 3D kinetic energy and soft X-ray flare fluence across) Tj T* 0 Tw .708464 Tw (14 physical dimensions to predict severe storms \(Dst ) Tj /F5 7.3 Tf 10 TL (\243) Tj /F4 7.3 Tf 10 TL ( -110 nT\) with ) Tj /F3 7.3 Tf (78.0% test accuracy) Tj /F4 7.3 Tf (, ) Tj /F3 7.3 Tf (0.8737 Test ROC-AUC) Tj /F4 7.3 Tf (, ) Tj /F3 7.3 Tf (0.6611 Train CV-AUC) Tj /F4 7.3 Tf (, and ) Tj /F3 7.3 Tf (78.9%) Tj T* 0 Tw -0.06676 Tw (specificity) Tj /F4 7.3 Tf ( \(60/76 false alarms avoided, 73.3% sensitivity, TSS +0.5228, Brier 0.1154 vs 0.1377 climatology\) on unseen Solar Cycle 25; \(3\) HELIOS-Transit) Tj (,) Tj T* 0 Tw -0.031159 Tw (a dynamic hybrid ensemble \(MoK + GBDT\) achieving \261) Tj (10.63h MAE \() Tj (\261) Tj (7.45h median error\) on unseen Solar Cycle 25 \(91 clean CMEs\), approaching NASA's) Tj T* 0 Tw .253209 Tw (operational WSA-ENLIL MHD standard \() Tj (\261) Tj (10.40h at Earth\); and \(4\) Tactical L1 Nowcasting) Tj (, coupling HELIOS-Point GBDT \(R) Tj (\262 = 0.968, RMSE = 3.66 nT at) Tj T* 0 Tw .564654 Tw (+1h; R) Tj (\262 = 0.714 at +6h\) and HeliosBiLSTM nowcasts on M4 GPU \(R) Tj (\262 = 0.955, RMSE = 4.32 nT at +1h across 57,975 samples\) with calibrated inductive) Tj T* 0 Tw 1.356095 Tw (conformal coverage \(89.26% on L1 Dst, 86.43% raw quantile; 92.3% on transit, mean window 59.7 h\). Crucially, an extensive ablation confirms that) Tj T* 0 Tw .498867 Tw (standalone 2D white-light coronagraph vision at t=0 yields near-chance skill \(AUC ) Tj /F5 7.3 Tf 10 TL (\273) Tj /F4 7.3 Tf 10 TL ( 0.46\2260.51\), establishing that space weather defense is carried by 3D) Tj T* 0 Tw (kinematics and in-situ L1 telemetry.) Tj T* ET
+BT 1 0 0 1 0 142.7 Tm 1.180206 Tw 10 TL /F3 7.3 Tf .176471 .215686 .282353 rg (Abstract:) Tj /F4 7.3 Tf ( Geomagnetic superstorms driven by solar coronal mass ejections \(CMEs\) pose acute risks to continental electrical transmission grids, LEO) Tj T* 0 Tw 1.138412 Tw (satellite constellations, and global aviation. Operational space weather infrastructure has historically suffered from the ) Tj /F3 7.3 Tf ('Southward Bz Paradox') Tj /F4 7.3 Tf (: while) Tj T* 0 Tw 1.201079 Tw (coronagraphs project arrival times across 1 AU \(24\22672h\), detecting whether the core magnetic field points southward \(driving violent reconnection\) or) Tj T* 0 Tw .478357 Tw (northward \(harmless deflection\) has required waiting for L1 satellite impact at 30\22645 minutes before arrival, yielding >) Tj (70% false alarms. Here, we present) Tj T* 0 Tw .3289 Tw /F3 7.3 Tf (Zar-Manah HELIOS 2.0) Tj /F4 7.3 Tf (, a unified 4-tier space weather intelligence architecture executing on Apple Silicon M4 GPU in ) Tj /F3 7.3 Tf (16.55 milliseconds) Tj /F4 7.3 Tf ( \(median 16.54) Tj T* 0 Tw .581845 Tw (ms, p99 17.34 ms\). HELIOS 2.0 couples: \(1\) HELIOS-CHIRALITY-APEX) Tj (, evaluating Bz southward threat at t=0 \(58.2% test accuracy at threshold 0.525,) Tj T* 0 Tw .075067 Tw (0.6497 Test ROC-AUC, 0.4745 Train CV-AUC near-chance\); \(2\) HELIOS-STORM-APEX) Tj (, synthesizing 3D kinetic energy and soft X-ray flare fluence across) Tj T* 0 Tw .708464 Tw (14 physical dimensions to predict severe storms \(Dst ) Tj /F5 7.3 Tf 10 TL (\243) Tj /F4 7.3 Tf 10 TL ( -110 nT\) with ) Tj /F3 7.3 Tf (78.0% test accuracy) Tj /F4 7.3 Tf (, ) Tj /F3 7.3 Tf (0.8737 Test ROC-AUC) Tj /F4 7.3 Tf (, ) Tj /F3 7.3 Tf (0.6611 Train CV-AUC) Tj /F4 7.3 Tf (, and ) Tj /F3 7.3 Tf (78.9%) Tj T* 0 Tw -0.06676 Tw (specificity) Tj /F4 7.3 Tf ( \(60/76 false alarms avoided, 73.3% sensitivity, TSS +0.5228, Brier 0.1154 vs 0.1377 climatology\) on unseen Solar Cycle 25; \(3\) HELIOS-Transit) Tj (,) Tj T* 0 Tw .064778 Tw (a single GBDT achieving \261) Tj (10.63h MAE \() Tj (\261) Tj (7.45h median error\) and a dynamic hybrid ensemble \(MoK + GBDT\) at \261) Tj (11.69h \() Tj (\261) Tj (8.34h median\) on unseen Solar) Tj T* 0 Tw .518721 Tw (Cycle 25 \(91 clean CMEs\), statistically indistinguishable from NASA's operational WSA-ENLIL MHD standard \() Tj (\261) Tj (10.40h at Earth; difference +0.23h = 0.20) Tj T* 0 Tw .04412 Tw (standard errors\); and \(4\) Tactical L1 Nowcasting) Tj (, coupling HELIOS-Point GBDT \(R) Tj (\262 = 0.968, RMSE = 3.66 nT at +1h; R) Tj (\262 = 0.714 at +6h\) and HeliosBiLSTM) Tj T* 0 Tw 1.009254 Tw (nowcasts on M4 GPU \(R) Tj (\262 = 0.955, RMSE = 4.32 nT at +1h across 57,974 samples\) with calibrated inductive conformal coverage \(89.26% on L1 Dst,) Tj T* 0 Tw .1582 Tw (86.43% raw quantile; 92.3% on transit, mean window 59.7 h\). Crucially, an extensive ablation confirms that standalone 2D white-light coronagraph vision at) Tj T* 0 Tw (t=0 yields near-chance skill \(AUC ) Tj /F5 7.3 Tf 10 TL (\273) Tj /F4 7.3 Tf 10 TL ( 0.46\2260.51\), establishing that space weather defense is carried by 3D kinematics and in-situ L1 telemetry.) Tj T* ET
 Q
 Q
 q
@@ -199,7 +199,7 @@ q
 BT /F1 7.5 Tf 9 TL ET
 .443137 .501961 .588235 rg
 BT 1 0 0 1 527.6375 28 Tm (Page 1 of 3) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24260407) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24262095) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -209,7 +209,7 @@ endstream
 endobj
 18 0 obj
 <<
-/Length 16410
+/Length 20215
 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
@@ -366,7 +366,7 @@ q
 1 0 0 1 66 68.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 20.3575 0 Td (HeliosBiLSTM \(MPS GPU\)) Tj T* -20.3575 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 5.362 0 Td (HeliosBiLSTM \(edited ckpt, M4 GPU\)) Tj T* -5.362 0 Td ET
 Q
 Q
 q
@@ -394,7 +394,7 @@ q
 1 0 0 1 371 68.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 23.3685 0 Td (0.880) Tj T* -23.3685 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 23.3685 0 Td (0.958) Tj T* -23.3685 0 Td ET
 Q
 Q
 q
@@ -582,347 +582,559 @@ BT 1 0 0 1 0 2.8 Tm /F2 7.4 Tf 10.2 TL (Table 2: 24\22672h Planetary CME Transit
 Q
 Q
 q
-1 0 0 1 46 219 cm
+1 0 0 1 56 212.8 cm
 q
 .168627 .423529 .690196 rg
-n 0 159.6 520 -22.6 re f*
+n 0 165.8 500 -13.8 re f*
 1 1 1 rg
-n 0 137 520 -13.5 re f*
+n 0 152 500 -13.5 re f*
 .968627 .980392 .988235 rg
-n 0 123.5 520 -22 re f*
+n 0 138.5 500 -13.5 re f*
 1 1 1 rg
-n 0 101.5 520 -22 re f*
+n 0 125 500 -22 re f*
 .968627 .980392 .988235 rg
-n 0 79.5 520 -13.5 re f*
+n 0 103 500 -22 re f*
 1 1 1 rg
-n 0 66 520 -22 re f*
+n 0 81 500 -13.5 re f*
 .968627 .980392 .988235 rg
-n 0 44 520 -22 re f*
+n 0 67.5 500 -13.5 re f*
 1 1 1 rg
-n 0 22 520 -22 re f*
+n 0 54 500 -13.5 re f*
+.968627 .980392 .988235 rg
+n 0 40.5 500 -13.5 re f*
+1 1 1 rg
+n 0 27 500 -13.5 re f*
+.968627 .980392 .988235 rg
+n 0 13.5 500 -13.5 re f*
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
-1 0 0 1 6 139.5 cm
+1 0 0 1 6 154.5 cm
 q
 1 1 1 rg
-BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 25.5706 0 Td (Speed Regime) Tj T* -25.5706 0 Td ET
+BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 19.7966 0 Td (Scope) Tj T* -19.7966 0 Td ET
 Q
 Q
 q
-1 0 0 1 116 139.5 cm
-q
-1 1 1 rg
-BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 31.748 0 Td (Model / System) Tj T* -31.748 0 Td ET
-Q
-Q
-q
-1 0 0 1 241 139.5 cm
+1 0 0 1 78 154.5 cm
 q
 1 1 1 rg
-BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 12.2288 0 Td (Arrival MAE) Tj T* -12.2288 0 Td ET
+BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 30.248 0 Td (Model / System) Tj T* -30.248 0 Td ET
 Q
 Q
 q
-1 0 0 1 316 139.5 cm
-q
-1 1 1 rg
-BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 9.961 0 Td (Arrival RMSE) Tj T* -9.961 0 Td ET
-Q
-Q
-q
-1 0 0 1 391 139.5 cm
+1 0 0 1 200 154.5 cm
 q
 1 1 1 rg
-BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 3.2576 0 Td (90% Coverage) Tj T* -3.2576 0 Td ET
+BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 15.4452 0 Td (MAE) Tj T* -15.4452 0 Td ET
 Q
 Q
 q
-1 0 0 1 456 139.5 cm
+1 0 0 1 258 154.5 cm
 q
 1 1 1 rg
-BT 1 0 0 1 0 10.8 Tm /F2 6.8 Tf 8.8 TL 14.2678 0 Td (Compute) Tj T* -0.952 0 Td (Overhead) Tj T* -13.3158 0 Td ET
+BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 13.1774 0 Td (RMSE) Tj T* -13.1774 0 Td ET
 Q
 Q
 q
-1 0 0 1 6 126 cm
+1 0 0 1 316 154.5 cm
 q
-BT 1 0 0 1 0 2 Tm 12.18075 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (Fast CMEs \() Tj /F5 6.5 Tf 8.5 TL (\263) Tj /F1 6.5 Tf 8.5 TL ( 1000 km/s\)) Tj T* -12.18075 0 Td ET
+1 1 1 rg
+BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 9.787 0 Td (Median) Tj T* -9.787 0 Td ET
 Q
 Q
 q
-1 0 0 1 116 126 cm
+1 0 0 1 371 154.5 cm
 q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 7.7435 0 Td (Classical Drag-Based \(DBM Fast\)) Tj T* -7.7435 0 Td ET
+1 1 1 rg
+BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 9.8836 0 Td (90% Cov.) Tj T* -9.8836 0 Td ET
 Q
 Q
 q
-1 0 0 1 241 126 cm
+1 0 0 1 433 154.5 cm
 q
-BT 1 0 0 1 0 2 Tm 17.8565 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (\261 16.57 h) Tj T* -17.8565 0 Td ET
+1 1 1 rg
+BT 1 0 0 1 0 2 Tm /F2 6.8 Tf 8.8 TL 15.7678 0 Td (Compute) Tj T* -15.7678 0 Td ET
 Q
 Q
 q
-1 0 0 1 316 126 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 20.658 0 Td (20.80 h) Tj T* -20.658 0 Td ET
-Q
-Q
-q
-1 0 0 1 391 126 cm
+1 0 0 1 6 141 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 21.08225 0 Td (N/A) Tj T* -21.08225 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 4.1755 0 Td (Global \(91 CMEs\)) Tj T* -4.1755 0 Td ET
 Q
 Q
 q
-1 0 0 1 456 126 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 20.147 0 Td (0.05 s) Tj T* -20.147 0 Td ET
-Q
-Q
-q
-1 0 0 1 6 104 cm
-q
-BT 1 0 0 1 0 2 Tm 12.18075 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (Fast CMEs \() Tj /F5 6.5 Tf 8.5 TL (\263) Tj /F1 6.5 Tf 8.5 TL ( 1000 km/s\)) Tj T* -12.18075 0 Td ET
-Q
-Q
-q
-1 0 0 1 116 104 cm
+1 0 0 1 78 141 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 9.54725 0 Td (NASA WSA-ENLIL \(STEREO-A\)) Tj T* -9.54725 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 13.11075 0 Td (Drag Prior Proxy \(DBM-prior\)) Tj T* -13.11075 0 Td ET
 Q
 Q
 q
-1 0 0 1 241 104 cm
-q
-BT 1 0 0 1 0 2 Tm 19.6635 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (\261 9.20 h) Tj T* -19.6635 0 Td ET
-Q
-Q
-q
-1 0 0 1 316 104 cm
+1 0 0 1 200 141 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 20.658 0 Td (12.40 h) Tj T* -20.658 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (28.95 h) Tj T* -12.158 0 Td ET
 Q
 Q
 q
-1 0 0 1 391 104 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 21.08225 0 Td (N/A) Tj T* -21.08225 0 Td ET
-Q
-Q
-q
-1 0 0 1 456 104 cm
+1 0 0 1 258 141 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 10.5 Tm /F1 6.5 Tf 8.5 TL 8.0505 0 Td (Hours on HPC) Tj T* 10.65675 0 Td (Cluster) Tj T* -18.70725 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (33.00 h) Tj T* -12.158 0 Td ET
 Q
 Q
 q
-1 0 0 1 6 82 cm
-q
-BT 1 0 0 1 0 2 Tm 12.18075 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (Fast CMEs \() Tj /F5 6.5 Tf 8.5 TL (\263) Tj /F1 6.5 Tf 8.5 TL ( 1000 km/s\)) Tj T* -12.18075 0 Td ET
-Q
-Q
-q
-1 0 0 1 116 82 cm
+1 0 0 1 316 141 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 13.69425 0 Td (HELIOS Dynamic Ensemble) Tj T* -13.69425 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 10.658 0 Td (29.35 h) Tj T* -10.658 0 Td ET
 Q
 Q
 q
-1 0 0 1 241 82 cm
-q
-BT 1 0 0 1 0 2 Tm 17.67775 0 Td 8.5 TL /F2 6.5 Tf .101961 .12549 .172549 rg (\261 15.37 h) Tj T* -17.67775 0 Td ET
-Q
-Q
-q
-1 0 0 1 316 82 cm
+1 0 0 1 371 141 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 20.47925 0 Td (18.42 h) Tj T* -20.47925 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 19.58225 0 Td (N/A) Tj T* -19.58225 0 Td ET
 Q
 Q
 q
-1 0 0 1 391 82 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 17.28625 0 Td (75.0%) Tj T* -17.28625 0 Td ET
-Q
-Q
-q
-1 0 0 1 456 82 cm
-q
-BT 1 0 0 1 0 10.5 Tm 6.14925 0 Td 8.5 TL /F2 6.5 Tf .101961 .12549 .172549 rg (< 0.05 s \(Apple) Tj T* 17.25425 0 Td (M4\)) Tj T* -23.4035 0 Td ET
-Q
-Q
-q
-1 0 0 1 6 68.5 cm
+1 0 0 1 433 141 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 14.87175 0 Td (All CMEs \(Global OOD\)) Tj T* -14.87175 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 21.647 0 Td (0.05 s) Tj T* -21.647 0 Td ET
 Q
 Q
 q
-1 0 0 1 116 68.5 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 14.96825 0 Td (Classical Drag-Based \(DBM\)) Tj T* -14.96825 0 Td ET
-Q
-Q
-q
-1 0 0 1 241 68.5 cm
-q
-BT 1 0 0 1 0 2 Tm 17.8565 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (\261 12.30 h) Tj T* -17.8565 0 Td ET
-Q
-Q
-q
-1 0 0 1 316 68.5 cm
+1 0 0 1 6 127.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 20.658 0 Td (16.10 h) Tj T* -20.658 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 4.1755 0 Td (Global \(91 CMEs\)) Tj T* -4.1755 0 Td ET
 Q
 Q
 q
-1 0 0 1 391 68.5 cm
+1 0 0 1 78 127.5 cm
 q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 21.08225 0 Td (N/A) Tj T* -21.08225 0 Td ET
+BT 1 0 0 1 0 2 Tm 9.669 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (Analytical Drag-Based \(Vr) Tj (\232) Tj (nak\)) Tj T* -9.669 0 Td ET
 Q
 Q
 q
-1 0 0 1 456 68.5 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 20.147 0 Td (0.05 s) Tj T* -20.147 0 Td ET
-Q
-Q
-q
-1 0 0 1 6 46.5 cm
+1 0 0 1 200 127.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 14.87175 0 Td (All CMEs \(Global OOD\)) Tj T* -14.87175 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (12.30 h) Tj T* -12.158 0 Td ET
 Q
 Q
 q
-1 0 0 1 116 46.5 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 10.82125 0 Td (NASA WSA-ENLIL \(Earth Std\)) Tj T* -10.82125 0 Td ET
-Q
-Q
-q
-1 0 0 1 241 46.5 cm
-q
-BT 1 0 0 1 0 2 Tm 17.8565 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (\261 10.40 h) Tj T* -17.8565 0 Td ET
-Q
-Q
-q
-1 0 0 1 316 46.5 cm
+1 0 0 1 258 127.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 20.658 0 Td (13.20 h) Tj T* -20.658 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (16.77 h) Tj T* -12.158 0 Td ET
 Q
 Q
 q
-1 0 0 1 391 46.5 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 21.08225 0 Td (N/A) Tj T* -21.08225 0 Td ET
-Q
-Q
-q
-1 0 0 1 456 46.5 cm
+1 0 0 1 316 127.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 10.5 Tm /F1 6.5 Tf 8.5 TL 8.0505 0 Td (Hours on HPC) Tj T* 10.65675 0 Td (Cluster) Tj T* -18.70725 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.465 0 Td (8.83 h) Tj T* -12.465 0 Td ET
 Q
 Q
 q
-1 0 0 1 6 24.5 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 14.87175 0 Td (All CMEs \(Global OOD\)) Tj T* -14.87175 0 Td ET
-Q
-Q
-q
-1 0 0 1 116 24.5 cm
+1 0 0 1 371 127.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 23.63275 0 Td (HELIOS Single GBDT) Tj T* -23.63275 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 19.58225 0 Td (N/A) Tj T* -19.58225 0 Td ET
 Q
 Q
 q
-1 0 0 1 241 24.5 cm
+1 0 0 1 433 127.5 cm
 q
-BT 1 0 0 1 0 2 Tm 17.67775 0 Td 8.5 TL /F2 6.5 Tf .101961 .12549 .172549 rg (\261 10.63 h) Tj T* -17.67775 0 Td ET
+BT 1 0 0 1 0 2 Tm 18.8455 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (< 0.01 s) Tj T* -18.8455 0 Td ET
 Q
 Q
 q
-1 0 0 1 316 24.5 cm
-q
-.101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 20.47925 0 Td (15.29 h) Tj T* -20.47925 0 Td ET
-Q
-Q
-q
-1 0 0 1 391 24.5 cm
+1 0 0 1 6 105.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 17.28625 0 Td (92.3%) Tj T* -17.28625 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 4.1755 0 Td (Global \(91 CMEs\)) Tj T* -4.1755 0 Td ET
 Q
 Q
 q
-1 0 0 1 456 24.5 cm
+1 0 0 1 78 105.5 cm
 q
-BT 1 0 0 1 0 10.5 Tm 6.14925 0 Td 8.5 TL /F2 6.5 Tf .101961 .12549 .172549 rg (< 0.01 s \(Apple) Tj T* 17.25425 0 Td (M4\)) Tj T* -23.4035 0 Td ET
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 10.5 Tm /F1 6.5 Tf 8.5 TL 8.7655 0 Td (NASA WSA-ENLIL \(Earth, Wold) Tj T* 37.92425 0 Td (2018\)) Tj T* -46.68975 0 Td ET
+Q
+Q
+q
+1 0 0 1 200 105.5 cm
+q
+BT 1 0 0 1 0 2 Tm 9.3565 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (\261 10.40 h) Tj T* -9.3565 0 Td ET
+Q
+Q
+q
+1 0 0 1 258 105.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (13.20 h) Tj T* -12.158 0 Td ET
+Q
+Q
+q
+1 0 0 1 316 105.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 18.25 0 Td (\227) Tj T* -18.25 0 Td ET
+Q
+Q
+q
+1 0 0 1 371 105.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 19.58225 0 Td (N/A) Tj T* -19.58225 0 Td ET
+Q
+Q
+q
+1 0 0 1 433 105.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 9.5505 0 Td (Hours on HPC) Tj T* -9.5505 0 Td ET
+Q
+Q
+q
+1 0 0 1 6 83.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 4.1755 0 Td (Global \(91 CMEs\)) Tj T* -4.1755 0 Td ET
+Q
+Q
+q
+1 0 0 1 78 83.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 10.5 Tm /F1 6.5 Tf 8.5 TL 8.226 0 Td (NASA WSA-ENLIL \(STEREO-A,) Tj T* 37.02075 0 Td (global\)) Tj T* -45.24675 0 Td ET
+Q
+Q
+q
+1 0 0 1 200 83.5 cm
+q
+BT 1 0 0 1 0 2 Tm 11.1635 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (\261 9.20 h) Tj T* -11.1635 0 Td ET
+Q
+Q
+q
+1 0 0 1 258 83.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (12.40 h) Tj T* -12.158 0 Td ET
+Q
+Q
+q
+1 0 0 1 316 83.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 18.25 0 Td (\227) Tj T* -18.25 0 Td ET
+Q
+Q
+q
+1 0 0 1 371 83.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 19.58225 0 Td (N/A) Tj T* -19.58225 0 Td ET
+Q
+Q
+q
+1 0 0 1 433 83.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 9.5505 0 Td (Hours on HPC) Tj T* -9.5505 0 Td ET
+Q
+Q
+q
+1 0 0 1 6 70 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 4.1755 0 Td (Global \(91 CMEs\)) Tj T* -4.1755 0 Td ET
+Q
+Q
+q
+1 0 0 1 78 70 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 22.13275 0 Td (HELIOS Single GBDT) Tj T* -22.13275 0 Td ET
+Q
+Q
+q
+1 0 0 1 200 70 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 11.97925 0 Td (10.63 h) Tj T* -11.97925 0 Td ET
+Q
+Q
+q
+1 0 0 1 258 70 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 11.97925 0 Td (15.29 h) Tj T* -11.97925 0 Td ET
+Q
+Q
+q
+1 0 0 1 316 70 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 12.28625 0 Td (7.45 h) Tj T* -12.28625 0 Td ET
+Q
+Q
+q
+1 0 0 1 371 70 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 15.78625 0 Td (92.3%) Tj T* -15.78625 0 Td ET
+Q
+Q
+q
+1 0 0 1 433 70 cm
+q
+BT 1 0 0 1 0 2 Tm 11.08125 0 Td 8.5 TL /F2 6.5 Tf .101961 .12549 .172549 rg (< 0.01 s \(M4\)) Tj T* -11.08125 0 Td ET
+Q
+Q
+q
+1 0 0 1 6 56.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 4.1755 0 Td (Global \(91 CMEs\)) Tj T* -4.1755 0 Td ET
+Q
+Q
+q
+1 0 0 1 78 56.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 14.18325 0 Td (HELIOS Dynamic Ensemble) Tj T* -14.18325 0 Td ET
+Q
+Q
+q
+1 0 0 1 200 56.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (11.69 h) Tj T* -12.158 0 Td ET
+Q
+Q
+q
+1 0 0 1 258 56.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (15.68 h) Tj T* -12.158 0 Td ET
+Q
+Q
+q
+1 0 0 1 316 56.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.465 0 Td (8.34 h) Tj T* -12.465 0 Td ET
+Q
+Q
+q
+1 0 0 1 371 56.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 15.78625 0 Td (92.3%) Tj T* -15.78625 0 Td ET
+Q
+Q
+q
+1 0 0 1 433 56.5 cm
+q
+BT 1 0 0 1 0 2 Tm 11.26325 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (< 0.05 s \(M4\)) Tj T* -11.26325 0 Td ET
+Q
+Q
+q
+1 0 0 1 6 43 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 13.29175 0 Td (Fast \(n=14\)) Tj T* -13.29175 0 Td ET
+Q
+Q
+q
+1 0 0 1 78 43 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 13.11075 0 Td (Drag Prior Proxy \(DBM-prior\)) Tj T* -13.11075 0 Td ET
+Q
+Q
+q
+1 0 0 1 200 43 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (44.76 h) Tj T* -12.158 0 Td ET
+Q
+Q
+q
+1 0 0 1 258 43 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (48.78 h) Tj T* -12.158 0 Td ET
+Q
+Q
+q
+1 0 0 1 316 43 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 10.658 0 Td (47.15 h) Tj T* -10.658 0 Td ET
+Q
+Q
+q
+1 0 0 1 371 43 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 19.58225 0 Td (N/A) Tj T* -19.58225 0 Td ET
+Q
+Q
+q
+1 0 0 1 433 43 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 21.647 0 Td (0.05 s) Tj T* -21.647 0 Td ET
+Q
+Q
+q
+1 0 0 1 6 29.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 13.29175 0 Td (Fast \(n=14\)) Tj T* -13.29175 0 Td ET
+Q
+Q
+q
+1 0 0 1 78 29.5 cm
+q
+BT 1 0 0 1 0 2 Tm 9.669 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (Analytical Drag-Based \(Vr) Tj (\232) Tj (nak\)) Tj T* -9.669 0 Td ET
+Q
+Q
+q
+1 0 0 1 200 29.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (16.57 h) Tj T* -12.158 0 Td ET
+Q
+Q
+q
+1 0 0 1 258 29.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (21.60 h) Tj T* -12.158 0 Td ET
+Q
+Q
+q
+1 0 0 1 316 29.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 10.658 0 Td (13.87 h) Tj T* -10.658 0 Td ET
+Q
+Q
+q
+1 0 0 1 371 29.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 19.58225 0 Td (N/A) Tj T* -19.58225 0 Td ET
+Q
+Q
+q
+1 0 0 1 433 29.5 cm
+q
+BT 1 0 0 1 0 2 Tm 18.8455 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (< 0.01 s) Tj T* -18.8455 0 Td ET
+Q
+Q
+q
+1 0 0 1 6 16 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 13.29175 0 Td (Fast \(n=14\)) Tj T* -13.29175 0 Td ET
+Q
+Q
+q
+1 0 0 1 78 16 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 22.13275 0 Td (HELIOS Single GBDT) Tj T* -22.13275 0 Td ET
+Q
+Q
+q
+1 0 0 1 200 16 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 11.97925 0 Td (13.55 h) Tj T* -11.97925 0 Td ET
+Q
+Q
+q
+1 0 0 1 258 16 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 11.97925 0 Td (20.12 h) Tj T* -11.97925 0 Td ET
+Q
+Q
+q
+1 0 0 1 316 16 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 12.28625 0 Td (9.41 h) Tj T* -12.28625 0 Td ET
+Q
+Q
+q
+1 0 0 1 371 16 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 15.78625 0 Td (85.7%) Tj T* -15.78625 0 Td ET
+Q
+Q
+q
+1 0 0 1 433 16 cm
+q
+BT 1 0 0 1 0 2 Tm 11.26325 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (< 0.01 s \(M4\)) Tj T* -11.26325 0 Td ET
 Q
 Q
 q
 1 0 0 1 6 2.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 14.87175 0 Td (All CMEs \(Global OOD\)) Tj T* -14.87175 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 13.29175 0 Td (Fast \(n=14\)) Tj T* -13.29175 0 Td ET
 Q
 Q
 q
-1 0 0 1 116 2.5 cm
+1 0 0 1 78 2.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 13.69425 0 Td (HELIOS Dynamic Ensemble) Tj T* -13.69425 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 14.18325 0 Td (HELIOS Dynamic Ensemble) Tj T* -14.18325 0 Td ET
 Q
 Q
 q
-1 0 0 1 241 2.5 cm
+1 0 0 1 200 2.5 cm
 q
-BT 1 0 0 1 0 2 Tm 17.67775 0 Td 8.5 TL /F2 6.5 Tf .101961 .12549 .172549 rg (\261 11.69 h) Tj T* -17.67775 0 Td ET
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (15.37 h) Tj T* -12.158 0 Td ET
+Q
+Q
+q
+1 0 0 1 258 2.5 cm
+q
+.101961 .12549 .172549 rg
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 12.158 0 Td (19.86 h) Tj T* -12.158 0 Td ET
 Q
 Q
 q
 1 0 0 1 316 2.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 20.47925 0 Td (15.68 h) Tj T* -20.47925 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 10.658 0 Td (14.19 h) Tj T* -10.658 0 Td ET
 Q
 Q
 q
-1 0 0 1 391 2.5 cm
+1 0 0 1 371 2.5 cm
 q
 .101961 .12549 .172549 rg
-BT 1 0 0 1 0 2 Tm /F2 6.5 Tf 8.5 TL 17.28625 0 Td (92.3%) Tj T* -17.28625 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 6.5 Tf 8.5 TL 15.78625 0 Td (85.7%) Tj T* -15.78625 0 Td ET
 Q
 Q
 q
-1 0 0 1 456 2.5 cm
+1 0 0 1 433 2.5 cm
 q
-BT 1 0 0 1 0 10.5 Tm 6.14925 0 Td 8.5 TL /F2 6.5 Tf .101961 .12549 .172549 rg (< 0.05 s \(Apple) Tj T* 17.25425 0 Td (M4\)) Tj T* -23.4035 0 Td ET
+BT 1 0 0 1 0 2 Tm 11.26325 0 Td 8.5 TL /F1 6.5 Tf .101961 .12549 .172549 rg (< 0.05 s \(M4\)) Tj T* -11.26325 0 Td ET
 Q
 Q
 q
@@ -930,30 +1142,34 @@ q
 1 j
 .796078 .835294 .878431 RG
 .5 w
-n 0 159.6 m 520 159.6 l S
-n 0 0 m 520 0 l S
-n 0 0 m 0 159.6 l S
-n 520 0 m 520 159.6 l S
-n 0 137 m 520 137 l S
-n 0 123.5 m 520 123.5 l S
-n 0 101.5 m 520 101.5 l S
-n 0 79.5 m 520 79.5 l S
-n 0 66 m 520 66 l S
-n 0 44 m 520 44 l S
-n 0 22 m 520 22 l S
-n 110 0 m 110 159.6 l S
-n 235 0 m 235 159.6 l S
-n 310 0 m 310 159.6 l S
-n 385 0 m 385 159.6 l S
-n 450 0 m 450 159.6 l S
+n 0 165.8 m 500 165.8 l S
+n 0 0 m 500 0 l S
+n 0 0 m 0 165.8 l S
+n 500 0 m 500 165.8 l S
+n 0 152 m 500 152 l S
+n 0 138.5 m 500 138.5 l S
+n 0 125 m 500 125 l S
+n 0 103 m 500 103 l S
+n 0 81 m 500 81 l S
+n 0 67.5 m 500 67.5 l S
+n 0 54 m 500 54 l S
+n 0 40.5 m 500 40.5 l S
+n 0 27 m 500 27 l S
+n 0 13.5 m 500 13.5 l S
+n 72 0 m 72 165.8 l S
+n 194 0 m 194 165.8 l S
+n 252 0 m 252 165.8 l S
+n 310 0 m 310 165.8 l S
+n 365 0 m 365 165.8 l S
+n 427 0 m 427 165.8 l S
 Q
 Q
 Q
 q
-1 0 0 1 52.8 215 cm
+1 0 0 1 52.8 208.8 cm
 Q
 q
-1 0 0 1 46.8 63.8 cm
+1 0 0 1 46.8 57.6 cm
 q
 518.4 0 0 151.2 0 0 cm
 /FormXob.0c3767f00695477b214be9be86578874 Do
@@ -967,7 +1183,7 @@ BT 1 0 0 1 46 752 Tm (Zar-Manah HELIOS 2.0: Unified 4-Tier Space Weather Intelli
 .5 w
 n 46 746 m 566 746 l S
 BT 1 0 0 1 527.6375 28 Tm (Page 2 of 3) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24260407) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24262095) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -977,7 +1193,7 @@ endstream
 endobj
 19 0 obj
 <<
-/Length 14028
+/Length 14191
 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
@@ -1287,92 +1503,92 @@ BT 1 0 0 1 0 3 Tm 12.5 TL /F2 9.5 Tf .101961 .211765 .364706 rg (5. Autonomous R
 Q
 Q
 q
-1 0 0 1 52.8 442.2 cm
+1 0 0 1 52.8 432 cm
 q
-BT 1 0 0 1 0 84.4 Tm .561718 Tw 10.2 TL /F1 7.4 Tf .101961 .12549 .172549 rg (HELIOS 2.0 incorporates a standalone operational engine querying open APIs without external dependencies: \(1\) SDO HMI line-of-sight magnetograms) Tj T* 0 Tw .426642 Tw (automatically cropped to 256) Tj (\327) Tj (256 centered on the active region magnetic shear centroid; \(2\) SOHO/LASCO C2 coronagraphs and NOAA GOES-18 soft) Tj T* 0 Tw .25546 Tw (X-ray flare cadences; \(3\) 1-minute solar wind plasma and magnetic field telemetry from NOAA SWPC DSCOVR/ACE satellites alongside Kyoto WDC Dst) Tj T* 0 Tw (index values. Output projections map directly to NOAA G-scales \(G1\226G5\) and NERC TPL-007 electric transmission reliability standards.) Tj  T* 1.656333 Tw /F2 7.4 Tf (Zero-Persistence Volatile RAM Architecture:) Tj /F1 7.4 Tf ( The client mission cockpit \() Tj /F4 7.4 Tf (Zar-Manah_HELIOS.html) Tj /F1 7.4 Tf (\) operates natively in any web browser without) Tj T* 0 Tw .299676 Tw (background daemons or persistent disk caching. Live SDO and SOHO image buffers are fetched directly into RAM memory via ephemeral Image objects) Tj T* 0 Tw -0.016189 Tw (and explicitly dereferenced upon refresh cycles, triggering automated browser garbage collection with zero cumulative disk footprint. In operational tests on) Tj T* 0 Tw .049632 Tw (Apple Silicon M4, HELIOS 2.0 parsed live high-speed wind streams \(674 km/s\), extracted active region shear, verified northward interplanetary orientation,) Tj T* 0 Tw (and issued a green verdict in ) Tj /F2 7.4 Tf (17.6 ms) Tj /F1 7.4 Tf (.) Tj T* ET
+BT 1 0 0 1 0 94.6 Tm .561718 Tw 10.2 TL /F1 7.4 Tf .101961 .12549 .172549 rg (HELIOS 2.0 incorporates a standalone operational engine querying open APIs without external dependencies: \(1\) SDO HMI line-of-sight magnetograms) Tj T* 0 Tw .426642 Tw (automatically cropped to 256) Tj (\327) Tj (256 centered on the active region magnetic shear centroid; \(2\) SOHO/LASCO C2 coronagraphs and NOAA GOES-18 soft) Tj T* 0 Tw .25546 Tw (X-ray flare cadences; \(3\) 1-minute solar wind plasma and magnetic field telemetry from NOAA SWPC DSCOVR/ACE satellites alongside Kyoto WDC Dst) Tj T* 0 Tw (index values. Output projections map directly to NOAA G-scales \(G1\226G5\) and NERC TPL-007 electric transmission reliability standards.) Tj  T* 1.656333 Tw /F2 7.4 Tf (Zero-Persistence Volatile RAM Architecture:) Tj /F1 7.4 Tf ( The client mission cockpit \() Tj /F4 7.4 Tf (Zar-Manah_HELIOS.html) Tj /F1 7.4 Tf (\) operates natively in any web browser without) Tj T* 0 Tw .299676 Tw (background daemons or persistent disk caching. Live SDO and SOHO image buffers are fetched directly into RAM memory via ephemeral Image objects) Tj T* 0 Tw -0.016189 Tw (and explicitly dereferenced upon refresh cycles, triggering automated browser garbage collection with zero cumulative disk footprint. In operational tests on) Tj T* 0 Tw .049632 Tw (Apple Silicon M4, HELIOS 2.0 parsed live high-speed wind streams \(674 km/s\), extracted active region shear, verified northward interplanetary orientation,) Tj T* 0 Tw .359581 Tw (and issued a green verdict; wall-clock time is dominated by HTTPS telemetry/imagery acquisition \(seconds\), while the four-tier inference itself runs in the) Tj T* 0 Tw (benchmarked ) Tj /F2 7.4 Tf (16.55 ms) Tj /F1 7.4 Tf (.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 435.7 cm
+1 0 0 1 52.8 425.5 cm
 Q
 q
-1 0 0 1 52.8 416.2 cm
+1 0 0 1 52.8 406 cm
 q
 BT 1 0 0 1 0 3 Tm 12.5 TL /F2 9.5 Tf .101961 .211765 .364706 rg (6. Conclusions & Open Data Availability) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 349 cm
+1 0 0 1 52.8 338.8 cm
 q
-BT 1 0 0 1 0 53.8 Tm 2.038235 Tw 10.2 TL /F1 7.4 Tf .101961 .12549 .172549 rg (Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for operational space weather and CME shock) Tj T* 0 Tw .6003 Tw (forecasting. By evaluating solar eruptions at the moment of launch \(24\22672h in advance\), HELIOS 2.0 achieves ) Tj /F2 7.4 Tf (78.0% accuracy) Tj /F1 7.4 Tf ( and ) Tj /F2 7.4 Tf (0.8737 ROC-AUC) Tj /F1 7.4 Tf  T* 0 Tw .670289 Tw (\(0.6611 Train CV-AUC\) in discriminating severe geomagnetic storms from harmless events, avoiding ) Tj /F2 7.4 Tf (78.9% of historical false alarms) Tj /F1 7.4 Tf ( \(60/76 avoided,) Tj T* 0 Tw 1.342837 Tw (73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology\) in out-of-distribution testing. The complete open-source codebase, trained neural checkpoints,) Tj T* 0 Tw 10.00685 Tw (interactive mission cockpit, and reproduction scripts are released under dual CC BY 4.0 / MIT licensing at:) Tj T* 0 Tw /F4 7.4 Tf (https://github.com/Zar-Manah/HELIOS-Space-Weather) Tj /F1 7.4 Tf ( \(Concept DOI: 10.5281/zenodo.24215019, Version DOI: 10.5281/zenodo.24260407\).) Tj T* ET
+BT 1 0 0 1 0 53.8 Tm 2.038235 Tw 10.2 TL /F1 7.4 Tf .101961 .12549 .172549 rg (Zar-Manah HELIOS 2.0 establishes an open, reproducible, and mathematically rigorous standard for operational space weather and CME shock) Tj T* 0 Tw .6003 Tw (forecasting. By evaluating solar eruptions at the moment of launch \(24\22672h in advance\), HELIOS 2.0 achieves ) Tj /F2 7.4 Tf (78.0% accuracy) Tj /F1 7.4 Tf ( and ) Tj /F2 7.4 Tf (0.8737 ROC-AUC) Tj /F1 7.4 Tf  T* 0 Tw .670289 Tw (\(0.6611 Train CV-AUC\) in discriminating severe geomagnetic storms from harmless events, avoiding ) Tj /F2 7.4 Tf (78.9% of historical false alarms) Tj /F1 7.4 Tf ( \(60/76 avoided,) Tj T* 0 Tw 1.342837 Tw (73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology\) in out-of-distribution testing. The complete open-source codebase, trained neural checkpoints,) Tj T* 0 Tw 10.00685 Tw (interactive mission cockpit, and reproduction scripts are released under dual CC BY 4.0 / MIT licensing at:) Tj T* 0 Tw /F4 7.4 Tf (https://github.com/Zar-Manah/HELIOS-Space-Weather) Tj /F1 7.4 Tf ( \(Concept DOI: 10.5281/zenodo.24215019, Version DOI: 10.5281/zenodo.24262095\).) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 342.5 cm
+1 0 0 1 52.8 332.3 cm
 Q
 q
-1 0 0 1 52.8 326.5 cm
+1 0 0 1 52.8 316.3 cm
 q
 .168627 .423529 .690196 rg
 BT 1 0 0 1 0 2.8 Tm /F2 8.2 Tf 11 TL (References) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 315.5 cm
+1 0 0 1 52.8 305.3 cm
 q
 BT 1 0 0 1 0 2.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Bothmer, V., & Schwenn, R. \(1998\). The structure of magnetic clouds. ) Tj /F4 6.8 Tf (Ann. Geophys.) Tj /F1 6.8 Tf (, 16\(1\), 1\22624.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 302.5 cm
+1 0 0 1 52.8 292.3 cm
 q
 BT 1 0 0 1 0 2.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Dungey, J. W. \(1961\). Interplanetary magnetic field and auroral zones. ) Tj /F4 6.8 Tf (Phys. Rev. Lett.) Tj /F1 6.8 Tf (, 6\(2\), 47\22648.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 289.5 cm
+1 0 0 1 52.8 279.3 cm
 q
 BT 1 0 0 1 0 2.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Gonzalez, W. D., et al. \(1994\). What is a geomagnetic storm? ) Tj /F4 6.8 Tf (J. Geophys. Res.) Tj /F1 6.8 Tf (, 99\(A4\), 5771\2265792.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 276.5 cm
+1 0 0 1 52.8 266.3 cm
 q
 BT 1 0 0 1 0 2.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Howard, A. G., et al. \(2019\). Searching for MobileNetV3. ) Tj /F4 6.8 Tf (IEEE/CVF ICCV) Tj /F1 6.8 Tf (, 1314\2261324.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 263.5 cm
+1 0 0 1 52.8 253.3 cm
 q
 BT 1 0 0 1 0 2.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Odstrcil, D. \(2003\). Modeling 3D solar wind structure by WSA-ENLIL. ) Tj /F4 6.8 Tf (Adv. Space Res.) Tj /F1 6.8 Tf (, 32\(4\), 497\226506.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 250.5 cm
+1 0 0 1 52.8 240.3 cm
 q
 BT 1 0 0 1 0 2.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Riley, P., et al. \(2018\). Forecasting CME arrival: CCor/ENLIL pipeline. ) Tj /F4 6.8 Tf (Space Weather) Tj /F1 6.8 Tf (, 16\(9\), 1245\2261260.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 237.5 cm
+1 0 0 1 52.8 227.3 cm
 q
 BT 1 0 0 1 0 2.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Romano, Y., Patterson, E., & Cand) Tj (\350) Tj (s, E. \(2019\). Conformalized quantile regression. ) Tj /F4 6.8 Tf (NeurIPS) Tj /F1 6.8 Tf (, 32.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 224.5 cm
+1 0 0 1 52.8 214.3 cm
 q
 BT 1 0 0 1 0 2.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Schrijver, C. J. \(2007\). Characteristic magnetic field patterns in large solar flares. ) Tj /F4 6.8 Tf (Astrophys. J.) Tj /F1 6.8 Tf (, 655\(2\), L117.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 211.5 cm
+1 0 0 1 52.8 201.3 cm
 q
 BT 1 0 0 1 0 2.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Vr) Tj (\232) Tj (nak, B., et al. \(2013\). Propagation of CMEs: Drag-based model. ) Tj /F4 6.8 Tf (Solar Phys.) Tj /F1 6.8 Tf (, 285\(1\), 295\226315.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 52.8 189.5 cm
+1 0 0 1 52.8 179.3 cm
 q
 BT 1 0 0 1 0 11.2 Tm 9 TL /F1 6.8 Tf .290196 .333333 .407843 rg (\177 Wold, A. M., Mays, M. L., Taktakishvili, A., et al. \(2018\). Verification of CME arrival predictions using WSA-ENLIL+Cone with CCMC Scoreboard. ) Tj /F4 6.8 Tf (J. Space Weather) Tj T* (Space Clim.) Tj /F1 6.8 Tf (, 8, A05. DOI: 10.1051/swsc/2018005.) Tj T* ET
 Q
@@ -1385,7 +1601,7 @@ BT 1 0 0 1 46 752 Tm (Zar-Manah HELIOS 2.0: Unified 4-Tier Space Weather Intelli
 .5 w
 n 46 746 m 566 746 l S
 BT 1 0 0 1 527.6375 28 Tm (Page 3 of 3) Tj T* ET
-BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24260407) Tj T* ET
+BT 1 0 0 1 46 28 Tm (Preprint \227 Independent Research \227 CC BY 4.0 / MIT \227 Concept DOI: 10.5281/zenodo.24215019 \227 Version DOI: 10.5281/zenodo.24262095) Tj T* ET
 .796078 .835294 .878431 RG
 .5 w
 n 46 38 m 566 38 l S
@@ -1413,12 +1629,12 @@ xref
 0001196439 00000 n 
 0001196849 00000 n 
 0001196924 00000 n 
-0001206508 00000 n 
-0001222971 00000 n 
+0001206641 00000 n 
+0001226909 00000 n 
 trailer
 <<
 /ID 
-[<9e8a4b0de75aed026de7909a1d8b296f><9e8a4b0de75aed026de7909a1d8b296f>]
+[<80da3322fe284d2e91682d93d3e291ea><80da3322fe284d2e91682d93d3e291ea>]
 % ReportLab generated PDF document -- digest (opensource)
 
 /Info 15 0 R
@@ -1426,5 +1642,5 @@ trailer
 /Size 20
 >>
 startxref
-1237052
+1241153
 %%EOF

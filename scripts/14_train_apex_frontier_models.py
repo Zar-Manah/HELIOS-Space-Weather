@@ -253,17 +253,19 @@ print(f"✅ Saved Model 2 package to {MODEL2_PKL}")
 
 # Manifest
 manifest = {
-    "version": "2.5.9",
+    "version": "2.5.19",
     "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     "framework": "Scikit-Learn Verified Physical Helio-Kinematic Models",
     "hardware": "Apple Silicon M4 GPU",
     "physical_features": PHYS_COLS,
     "model1_chirality_bz": {
         "cv_auc_train": float(cv1_auc),
+        "decision_threshold": float(best_th1),
         "test_metrics_ood": pkg1["metrics_ood"]
     },
     "model2_storm_severity": {
         "cv_auc_train": float(cv2_auc),
+        "decision_threshold": float(best_th2),
         "test_metrics_ood": pkg2["metrics_ood"]
     }
 }

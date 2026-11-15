@@ -1,6 +1,6 @@
 {
-  "version": "2.5.18",
-  "timestamp": "2026-11-13T15:01:25Z",
+  "version": "2.5.19",
+  "timestamp": "2026-11-15T21:14:22Z",
   "framework": "Scikit-Learn Verified Physical Helio-Kinematic Models",
   "hardware": "Apple Silicon M4 GPU",
   "physical_features": [
@@ -21,6 +21,7 @@
   ],
   "model1_chirality_bz": {
     "cv_auc_train": 0.47448897473040397,
+    "decision_threshold": 0.525,
     "test_metrics_ood": {
       "acc": 0.5824175824175825,
       "auc": 0.6497093023255814,
@@ -35,6 +36,7 @@
   },
   "model2_storm_severity": {
     "cv_auc_train": 0.661128526645768,
+    "decision_threshold": 0.30000000000000004,
     "test_metrics_ood": {
       "acc": 0.7802197802197802,
       "auc": 0.8736842105263158,

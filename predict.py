@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.18)
+Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.19)
 Author: Zar Manah
 
 Dual-Scale Operational Predictions:
@@ -157,10 +157,10 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
         if as_json:
             out = {
                 "system": "Zar-Manah HELIOS 2.0",
-                "version": "2.5.18",
+                "version": "2.5.19",
                 "doi": "10.5281/zenodo.24215019",
                 "concept_doi": "10.5281/zenodo.24215019",
-                "version_doi": "10.5281/zenodo.24260407",
+                "version_doi": "10.5281/zenodo.24262095",
                 "type": "cme_trajectory_assessment",
                 "status": "ALL-CLEAR / MISS",
                 "earth_impact": False,
@@ -396,10 +396,10 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.18",
+            "version": "2.5.19",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
-            "version_doi": "10.5281/zenodo.24260407",
+            "version_doi": "10.5281/zenodo.24262095",
             "type": "transit_cme_forecast",
             "speed_km_s": float(speed),
             "angular_width_deg": float(width),
@@ -688,8 +688,8 @@ def run_synthetic_sample(scenario="extreme", as_json=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.18)")
-    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.18)")
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.19)")
+    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.19)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
@@ -758,10 +758,10 @@ def main():
     if args.json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.18",
+            "version": "2.5.19",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
-            "version_doi": "10.5281/zenodo.24260407",
+            "version_doi": "10.5281/zenodo.24262095",
             "type": "tactical_dst_forecast",
             "data_source": data_source,
             "horizons": {}

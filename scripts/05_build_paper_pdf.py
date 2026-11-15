@@ -57,7 +57,7 @@ class NumberedCanvas(canvas.Canvas):
         # Running footer on all pages
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(566, 28, page_str)
-        self.drawString(46, 28, "Preprint — Independent Research — CC BY 4.0 / MIT — Concept DOI: 10.5281/zenodo.24215019 — Version DOI: 10.5281/zenodo.24260407")
+        self.drawString(46, 28, "Preprint — Independent Research — CC BY 4.0 / MIT — Concept DOI: 10.5281/zenodo.24215019 — Version DOI: 10.5281/zenodo.24262095")
         self.setStrokeColor(colors.HexColor("#cbd5e0"))
         self.setLineWidth(0.5)
         self.line(46, 38, 566, 38)
@@ -73,9 +73,9 @@ def build_pdf():
         topMargin=0.60 * inch,
         bottomMargin=0.60 * inch,
         pageCompression=0,
-        title="Zar-Manah HELIOS 2.0 (DOI: 10.5281/zenodo.24260407, Concept DOI: 10.5281/zenodo.24215019)",
+        title="Zar-Manah HELIOS 2.0 (DOI: 10.5281/zenodo.24262095, Concept DOI: 10.5281/zenodo.24215019)",
         author="Zar Manah",
-        subject="DOI: 10.5281/zenodo.24260407 — Concept DOI: 10.5281/zenodo.24215019"
+        subject="DOI: 10.5281/zenodo.24262095 — Concept DOI: 10.5281/zenodo.24215019"
     )
 
     styles = getSampleStyleSheet()
@@ -223,7 +223,7 @@ def build_pdf():
         "<b>(2) Zar-Manah HELIOS-Transit (24–72h):</b> Trained on 240 verified Earth-impacting CMEs (331-event catalog; 91 Cycle 25 events held out) cross-matched between "
         "NASA SOHO/LASCO CDAW and the Richardson & Cane database with zero synthetic speed leakage. HELIOS achieves an arrival MAE of "
         "<b>10.63 hours and median of 7.45 hours (GBDT)</b> and 11.69 hours MAE (dynamic hybrid ensemble) on unseen Cycle 25 (91 clean CMEs), "
-        "on par with NASA's operational WSA-ENLIL MHD supercomputing benchmark (±10.40 hours at Earth) "
+        "statistically indistinguishable from NASA's operational WSA-ENLIL MHD supercomputing benchmark (±10.40 hours at Earth; difference +0.23 h = 0.20 standard errors) "
         "in sub-second execution (< 0.05 s) without numerical supercomputing overhead and with 92.3% unpadded conformal coverage (mean window 59.7 h). We provide open-source code, neural weights, and an automated "
         "NOAA SWPC real-time satellite CLI for immediate operational deployment."
     )
@@ -317,7 +317,7 @@ def build_pdf():
         ["Lead Time", "Architecture", "RMSE (nT)", "MAE (nT)", "R²", "TSS (≤ -50)", "HSS (≤ -50)", "Nominal 90% Cov.", "Mean Width"],
         ["+1 Hour", "Persistence Baseline", "4.57", "2.87", "0.950", "0.873", "0.873", "N/A", "N/A"],
         ["", "<b>Zar-Manah HELIOS-Point</b>", "<b>3.66</b>", "<b>2.36</b>", "<b>0.968</b>", "<b>0.894</b>", "<b>0.900</b>", "N/A", "N/A"],
-        ["", "Zar-Manah HELIOS Bi-LSTM", "4.32", "2.54", "0.955", "0.880", "0.879", "N/A", "N/A"],
+        ["", "Zar-Manah HELIOS Bi-LSTM", "4.32", "2.54", "0.955", "0.958", "0.894", "N/A", "N/A"],
         ["", "<b>Zar-Manah HELIOS-CQR (90%)</b>", "—", "—", "—", "—", "—", "<b>89.26%</b> (86.4% raw)", "<b>10.02 nT</b>"],
         ["+2 Hours", "Persistence Baseline", "7.34", "4.66", "0.870", "0.796", "0.796", "N/A", "N/A"],
         ["", "<b>Zar-Manah HELIOS-Point</b>", "<b>5.93</b>", "<b>3.96</b>", "<b>0.915</b>", "<b>0.827</b>", "<b>0.839</b>", "N/A", "N/A"],
@@ -378,24 +378,25 @@ def build_pdf():
         "To provide advance planetary warning prior to L1 detection, Zar-Manah HELIOS incorporates <b>Zar-Manah HELIOS-Transit</b>. "
         "By implementing a bifurcated Mixture-of-Kinematics (MoKTransitNN) neural architecture coupled with closed-form hypersonic weight surgery, "
         "the dynamic hybrid ensemble disentangles hypersonic bow-shock deceleration from ambient solar wind entrainment. "
-        "On unseen Solar Cycle 25, Zar-Manah HELIOS achieves arrival error competitive with numerical MHD operational standards (±10.63h vs ±10.40h at Earth), executing in sub-second latency on edge hardware."
+        "On unseen Solar Cycle 25, Zar-Manah HELIOS achieves an arrival error within +0.23 h (0.20 standard errors) of NASA's WSA-ENLIL Earth benchmark (±10.40h), executing in sub-second latency on edge hardware."
     )
     story.append(Paragraph(p_transit_desc, body_style))
 
     table_transit_data = [
-        ["Regime / Benchmark", "Model / Architecture", "Arrival MAE (h)", "Arrival RMSE (h)", "90% Conformal Cov.", "Computational Cost"],
-        ["<b>Fast CMEs (≥1000 km/s)</b>", "Baseline Drag Prior Proxy", "±18.40", "22.10", "N/A", "0.05 s"],
-        ["", "Analytical Drag-Based Model (Fast)", "±16.57", "20.80", "N/A", "0.05 s"],
-        ["", "NASA WSA-ENLIL (STEREO-A, Wold 2018)", "±9.20", "12.40", "N/A", "Hours on HPC Cluster"],
-        ["", "<b>HELIOS Dynamic Ensemble (Fast)</b>", "<b>±15.37</b>", "<b>18.42</b>", "<b>75.0%</b>", "<b>< 0.05 s (Local Apple M4)</b>"],
-        ["<b>Global (All CMEs, Cycle 25)</b>", "Baseline Drag Prior Proxy (DBM-prior)", "±28.95", "33.00", "N/A", "0.05 s"],
-        ["", "Analytical Drag-Based Model (Vršnak 2013)", "±12.30", "16.10", "N/A", "0.05 s"],
-        ["", "NASA WSA-ENLIL Operational Std (Earth)", "±10.40", "13.20", "N/A", "Hours on HPC Cluster"],
-        ["", "<b>Zar-Manah HELIOS Single GBDT</b>", "<b>±10.63</b>", "<b>15.29</b>", "<b>92.3%</b>", "<b>< 0.01 s (Local Apple M4)</b>"],
-        ["", "<b>Zar-Manah HELIOS Dynamic Ensemble</b>", "<b>±11.69</b>", "<b>15.68</b>", "<b>92.3%</b>", "<b>< 0.05 s (Local Apple M4)</b>"]
+        ["Scope", "Model / Architecture", "Arrival MAE (h)", "Arrival RMSE (h)", "Median (h)", "90% Conformal Cov.", "Computational Cost"],
+        ["<b>Global (91 CMEs)</b>", "Baseline Drag Prior Proxy (DBM-prior)", "28.95", "33.00", "29.35", "N/A", "0.05 s"],
+        ["", "Analytical Drag-Based Model (Vršnak 2013)", "12.30", "16.77", "8.83", "N/A", "< 0.01 s"],
+        ["", "NASA WSA-ENLIL, Earth view (Wold 2018, Cycle 24 lit.)", "10.40", "13.20", "—", "N/A", "Hours on HPC Cluster"],
+        ["", "NASA WSA-ENLIL, STEREO-A view (Wold 2018, Cycle 24 lit.)", "9.20", "12.40", "—", "N/A", "Hours on HPC Cluster"],
+        ["", "<b>Zar-Manah HELIOS Single GBDT</b>", "<b>10.63</b>", "<b>15.29</b>", "<b>7.45</b>", "<b>92.3%</b>", "<b>< 0.01 s (Local Apple M4)</b>"],
+        ["", "<b>Zar-Manah HELIOS Dynamic Ensemble</b>", "11.69", "15.68", "8.34", "<b>92.3%</b>", "<b>< 0.05 s (Local Apple M4)</b>"],
+        ["<b>Fast (n=14)</b>", "Baseline Drag Prior Proxy", "44.76", "48.78", "47.15", "N/A", "0.05 s"],
+        ["", "Analytical Drag-Based Model (Vršnak 2013)", "16.57", "21.60", "13.87", "N/A", "< 0.01 s"],
+        ["", "<b>Zar-Manah HELIOS Single GBDT</b>", "<b>13.55</b>", "<b>20.12</b>", "<b>9.41</b>", "85.7%", "< 0.01 s (Local Apple M4)"],
+        ["", "Zar-Manah HELIOS Dynamic Ensemble", "15.37", "19.86", "14.19", "85.7%", "< 0.05 s (Local Apple M4)"]
     ]
 
-    t_transit = Table(table_transit_data, colWidths=[1.8*inch, 2.0*inch, 0.9*inch, 0.9*inch, 1.0*inch, 1.2*inch])
+    t_transit = Table(table_transit_data, colWidths=[1.0*inch, 1.95*inch, 0.72*inch, 0.72*inch, 0.65*inch, 0.85*inch, 1.05*inch])
     t_transit.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#2b6cb0")),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
@@ -414,7 +415,7 @@ def build_pdf():
     fig4_img = os.path.join(FIGURES_DIR, "fig4_cme_transit_benchmark.png")
     if os.path.exists(fig4_img):
         story.append(Image(fig4_img, width=6.6*inch, height=4.1*inch))
-        story.append(Paragraph("<b>Figure 4:</b> (A) Predicted vs actual 24–72h CME transit duration on unseen Solar Cycle 25. (B) Operational MAE benchmark across CME speed regimes, establishing that Zar-Manah HELIOS Single GBDT (±10.63h MAE, ±7.45h median) achieves accuracy on par with NASA WSA-ENLIL (±10.40h at Earth). (C) Calibrated conformal prediction bands (92.3% coverage, mean window 59.7 h). (D) 24–72h ahead planetary shock Dst severity prediction.", caption_style))
+        story.append(Paragraph("<b>Figure 4:</b> (A) Predicted vs actual 24–72h CME transit duration on unseen Solar Cycle 25. (B) Operational MAE benchmark across CME speed regimes, establishing that Zar-Manah HELIOS Single GBDT (±10.63h MAE, ±7.45h median) lands within +0.23 h (0.20 standard errors) of NASA WSA-ENLIL (±10.40h at Earth, Cycle 24 literature value). (C) Calibrated conformal prediction bands (92.3% coverage, mean window 59.7 h). (D) 24–72h ahead planetary shock Dst severity prediction.", caption_style))
 
     story.append(PageBreak())
 
@@ -476,7 +477,7 @@ def build_pdf():
     p_avail = (
         "<b>Data and Code Availability:</b> All source code, preprocessing pipelines, model checkpoints, the interactive mission cockpit "
         "(<code>Zar-Manah_HELIOS.html</code>), and publication figures are open-sourced under dual CC BY 4.0 / MIT licensing at: "
-        "<b>https://github.com/Zar-Manah/HELIOS-Space-Weather</b> (Concept DOI: <b>10.5281/zenodo.24215019</b>, Version DOI: <b>10.5281/zenodo.24260407</b>). "
+        "<b>https://github.com/Zar-Manah/HELIOS-Space-Weather</b> (Concept DOI: <b>10.5281/zenodo.24215019</b>, Version DOI: <b>10.5281/zenodo.24262095</b>). "
         "Raw solar wind data are curated by NASA SPDF OMNIWeb (https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/)."
     )
     story.append(Paragraph(p_avail, body_style))

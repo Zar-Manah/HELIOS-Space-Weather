@@ -139,7 +139,16 @@ def run_battery():
     for ar in audit_results:
         print(f"  • {ar['name']:55s} | {ar['status']:<25s} | ΔTransit: {ar['transit_err']:4.1f}h | P_sev: {ar['p_storm']*100:.1f}%, P_south: {ar['p_bz']*100:.1f}%")
     print(f"\n   Concordance: {concordant_count}/{len(audit_results)} events fully matched ground truth classification.")
-    print("   Note: Moderate/Quiet events show elevated baseline P_sev (~0.60–0.72) when run headless without local raw magnetogram images.")
+    print("   Note: Gear 1 abstains inside the 0.40 < P(south) < 0.60 band, so Bz is reported as INDETERMINATE for any event in that range.")
+    battery_path = os.path.join(BASE_DIR, "results", "verification_battery.json")
+    with open(battery_path, "w") as f:
+        json.dump({
+            "n_events": len(audit_results),
+            "concordance_full": concordant_count,
+            "bz_abstention_band": [0.40, 0.60],
+            "events": audit_results,
+        }, f, indent=2)
+    print(f"   Artifact: results/verification_battery.json")
 
     # -------------------------------------------------------------
     # PHASE 3: LIVE BENCHMARK WITH CURRENT SATELLITES

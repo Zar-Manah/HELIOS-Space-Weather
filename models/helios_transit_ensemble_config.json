@@ -1,6 +1,6 @@
 {
   "architecture": "MoKTransitNN + GBDT Dynamic Regime",
-  "version": "2.5.18",
+  "version": "2.5.19",
   "w_base": 0.45,
   "w_fast_boost": 0.45,
   "transition_v0": 950.0,
@@ -12,10 +12,83 @@
   "fast_cme_mae": 15.37,
   "global_rmse": 15.68,
   "r2_score": 0.278,
-  "ensemble_raw_quantile_coverage_pct": 82.4,
-  "ensemble_raw_quantile_mean_window_hours": 37.9,
+  "ensemble_raw_quantile_coverage_pct": 82.42,
+  "ensemble_raw_quantile_mean_window_hours": 59.7,
   "benchmark_vrsnak_dbm": 12.3,
   "benchmark_nasa_enlil_earth": 10.4,
-  "benchmark_nasa_enlil_stereo_a": 9.2,
-  "benchmark_dbm_prior": 29.0
+  "benchmark_nasa_enlil_stereo_a_global": 9.2,
+  "benchmark_dbm_prior": 29.0,
+  "metrics": {
+    "global": {
+      "dbm_prior": {
+        "mae": 28.95,
+        "rmse": 33.0,
+        "median": 29.35,
+        "n": 91
+      },
+      "vrsnak_dbm": {
+        "mae": 12.3,
+        "rmse": 16.77,
+        "median": 8.83,
+        "n": 91
+      },
+      "gbdt": {
+        "mae": 10.63,
+        "rmse": 15.29,
+        "median": 7.45,
+        "n": 91
+      },
+      "mok": {
+        "mae": 14.48,
+        "rmse": 18.09,
+        "median": 12.28,
+        "n": 91
+      },
+      "ensemble": {
+        "mae": 11.69,
+        "rmse": 15.68,
+        "median": 8.34,
+        "n": 91
+      }
+    },
+    "fast": {
+      "dbm_prior": {
+        "mae": 44.76,
+        "rmse": 48.78,
+        "median": 47.15,
+        "n": 14
+      },
+      "vrsnak_dbm": {
+        "mae": 16.57,
+        "rmse": 21.6,
+        "median": 13.87,
+        "n": 14
+      },
+      "gbdt": {
+        "mae": 13.55,
+        "rmse": 20.12,
+        "median": 9.41,
+        "n": 14
+      },
+      "mok": {
+        "mae": 15.75,
+        "rmse": 20.07,
+        "median": 14.76,
+        "n": 14
+      },
+      "ensemble": {
+        "mae": 15.37,
+        "rmse": 19.86,
+        "median": 14.19,
+        "n": 14
+      }
+    },
+    "coverage_pct": {
+      "global_raw": 82.42,
+      "global_conformal": 92.31,
+      "fast_raw": 78.57,
+      "fast_conformal": 85.71,
+      "mean_window_hours": 59.72
+    }
+  }
 }
