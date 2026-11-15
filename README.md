@@ -3,11 +3,12 @@
 > **An Open-Source Space Weather Architecture on Consumer Hardware (~18ms) — Predicting CME Arrival Times and Geomagnetic Storm Severity from Live Satellite Telemetry.**
 
 [![License: MIT / CC BY 4.0](https://img.shields.io/badge/License-MIT%20%2F%20CC%20BY%204.0-yellow.svg)](LICENSE)
-[![Release: v2.5.14](https://img.shields.io/badge/Release-v2.5.14-brightgreen.svg)](https://github.com/Zar-Manah/HELIOS-Space-Weather/releases/tag/v2.5.14)
+[![Release: v2.5.15](https://img.shields.io/badge/Release-v2.5.15-brightgreen.svg)](https://github.com/Zar-Manah/HELIOS-Space-Weather/releases/tag/v2.5.15)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
 [![Zenodo Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24215019-blue.svg)](https://doi.org/10.5281/zenodo.24215019)
+[![Zenodo v2.5.15 DOI](https://img.shields.io/badge/v2.5.15%20DOI-10.5281%2Fzenodo.24227364-green.svg)](https://doi.org/10.5281/zenodo.24227364)
 [![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
 
 ---
@@ -201,9 +202,9 @@ If you utilize HELIOS 2.0 in academic research, space operations, or utility gri
   journal={Zenodo Preprints},
   year={2026},
   publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24215019},
-  url={https://doi.org/10.5281/zenodo.24215019},
-  note={Concept DOI: 10.5281/zenodo.24215019}
+  doi={10.5281/zenodo.24227364},
+  url={https://doi.org/10.5281/zenodo.24227364},
+  note={Version DOI: 10.5281/zenodo.24227364 (v2.5.15). Concept DOI: 10.5281/zenodo.24215019}
 }
 ```
 
@@ -226,5 +227,5 @@ HELIOS 2.0 ingests and builds upon public open-science data from international m
 ## 📄 License & Open Science
 
 * **Software & Code:** Distributed under the **MIT License**.
-* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (Concept DOI: [10.5281/zenodo.24215019](https://doi.org/10.5281/zenodo.24215019)).
+* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (Concept DOI: [10.5281/zenodo.24215019](https://doi.org/10.5281/zenodo.24215019); v2.5.15 DOI: [10.5281/zenodo.24227364](https://doi.org/10.5281/zenodo.24227364)).
 * Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah**.
