@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.14)
+Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.15)
 Author: Zar Manah
 
 Dual-Scale Operational Predictions:
@@ -79,6 +79,9 @@ def load_tactical_models():
 
 
 def predict_tactical_storm(features_df, models, metrics):
+    # Accept raw feature tables (extra columns / datetime) by projecting onto the
+    # exact training schema; LightGBM cannot ingest mixed dtypes.
+    features_df = features_df[FEATURE_COLS]
     results = {}
 
     # Extract multi-hour integrated reconnection drivers
@@ -144,7 +147,7 @@ def check_cme_earth_trajectory(lat, lon, width):
     return is_impact, delta_alpha, half_width
 
 
-def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0.0, as_json=False):
+def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0.0, as_json=False, launch_time=None):
     # Enforce physical constraints
     check_cme_physical_bounds(speed=speed, lat=lat, lon=lon, width=width)
 
@@ -154,7 +157,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
         if as_json:
             out = {
                 "system": "Zar-Manah HELIOS 2.0",
-                "version": "2.5.14",
+                "version": "2.5.15",
                 "doi": "10.5281/zenodo.24215019",
                 "concept_doi": "10.5281/zenodo.24215019",
                 "version_doi": "10.5281/zenodo.24215019",
@@ -192,7 +195,10 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     t_prior = L_AU / (v_eff * 3600.0)
 
     now = datetime.now(timezone.utc).replace(tzinfo=None)
-    cycle_phase = (now.year - 1996) % 11 / 11.0
+    # Historical epochs must use their own solar-cycle phase and launch date;
+    # live forecasts fall back to "now".
+    ref_time = launch_time or now
+    cycle_phase = (ref_time.year - 1996) % 11 / 11.0
     sin_c = np.sin(2 * np.pi * cycle_phase)
     cos_c = np.cos(2 * np.pi * cycle_phase)
 
@@ -297,7 +303,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     low_h = max(14.0, float(q_low_tree))
     high_h = max(low_h + 4.0, float(q_high_tree))
 
-    arrival_dt = now + timedelta(hours=pred_h)
+    arrival_dt = ref_time + timedelta(hours=pred_h)
 
     # 6. APEX 24–72h Solar Evaluation (Gear 1: Southward Bz & Gear 2: Severe Storm Veto)
     apex_storm_path = os.path.join(MODELS_DIR, "helios_storm_apex.pkl")
@@ -390,7 +396,7 @@ def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0
     if as_json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.14",
+            "version": "2.5.15",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
             "version_doi": "10.5281/zenodo.24215019",
@@ -682,8 +688,8 @@ def run_synthetic_sample(scenario="extreme", as_json=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.14)")
-    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.14)")
+    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.15)")
+    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.15)")
     parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
     parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
     parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
@@ -752,7 +758,7 @@ def main():
     if args.json:
         out = {
             "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.14",
+            "version": "2.5.15",
             "doi": "10.5281/zenodo.24215019",
             "concept_doi": "10.5281/zenodo.24215019",
             "version_doi": "10.5281/zenodo.24215019",

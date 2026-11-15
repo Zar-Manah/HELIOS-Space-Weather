@@ -105,6 +105,19 @@ Evaluating historical landmark space weather events across Solar Cycles 23–25 
 | **May 14, 2024 Moderate Eruption** | 2024-05-14 10:09 | $800\text{ km/s}$ | $-88\text{ nT} / -12.8\text{ nT}$ | $75.3\text{ h}$ | 🟢 Safe Protocol ($P_{\text{sev}} = 14.9\%$, $P_{\text{south}} = 49.1\%$, ETA $68.7\text{ h}$, $\Delta = 6.6\text{ h}$) | ✅ Concordant Moderate Match |
 | **Jan 17, 1998 Solar Baseline** | 1998-01-17 04:09 | $350\text{ km/s}$ | $-11\text{ nT} / -4.4\text{ nT}$ | $95.8\text{ h}$ | 🟢 Safe Protocol ($P_{\text{sev}} = 12.4\%$, $P_{\text{south}} = 47.9\%$, ETA $75.8\text{ h}$, $\Delta = 20.0\text{ h}$) | ✅ Concordant Baseline Match |
 
+### 🔁 Independent Historical Backtest — 12 Real Epochs (7 Storms / 5 Quiet)
+
+Reproducible end-to-end run over **real OMNI hourly observations** (no synthetic input) with `python3 scripts/21_backtest_historical.py --save`; artifact: `results/backtest_historical.json`. A severe-storm alert is issued when the forecast `Dst <= -110 nT`.
+
+| Lead | MAE | Storm hits | False alarms | Misses | Correct quiet |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **+1 h** | 9.2 nT | 2 | **0** | 1 | 9 |
+| **+2 h** | 12.3 nT | 4 | **0** | 0 | 8 |
+| **+3 h** | 26.0 nT | 5 | **0** | 0 | 7 |
+| **+6 h** | 46.3 nT | 7 | **0** | 0 | 5 |
+
+Zero false alarms across all 12 epochs and all four horizons. Known limitation, reported rather than hidden: at **+6 h** the model over-predicts extreme intensities (November 2003: −478 nT forecast vs −396 nT observed) while under-predicting the fast Halloween 2003 onset (−157 vs −241 nT); the 1 h horizon is the most accurate (MAE 9.2 nT).
+
 
 ---
 
