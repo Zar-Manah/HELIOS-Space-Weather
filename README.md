@@ -226,6 +226,6 @@ HELIOS 2.0 ingests and builds upon public open-science data from international m
 
 ## 📄 License & Open Science
 
-* **Software & Code:** Distributed under the **MIT License**.
-* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** via CERN Zenodo (Concept DOI: [10.5281/zenodo.24215019](https://doi.org/10.5281/zenodo.24215019); v2.5.15 DOI: [10.5281/zenodo.24227364](https://doi.org/10.5281/zenodo.24227364)).
+* **Software & Code:** Distributed under the **MIT License** ([`LICENSE`](LICENSE)).
+* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** ([`LICENSE-DATA.md`](LICENSE-DATA.md)) via CERN Zenodo (Concept DOI: [10.5281/zenodo.24215019](https://doi.org/10.5281/zenodo.24215019); v2.5.15 DOI: [10.5281/zenodo.24227364](https://doi.org/10.5281/zenodo.24227364)).
 * Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah**.
