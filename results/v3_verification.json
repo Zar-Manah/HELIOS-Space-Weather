@@ -1,0 +1,300 @@
+{
+  "n_pass": 16,
+  "n_total": 20,
+  "n_expected_fail": 4,
+  "n_unexpected_fail": 0,
+  "gates": [
+    {
+      "gate": "G1.1 cme_accel is the true CDAW acceleration (not 20R)",
+      "pass": true,
+      "detail": {
+        "corr_speed_accel_true": -0.03443971451408646,
+        "legacy_bug_value": 0.8069,
+        "corr_speed_v20r": 0.44920710110612494
+      }
+    },
+    {
+      "gate": "G1.2 every merged feature timestamp <= t_forecast",
+      "pass": true,
+      "detail": {
+        "violations": 0,
+        "n_merged": 41756
+      }
+    },
+    {
+      "gate": "G1.3 zero synthetic magnetic proxies in v3 code",
+      "pass": true,
+      "detail": {
+        "hits": []
+      }
+    },
+    {
+      "gate": "G1.4 zero hardcoded fallback constants in predict.py",
+      "pass": true,
+      "detail": {
+        "found": []
+      }
+    },
+    {
+      "gate": "G1.5 real JSOC SHARP invariants ingested",
+      "pass": true,
+      "detail": {
+        "n_sharp": 3758,
+        "usflux_median": 2.214858e+22,
+        "sharp_coverage_post2010_ar": 0.3820658804392029,
+        "n_post2010_ar": 9836
+      }
+    },
+    {
+      "gate": "G2.1 Impact v3 PR-AUC >= 1.5x the halo rule (same labels/split)",
+      "pass": true,
+      "detail": {
+        "v3_pr_auc": 0.2421075924699933,
+        "halo_pr_auc": 0.09853814551492188,
+        "ratio": 2.4569935957778943,
+        "v3_precision": 0.20833333333333334,
+        "halo_precision": 0.20141342756183744,
+        "v3_recall": 0.47619047619047616,
+        "halo_recall": 0.4523809523809524,
+        "v3_far": 0.024863685932388222,
+        "halo_far": 0.024645583424209378,
+        "v3_p_at_r70": 0.10814094775212636,
+        "halo_p_at_r70": 0.024073573167433054,
+        "evaluated_model": "impact_blend",
+        "artifact": "results/v3_impact_benchmark.json:model_blend"
+      }
+    },
+    {
+      "gate": "G2.1b Impact v3 dominates the halo rule at a matched false-alarm budget",
+      "pass": true,
+      "detail": {
+        "far_halo": 0.024645583424209378,
+        "far_model": 0.024863685932388222,
+        "delta_far": 0.00021810250817884402,
+        "threshold": 0.1635225227060517,
+        "precision": 0.20833333333333334,
+        "recall": 0.47619047619047616,
+        "tp": 60,
+        "halo_precision": 0.20141342756183744,
+        "halo_recall": 0.4523809523809524,
+        "evaluated_model": "impact_blend",
+        "artifact": "results/v3_impact_benchmark.json:model_blend"
+      }
+    },
+    {
+      "gate": "G2.2 Impact v3 PR-AUC beats the v2 no-source classifier",
+      "pass": true,
+      "detail": {
+        "v3_pr_auc": 0.2421075924699933,
+        "v2_pr_auc": 0.0748,
+        "roc_auc": 0.8936577175399422,
+        "brier_skill": 0.09954965893844381,
+        "evaluated_model": "impact_blend",
+        "artifact": "results/v3_impact_benchmark.json:model_blend"
+      }
+    },
+    {
+      "gate": "G2.3 source geometry carries real signal",
+      "pass": true,
+      "detail": {
+        "with_source": 0.2421075924699933,
+        "without_source": 0.17929228450424572,
+        "evaluated_model": "impact_blend",
+        "artifact": "results/v3_impact_benchmark.json:model_blend"
+      }
+    },
+    {
+      "gate": "G2.4 Transit v3 (served, n=126) beats the GBDT v2 reference (10.63 h MAE)",
+      "pass": false,
+      "detail": {
+        "mae": 15.471326752903948,
+        "gbdt_v2": 10.63,
+        "rmse": 20.746867548029662,
+        "median_ae": 12.249883312747098,
+        "delta_vs_v2_h": 4.841326752903948,
+        "served_model_same91_mae_h": 11.579221493303312,
+        "bench_model_same91_mae_h": 10.533627597382244,
+        "comparison_note": "GBDT v2's 10.63 h was measured on the 91-event benchmark; this gate certifies the full served cohort (n=126) as v3.3 P0.1.2 requires",
+        "evaluated_model": "served production model (transit_v3.joblib)",
+        "artifact": "results/v3_transit_benchmark.json",
+        "mode": "full",
+        "n": 126
+      },
+      "expected_failure": true,
+      "expected_failure_reason": "Pre-registered non-win: the 10.63 h reference is defined on the 91-event bench subset, where the served model reaches 11.5792 h; on the full 126-event cohort it is 15.4713 h. Both cells are reported in the paper (\u00a74.1-4.2), not redefined."
+    },
+    {
+      "gate": "G2.5 Transit v3 challenges WSA-ENLIL (10.4 h MAE, 91-event bench subset)",
+      "pass": false,
+      "detail": {
+        "mae": 10.533627597382244,
+        "enlil": 10.4,
+        "evaluated_model": "benchmark model (transit_v3_bench.joblib)",
+        "artifact": "results/v3_transit_benchmark_bench.json",
+        "mode": "bench",
+        "not_served": true,
+        "served_model_mae_same91_h": 11.579221493303312
+      },
+      "expected_failure": true,
+      "expected_failure_reason": "Pre-registered non-win by 0.13 h: 10.5336 h against the 10.4 h WSA-ENLIL reference on the same 91 events. Reported as a miss in the paper, not rounded away."
+    },
+    {
+      "gate": "G2.6 Transit v3 beats the static Vrsnak DBM",
+      "pass": true,
+      "detail": {
+        "v3": 15.471326752903948,
+        "dbm_fitted": 17.614018890355002,
+        "dbm_legacy_w400_g1e-7": 26.066844437074685,
+        "persistence_mean": 17.260793905869665,
+        "n": 126,
+        "evaluated_model": "served production model (transit_v3.joblib)",
+        "artifact": "results/v3_transit_benchmark.json",
+        "mode": "full"
+      }
+    },
+    {
+      "gate": "G2.7 conformal window < 35 h at >= 88 % coverage",
+      "pass": false,
+      "detail": {
+        "width_h": 74.04189215198109,
+        "coverage": 0.9206349206349206,
+        "band_mode": "cqr",
+        "oof_band": {
+          "cqr": {
+            "coverage": 0.8975,
+            "width_h": 71.41139223636046
+          },
+          "abs_conformal": {
+            "coverage": 0.8975,
+            "width_h": 74.48300197378059
+          },
+          "abs_conformal_normalized": {
+            "coverage": 0.8975,
+            "width_h": 74.48300197378057
+          }
+        },
+        "legacy_width_h": 59.72,
+        "n": 126,
+        "information_ceiling_width_h": 69.31261077350318,
+        "information_ceiling_width_asym_h": 64.62501313143652,
+        "gate_information_infeasible": true,
+        "evaluated_model": "served production model (transit_v3.joblib)",
+        "artifact": "results/v3_transit_benchmark.json",
+        "mode": "full"
+      },
+      "expected_failure": true,
+      "expected_failure_reason": "Information-infeasible: the tightest static symmetric band that reaches 88 % on this cohort, fitted on the test labels themselves, is 69.3126 h, above the 35 h target. Reported as a ceiling in \u00a74.3."
+    },
+    {
+      "gate": "G2.8 Apex Brier skill > 0.25 at Dst <= -100",
+      "pass": false,
+      "detail": {
+        "bss": 0.07678182483608731,
+        "roc_auc": 0.6979895104895104,
+        "test_pos": 22,
+        "test_n": 126,
+        "model_selected_by_oof": "conformal_empirical",
+        "bss_oof": 0.039016759483030294,
+        "oof_n_pos": 93,
+        "oof_bss_candidates": {
+          "gaussian_tail": -0.011063793711331371,
+          "gaussian_tail_conditional": 0.0028096083339799183,
+          "conformal_empirical": 0.039016759483030294,
+          "direct_classifier": -0.41500890337151075,
+          "logistic_regularized": -0.2585512017845504,
+          "compact_logit": 0.004947757444486056,
+          "blend_logit_tail": 0.029960060963709734,
+          "climatology": 0.0
+        },
+        "evaluated_model": "served apex_v3.joblib",
+        "artifact": "results/v3_apex_benchmark.json:p_dst_le_100",
+        "information_ceiling_bss": 0.14999289897745227,
+        "gate_information_infeasible": true
+      },
+      "expected_failure": true,
+      "expected_failure_reason": "Information-infeasible: the oracle recalibration ceiling is 0.1500 BSS, below the 0.25 target. Reported as a ceiling in \u00a74.4."
+    },
+    {
+      "gate": "G2.9 Tactical +1h beats HELIOS v2.5 (3.66 nT RMSE)",
+      "pass": true,
+      "detail": {
+        "rmse_1h": 3.50144154464676,
+        "v2_5": 3.66,
+        "persistence": 4.6171848326758615,
+        "ode": 4.009896575211537
+      }
+    },
+    {
+      "gate": "G2.10 Tactical +6h beats HELIOS v2.5 (10.91 nT RMSE)",
+      "pass": true,
+      "detail": {
+        "rmse_6h": 10.605655683616867,
+        "v2_5": 10.91,
+        "persistence": 13.207308232843884,
+        "ode": 11.963559237750163
+      }
+    },
+    {
+      "gate": "G2.11 Tactical beats persistence and the raw ODE on storm hours (+1h)",
+      "pass": true,
+      "detail": {
+        "storm50_rmse_model": 8.561930972210876,
+        "persistence": 12.859451555046114,
+        "ode": 10.35664930836511,
+        "aci_coverage": 0.8998913736917427,
+        "aci_coverage_storm50": 0.8982889733840305,
+        "aci_coverage_storm100": 0.8031746031746032,
+        "aci_coverage_storm50_+6h": 0.8003802281368821,
+        "static_coverage_storm50_equivalent": 0.8977533320689001
+      }
+    },
+    {
+      "gate": "G2.12 calibrated 3DCORE-lite Bz_min extrapolation beats persistence at 20 % MO completion",
+      "pass": true,
+      "detail": {
+        "n": 77,
+        "mae_bzmin_rest": 6.0402874823352,
+        "mae_bzmin_calibrated": 3.3537595851219546,
+        "mae_bzmin_persistence": 4.21,
+        "skill_calibrated": 0.20338252134870438,
+        "mean_corr_bz_rest": 0.11127588567209722
+      }
+    },
+    {
+      "gate": "G3.1 15-case historical battery",
+      "pass": true,
+      "detail": {
+        "n_events": 15,
+        "hit_n": 10,
+        "hit_alert_rate": 0.9,
+        "hit_mean_p_impact": 0.4656223126489709,
+        "quiet_n": 5,
+        "quiet_false_alarm_rate": 0.0,
+        "transit_mae_h": 7.411214537962888,
+        "dst_mae": 43.72430419921875
+      }
+    },
+    {
+      "gate": "G4.1 SHA-256 manifest written for every model",
+      "pass": true,
+      "detail": {
+        "n_models": 14,
+        "path": "models/helios_models_checksums.json"
+      }
+    }
+  ],
+  "informative": {
+    "impact_model_full_not_served": {
+      "pr_auc": 0.21850258681963627,
+      "roc_auc": 0.8930795727960396,
+      "precision": 0.20606060606060606,
+      "recall": 0.5396825396825397,
+      "far": 0.02857142857142857,
+      "precision_at_recall_70": 0.10148232611174458,
+      "brier_skill": 0.0740183452569485,
+      "served_model": "impact_blend",
+      "certifies": false,
+      "note": "informative only; G2.1-G2.3 certify the served model"
+    }
+  }
+}

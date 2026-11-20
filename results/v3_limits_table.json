@@ -1,0 +1,78 @@
+{
+  "note": "All four cells are reported. Neither model is retrained; the cohort rules are those of v3_06_train_transit.py.",
+  "served_artifact": "models/v3/transit_v3.joblib",
+  "bench_artifact": "models/v3/transit_v3_bench.joblib",
+  "bench_is_served": false,
+  "cohorts": {
+    "full_n126": 126,
+    "frozen_1to1_n91": 91
+  },
+  "cells": {
+    "full_n126|served_transit_v3": {
+      "n": 126,
+      "mae_h": 15.471326752903948,
+      "rmse_h": 20.746867548029662,
+      "median_ae_h": 12.249883312747098,
+      "bias_h": -1.4743990175649833,
+      "coverage90": 0.9206349206349206,
+      "mean_width_h": 74.04189215198109,
+      "fast_n": 33,
+      "fast_mae_h": 20.42922667286433
+    },
+    "full_n126|bench_transit_v3_bench": {
+      "n": 126,
+      "mae_h": 15.427546689134116,
+      "rmse_h": 20.882548617836928,
+      "median_ae_h": 11.03939552946483,
+      "bias_h": -1.0402061174044264,
+      "coverage90": 0.7857142857142857,
+      "mean_width_h": 49.288746753992086,
+      "fast_n": 33,
+      "fast_mae_h": 20.390884584562937
+    },
+    "frozen_1to1_n91|served_transit_v3": {
+      "n": 91,
+      "mae_h": 11.579221493303312,
+      "rmse_h": 16.128426346044886,
+      "median_ae_h": 8.848939975502248,
+      "bias_h": -1.459772502848889,
+      "coverage90": 0.9560439560439561,
+      "mean_width_h": 71.43927012651751,
+      "fast_n": 14,
+      "fast_mae_h": 15.698218338179393
+    },
+    "frozen_1to1_n91|bench_transit_v3_bench": {
+      "n": 91,
+      "mae_h": 10.533627597382244,
+      "rmse_h": 14.727172194859744,
+      "median_ae_h": 6.544039896679138,
+      "bias_h": -1.405519740367346,
+      "coverage90": 0.8791208791208791,
+      "mean_width_h": 49.18637605384725,
+      "fast_n": 14,
+      "fast_mae_h": 13.66148101191642
+    }
+  },
+  "model_contrast_served_minus_bench": {
+    "full_n126": {
+      "delta_mae_h": 0.043780063769832435,
+      "ci95_h": [
+        -0.8367127909886849,
+        0.9117326982227881
+      ],
+      "p_two_sided": 0.9395,
+      "n": 126,
+      "n_boot": 4000
+    },
+    "frozen_1to1_n91": {
+      "delta_mae_h": 1.0455938959210662,
+      "ci95_h": [
+        0.09665918242306311,
+        1.9837361925454462
+      ],
+      "p_two_sided": 0.027,
+      "n": 91,
+      "n_boot": 4000
+    }
+  }
+}

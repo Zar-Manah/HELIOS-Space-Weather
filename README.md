@@ -1,258 +1,244 @@
-# ☀️ HELIOS 2.0: Multi-Gear Architecture for Real-Time Solar Storm Impact & CME Arrival Prediction
+# ☀️ HELIOS v3.4 — Where Remote CME Forecasting Stops
 
-> **An Open-Source Space Weather Architecture on Consumer Hardware (~18ms) — Predicting CME Arrival Times and Geomagnetic Storm Severity from Live Satellite Telemetry.**
+> **An empirical information-ceiling study of CME arrival-time forecasting across Solar Cycles 23–25, with a fully automatic five-stage pipeline as the test vehicle.**
 
 [![License: MIT / CC BY 4.0](https://img.shields.io/badge/License-MIT%20%2F%20CC%20BY%204.0-yellow.svg)](LICENSE)
-[![Release: v2.5.19](https://img.shields.io/badge/Release-v2.5.19-brightgreen.svg)](https://github.com/Zar-Manah/HELIOS-Space-Weather/releases/tag/v2.5.19)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![PyTorch MPS](https://img.shields.io/badge/PyTorch-Apple%20Silicon%20MPS-orange.svg)](https://pytorch.org/)
-[![LightGBM](https://img.shields.io/badge/LightGBM-CQR-green.svg)](https://lightgbm.readthedocs.io/)
-[![Zenodo Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.24215019-blue.svg)](https://doi.org/10.5281/zenodo.24215019)
-[![Zenodo v2.5.19 DOI](https://img.shields.io/badge/v2.5.19%20DOI-10.5281%2Fzenodo.24262095-green.svg)](https://doi.org/10.5281/zenodo.24262095)
-[![Made with Passion in Spain](https://img.shields.io/badge/Made%20with%20Passion%20in-Spain%20%F0%9F%87%AA%F0%9F%87%B8-red.svg)](https://github.com/Zar-Manah)
+[![Status: local study](https://img.shields.io/badge/status-local%20study%2C%20not%20deposited-lightgrey.svg)](#status)
 
 ---
 
-> ### 🌐 Interactive Mission Cockpit (Browser Companion Demo)
-> **Explore the real-time space weather mission cockpit directly in any web browser (zero installation):**
-> 📥 **Single File to Download & Open:** **[`Zar-Manah_HELIOS.html`](Zar-Manah_HELIOS.html)** (double-click to open in any web browser).
-> *• Companion visualization with live NOAA SWPC streaming & kinematic simulation • Zero dependencies.*
->
-> *For operational AI inference (full PyTorch/LightGBM 4-gear pipeline): Run:* `python3 predict.py --live` *or* `python3 scripts/helios_swiss_orchestrator.py`
+## 🖥️ Zero-Install Interactive Cockpit
+
+`Zar-Manah_HELIOS.html` is a single self-contained file: no build step, no server, no
+external library, no analytics. Open it in any modern browser (macOS, Windows, Linux,
+Android, iOS) and it runs.
+
+It has two modes, and they are not the same thing:
+
+| Mode | What runs | What it is |
+|---|---|---|
+| **Standalone** (default) | exact v3.4 physics backbone + live NOAA SWPC telemetry | physics-only: exact DBM transit (70-step bisection, same constants), Burton–O'Brien–McPherron ODE rollout, launch geometry and the deterministic `bz_risk_tag`. It does **not** run the 14 frozen `.joblib` artefacts. |
+| **FULL ML v3.4** (optional) | `predict.py` + the 14 frozen `.joblib` artefacts through a localhost bridge | the calibrated five-stage pipeline, same code path as the CLI: impact_blend, transit CQR, apex_v3, MO-Net + 3DCORE, tactical GBDT + ACI |
+
+To enable FULL ML on macOS, double-click `Zar-Manah_HELIOS.command`; it starts the bridge
+(`python3 server.py`, loopback only, `127.0.0.1:8787`), waits for it and opens the cockpit
+on `http://127.0.0.1:8787/`. On other systems run `python3 server.py` and open that URL.
+Without the bridge the cockpit stays in standalone mode and says so.
+
+What the standalone mode does **not** do: it does not reproduce the four-cell table, the
+CQR/ACI coverage or any benchmark number in this README. Those come from the CLI and the
+frozen artefacts. The cockpit states this in its header badge (`PHYSICS-ONLY`), in the
+banner and in the provenance panel.
+
+Telemetry: nine SWPC feeds (RTSW 1-min magnetometer and plasma, ACE 1-hour fallback,
+Kyoto Dst, planetary Kp, F10.7, GOES X-ray and the 7-day flare list) with explicit
+RTSW/ACE schema normalisation, sentinel filtering, a 60 s poll and a `localStorage`
+cache that degrades gracefully when storage is isolated.
+
+CME kinematics are **manual input only**. No CORS-enabled feed of `v_lin`, width and
+Stonyhurst coordinates was available (DONKI CME timed out; LMSAL HEK returned `403`
+without `Access-Control-Allow-Origin`), and the legacy `derivedV0`-style mapping from
+X-ray flux is prohibited by the v3 audit. The panel is labelled `MANUAL · NOT TELEMETRY`.
+
+The infrastructure matrix (power grids, LEO drag, polar aviation) is an operational
+heuristic over NOAA scales, not a NERC/ICAO-certified product and not a calibrated v3.4
+output.
 
 ---
 
-## ⚡ What is HELIOS 2.0?
+## What this package is
 
-**HELIOS 2.0** (*Heliospheric Environment & Learning for In-situ Operational Storms*) is an open-source suite of **Artificial Intelligence (AI) models** engineered to predict geomagnetic disturbances ($Dst$), coronal mass ejection (CME) shock arrival times, and, only when the model is confident enough to answer, interplanetary magnetic field ($B_z$) polarity prior to Earth impact (the deployed policy abstains on ~98% of Cycle 25 events rather than guessing).
+This is **not** a state-of-the-art claim. It is a measurement of where the wall is.
 
-Operated as a synchronized **4-Gear "Swiss Watch" AI architecture**, HELIOS 2.0 evaluates solar eruptions at the exact moment of launch on the Sun, tracks their 3D propagation through interplanetary space, and confirms magnetospheric coupling at Lagrange Point L1—executing in **16.55 milliseconds mean latency on consumer-grade hardware (Apple Silicon M4 GPU, median 16.54 ms, 17.34 ms p99; sub-18 ms latency)** with zero cloud dependencies or supercomputing queues. *Benchmark artifact: `results/latency_benchmark.json` (canonical idle-machine run). Latency is load-dependent: the same benchmark re-run on 2026-11-15 while a browser saturated one CPU core measured 19.09 ms (median 18.94, p99 21.66) and 19.52 ms (p99 23.07); both real runs are recorded in the artifact under `loaded_system_runs`.*
+Operational CME arrival-time forecasting has sat near ten hours of mean absolute error
+for a decade, across more than thirty methods including 3D MHD simulations on
+supercomputers. This work separates three effects that are usually reported as one:
 
-⚡ **Rapid Sub-Second Forecasting Benchmarked against Operational Standards:**
-Evaluated strictly out-of-distribution across **Solar Cycle 25 (2020–2026)** on 100% empirical CDAW/Richardson & Cane observations (zero synthetic leakage), HELIOS 2.0 achieves a median transit arrival error of **$\pm 7.45$ to $\pm 8.34$ hours** (MAE $\pm 10.63\text{ h}$ with GBDT, $\pm 11.69\text{ h}$ with MoK hybrid), outperforming classical analytical drag models (Vršnak 2013 DBM $\pm 12.30\text{ h}$ global, $\pm 16.57\text{ h}$ fast $\ge 1000\text{ km/s}$; drag prior baseline $\pm 28.95\text{ h}$) and statistically indistinguishable from NASA's WSA-ENLIL 3D MHD benchmark reported on Solar Cycle 24 ($\pm 10.40\text{ h}$ at Earth; difference $+0.23\text{ h} = 0.20$ standard errors; Wold et al., 2018; Riley et al., 2018). *Note on benchmark context: Wold et al. (2018) evaluated a historical sample from 2010–2016 (Solar Cycle 24), whereas HELIOS is evaluated out-of-distribution across Cycle 25 (2020–2026).* While numerical MHD models take hours on supercomputing clusters, HELIOS executes the full 4-tier pipeline locally on standard consumer hardware (Apple Silicon M4 GPU / consumer CPUs) in **16.55 ms (median 16.54 ms, p99 17.34 ms)** with zero cloud dependencies or cluster queues.
+- the **model**,
+- the **cohort**,
+- the **information available at launch**.
 
-🤖 **End-to-End Operational Pipeline:**
-Legacy space weather forecasting relies heavily on slow manual labor—requiring human operators to hand-fit geometric wireframes to coronagraph images, configure simulation grids, and wait hours for supercomputing cluster queues. HELIOS 2.0 streamlines these workflows through a **scripted, end-to-end computational pipeline**: from real-time satellite telemetry ingestion (NOAA SWPC RTSW) and physical feature derivation to kinematic inference, conformal uncertainty quantification (92.3% empirical coverage), and automated NASA CCMC Scoreboard formatting.
+The answer, on frozen artefacts and frozen cohorts, is that the cohort effect is about
+five times larger than the model effect, and that two of the original design targets are
+unreachable with white-light coronagraphy and no interplanetary magnetic field
+measurement.
 
-```
-       ☀️ SUN (t = 0)                    🛰️ INTERPLANETARY (24–72h)              🌍 L1 & EARTH (0–6h)
- ┌──────────────────────────┐             ┌──────────────────────────┐            ┌──────────────────────────┐
- │  GEAR 1: SOLAR CHIRALITY │             │ GEAR 3: 3D KINEMATICS    │            │ GEAR 4: IN-SITU L1 BiLSTM│
- │  HELIOS-CHIRALITY-APEX   │             │ MoKTransitNN (HTWS)      │            │ 24h Multivariate History │
- │  14-dim Physical Vector  │             │ Vršnak Aerodynamic Drag  │            │ Conformal CQR Bands      │
- └────────────┬─────────────┘             └────────────┬─────────────┘            └────────────┬─────────────┘
-              │                                        │                                       │
-              ▼                                        ▼                                       ▼
- ┌──────────────────────────┐             ┌──────────────────────────┐            ┌──────────────────────────┐
- │  GEAR 2: STORM SEVERITY  │────────────▶│ CONFORMAL ARRIVAL WINDOW │───────────▶│ MISSION COCKPIT VERDICT  │
- │  HELIOS-STORM-APEX       │             │ Calibrated ± 18.8h Bound │            │ 🟢 Safe | 🟡 Watch | 🔴 G5│
- │  Dst <= -110 nT Veto     │             │ 7.45h Median (10.6h MAE) │            │ Sub-Second Mitigation    │
- └──────────────────────────┘             └──────────────────────────┘            └──────────────────────────┘
-```
+## The four cells
 
----
+Both models are frozen. Neither was retrained for this study. All four combinations are
+reported, including the one that had never been measured: the benchmark model on the
+full cohort.
 
-## ⚙️ The 4-Gear Cascaded Architecture
+| Cohort | Model | n | MAE (h) | Median AE (h) | RMSE (h) | Bias (h) | Coverage@90 | Mean width (h) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| full (Cycle 25) | served | 126 | 15.4713 | 12.2499 | 20.7469 | −1.4744 | 0.9206 | 74.0419 |
+| full (Cycle 25) | bench | 126 | 15.4275 | 11.0394 | 20.8825 | −1.0402 | 0.7857 | 49.2887 |
+| frozen 1:1 | served | 91 | 11.5792 | 8.8489 | 16.1284 | −1.4598 | 0.9560 | 71.4393 |
+| frozen 1:1 | bench | 91 | 10.5336 | 6.5440 | 14.7272 | −1.4055 | 0.8791 | 49.1864 |
 
-| Gear | Operational Role | Time Horizon | Core Architecture & Data | Key Performance Metric |
-| :--- | :--- | :--- | :--- | :--- |
-| **Gear 1: Coronal Chirality** | Magnetic cloud polarity ($B_z \le -10\text{ nT}$) | **24–72 hours** | 14-dimensional helio-physical vector (shear, flare flux, kinematics) | **58.2% Accuracy** (threshold 0.525), **0.6497 Test ROC-AUC** (**0.4745 Train CV-AUC** near-chance), **70.8% Specificity** on Cycle 25 OOD |
-| **Gear 2: Storm Severity Veto** | Severe storm classification ($Dst \le -110\text{ nT}$) | **24–72 hours** | 14 active empirical physical features ($E_{\text{3D}}$, flare fluence, kinematics) | **78.0% Accuracy** & **0.8737 Test ROC-AUC** (**0.6611 Train CV-AUC**) on Cycle 25 OOD; **Defuses 78.9% of benign events** (60/76 false alarms avoided, 73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology) |
-| **Gear 3: 3D Transit Kinematics** | Interplanetary shock arrival time ($\tau$) | **12–48 hours** | Bifurcated `MoKTransitNN` + GBDT with deterministic 3D cone trajectory filter | **$\pm 7.45\text{ h}$ Median / $\pm 10.63\text{ h}$ MAE** on Cycle 25 OOD (beats Vršnak DBM $\pm 12.30\text{ h}$; near WSA-ENLIL 10.4h Earth std) |
-| **Gear 4: L1 In-Situ Attention** | Tactical ring current nowcasting ($Dst$) | **1–6 hours** | 24-hour multivariate bidirectional LSTM (`HeliosBiLSTM`) with temporal attention on L1 DSCOVR/ACE telemetry | Calibrated inductive conformal prediction bounds on real L1 stream |
+Paired bootstrap, 4,000 resamples, same events for both models:
 
-### 🚀 Legacy Space Weather vs HELIOS 2.0 Architectural Contrast
+| Cohort | ΔMAE (served − bench) | 95 % CI | p |
+|---|---:|---|---:|
+| full (n=126) | +0.0438 h | [−0.8367, +0.9117] | 0.94 |
+| frozen 1:1 (n=91) | +1.0456 h | [+0.0967, +1.9837] | 0.027 |
 
-| Dimension | Legacy Standard (WSA-ENLIL / NOAA) | HELIOS 2.0 Autonomous AI | Operational Advantage |
-| :--- | :--- | :--- | :--- |
-| **CME Arrival Accuracy** | Numerical 3D MHD $\pm 10.40\text{h}$ (Earth, Wold 2018) | GBDT/MoK Ensemble **$\pm 7.45\text{h}$ median / $\pm 10.63\text{h}$ MAE** | **Comparable accuracy to HPC without cluster queues** |
-| **Computational Footprint** | 1 to 4 hours on supercomputing HPC clusters | **16.55 ms (median 16.54 ms, p99 17.34 ms)** on Apple Silicon M4 GPU / consumer CPUs | **Eliminates cluster queue latency entirely** |
-| **Human Labor & Bottlenecks** | Manual wireframe cone fitting on coronagraphs | **Automated Programmatic** multi-satellite ingestion (CLI / Python API) | **Zero human response lag in severe emergencies** |
-| **False Alarm Rate** | Velocity-only sirens (up to 92% false alarms) | 3D Cone Trajectory Filter + Severity Veto | **Filters non-Earth CMEs deterministically** |
-| **Uncertainty Quantification** | Heuristic single-point deterministic output | Empirical Conformal Quantiles (CQR) | **Calibrated 92.31% coverage intervals on Cycle 25 OOD (nominal 90%, 59.72h width)** |
-| **Standard Interoperability** | Complex manual formats | Native NASA CCMC JSON Schema export | **Instant pre-event benchmarking for global agencies** |
+**Reading:** on the full cohort the two models are statistically indistinguishable. On the
+clean subset the benchmark model is better by about one hour, with a confidence interval
+that barely excludes zero. Changing the cohort moves both models by four to five hours.
 
----
+The widely quoted 10.5 h and 15.5 h figures are therefore not evidence about model
+quality. They are evidence about cohort difficulty. The narrow benchmark interval is also
+not transportable: its coverage collapses from 0.8791 on its own cohort to 0.7857 on the
+full cohort.
 
-## 🌟 Key Scientific Breakthroughs
+## The two information ceilings
 
-1. **Defusing False Alarms via Coronal Chirality & Helio-Energetics:**
-   Standard kinematic-only models (like WSA-ENLIL or empirical speed alerts) trigger high-level emergency alerts whenever a CME launches at $V > 700-1500\text{ km/s}$, regardless of magnetic field orientation. When the field is northward ($B_z > 0$), the Earth's magnetosphere deflects the plasma, resulting in benign conditions ($Dst > -50\text{ nT}$). HELIOS 2.0 inspects coronal chirality and physical shock energetics at launch, **defusing 78.9% of operational false alarms** (60/76 false alarms avoided in out-of-distribution Cycle 25 testing, 73.3% sensitivity, Brier 0.1154 vs 0.1377 climatology) before sirens are sounded. Crucially, a rigorous ablation demonstrates that standalone 2D coronagraph computer vision yields near-chance skill ($\text{AUC} \approx 0.46\text{--}0.51$), establishing that space weather defense is carried by 3D kinematics, eruptive energy, and solar wind preconditioning.
+Both were design targets. Neither is reachable, and neither has been redefined after the
+fact.
 
-2. **Aerodynamic Drag Bounding for Hypersonic CMEs:**
-   In extreme hypersonic eruptions ($V > 2000\text{ km/s}$), standard empirical models suffer from extrapolation error. By implementing closed-form aerodynamic drag limits ($v_{\text{amb}} = 420\text{ km/s}$, $\tau \ge 16.0\text{ h}$ physical solar wind saturation bound), HELIOS establishes an empirical transit lower bound on landmark events like the record October 29, 2003 Halloween storm ($19.4\text{ h}$ observed vs $16.0\text{ h}$ aerodynamic bound, $\Delta = 3.4\text{ h}$).
+| Gate | Measured | Target | Status |
+|---|---:|---:|---|
+| 90 % conformal interval width | 74.0419 h at 0.9206 coverage | 35 h at 0.88 | information-infeasible |
+| Apex Brier skill score, Dst ≤ −100 nT | 0.0768 (ROC-AUC 0.6980) | 0.25 | information-infeasible |
 
-3. **Sub-Second Execution on Consumer Hardware:**
-   While numerical 3D MHD simulations take 1 to 4 hours to run on supercomputer clusters, HELIOS 2.0 evaluates the entire 4-tier pipeline in **16.55 milliseconds (median 16.54 ms, p99 17.34 ms)** on Apple Silicon M4 GPU (or standard CPUs), enabling continuous real-time space weather nowcasting.
+The tightest *static* band that can reach 88 % coverage on this cohort is 69.3126 h if
+constrained to be symmetric and 64.6250 h if allowed to be asymmetric. The
+oracle-recalibrated BSS — the best score obtainable by recalibrating on the test labels
+themselves, which is not a legitimate forecast — is 0.1500, still below 0.25.
 
-4. **Interactive Browser Mission Cockpit:**
-   The interactive mission cockpit (`Zar-Manah_HELIOS.html`) provides a lightweight browser environment streaming live NOAA SWPC RTSW plasma and magnetic vectors with dual-track mission timelines and responsive aerodynamic drag modeling.
+With a residual dispersion of σ ≈ 15–21 h, an 88 % interval needs roughly 3.1 σ, which is
+47–65 h before any model error is added. A 35 h interval at 88 % coverage would require
+σ ≈ 11 h. The cohort does not have it.
 
-5. **Operational Automation & Fast Turnaround:**
-   HELIOS 2.0 provides scripted end-to-end processing: from satellite telemetry ingestion (NOAA SWPC RTSW) to real-time kinematic inference and automated NASA CCMC Scoreboard export without supercomputing cluster delays.
+## Tactical stage
 
----
+Dst forecasting at L1 is a different problem, and it is where the skill actually lives:
 
-## 📊 Rigorous Validation: Landmark Historical Case Studies
+| Horizon | RMSE (nT) | Reference |
+|---|---:|---|
+| +1 h | 3.5014 | persistence 4.6172, raw ODE 4.0099 |
+| +6 h | 10.6057 | persistence 13.2073, raw ODE 11.9636 |
+| +12 h | 15.1372 | — |
 
-Evaluating historical landmark space weather events across Solar Cycles 23–25 with exact time-synchronized inputs and real empirical ground truth:
+Adaptive conformal inference holds marginal coverage near 0.90 at every horizon
+(0.8999 at +1 h, 0.8996 at +6 h, 0.8986 at +12 h), but coverage on storm hours falls
+with lead time: 0.8983 at +1 h, 0.8004 at +6 h, 0.6625 at +12 h. The reliable horizon
+for L1-driven Dst is about three hours; beyond that only the recovery phase remains
+predictable. The strategic/tactical split is what the data supports, not a design
+preference.
 
-| Landmark Event | Detection Epoch | Launch Speed | Ground Truth ($Dst / B_z$) | Observed Transit | Pipeline Alert & Status | Validation Verdict |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **May 2024 Superstorm (AR 3664)** | 2024-05-07 03:12 | $812\text{ km/s}$ | $-412\text{ nT} / -35.3\text{ nT}$ (G5) | $85.9\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 30.9\%$, $P_{\text{south}} = 54.5\%$ → INDETERMINATE, ETA $61.9\text{ h}$, $\Delta = 24.0\text{ h}$) | ⚠️ Partial (Bz abstained, transit $\Delta>15$h) |
-| **Halloween Superstorm (Oct 29, 2003)** | 2003-10-29 20:54 | $2293\text{ km/s}$ | $-383\text{ nT} / -38.5\text{ nT}$ (G5) | $19.4\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 68.6\%$, $P_{\text{south}} = 66.5\%$ → SOUTH, ETA $49.4\text{ h}$, $\Delta = 30.0\text{ h}$) | ⚠️ Partial (classes PASS, transit $\Delta>15$h) |
-| **Nov 2003 Superstorm (Halloween)** | 2003-11-18 08:50 | $2074\text{ km/s}$ | $-422\text{ nT} / -50.9\text{ nT}$ (G5) | $47.2\text{ h}$ | 🔴 G5 Protocol Active ($P_{\text{sev}} = 55.6\%$, $P_{\text{south}} = 59.9\%$ → INDETERMINATE, ETA $37.4\text{ h}$, $\Delta = 9.8\text{ h}$) | ⚠️ Partial (Bz abstained) |
-| **May 14, 2024 Moderate Eruption** | 2024-05-14 10:09 | $800\text{ km/s}$ | $-88\text{ nT} / -12.8\text{ nT}$ | $75.3\text{ h}$ | 🟢 Safe Protocol ($P_{\text{sev}} = 14.9\%$, $P_{\text{south}} = 49.1\%$ → INDETERMINATE, ETA $68.7\text{ h}$, $\Delta = 6.6\text{ h}$) | ⚠️ Partial (Bz abstained) |
-| **Jan 17, 1998 Solar Baseline** | 1998-01-17 04:09 | $350\text{ km/s}$ | $-11\text{ nT} / -4.4\text{ nT}$ | $95.8\text{ h}$ | 🟢 Safe Protocol ($P_{\text{sev}} = 23.6\%$, $P_{\text{south}} = 49.3\%$ → INDETERMINATE, ETA $75.8\text{ h}$, $\Delta = 20.0\text{ h}$) | ⚠️ Partial (Bz abstained, transit $\Delta>15$h) |
+## Operational context, stated correctly
 
-Battery totals (`scripts/16_verify_battery_past_and_live.py` → `results/verification_battery.json`): severe-storm class **5/5**, Bz direction **1/5** (4 abstentions inside $0.40<P<0.60$), transit within 15 h **2/5**, full three-way concordance **0/5**.
+The CCMC Earth CME Scoreboard for 2023–2024, recomputed for this study directly from the
+public API (164 closed CMEs; earliest pre-arrival submission per method):
 
-### 🔁 Independent Historical Backtest — 12 Real Epochs (7 Storms / 5 Quiet)
+| Method | MAE (h) | CMEs |
+|---|---:|---:|
+| NOAA/SWPC ENLIL | 9.72 | 47 |
+| Ensemble ENLIL (M2M) | 10.18 | 51 |
+| Cone + HAF | 10.20 | 42 |
+| Met Office ENLIL | 10.59 | 91 |
+| M2M ENLIL | 10.74 | 153 |
+| ELEvo | 11.28 | 26 |
+| CMEFM | 11.37 | 74 |
+| BoM | 11.45 | 40 |
+| EAM | 12.04 | 58 |
+| SARM | 12.05 | 71 |
+| SIDC | 15.23 | 80 |
 
-Reproducible end-to-end run over **real OMNI hourly observations** (no synthetic input) with `python3 scripts/21_backtest_historical.py --save`; artifact: `results/backtest_historical.json`. A severe-storm alert is issued when the forecast `Dst <= -110 nT`.
+HELIOS sits mid-table: 11.5792 h on the clean subset, 15.4713 h on the full cohort. Any
+claim that it tops this table is false.
 
-| Lead | MAE | Storm hits | False alarms | Misses | Correct quiet |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| **+1 h** | 9.2 nT | 2 | **0** | 1 | 9 |
-| **+2 h** | 12.3 nT | 4 | **0** | 0 | 8 |
-| **+3 h** | 26.0 nT | 5 | **0** | 0 | 7 |
-| **+6 h** | 46.3 nT | 7 | **0** | 0 | 5 |
+The ranking is also not like-for-like. The best entry, 9.72 h, is computed on 47 CMEs
+that NOAA chose to forecast, with human adjustment of the cone parameters before
+submission. The largest-sample entry, 10.74 h, covers 153 CMEs and is still a
+human-supervised operational product. HELIOS has no human in the loop, selects its
+features by pre-2020 out-of-fold error, and runs on one consumer CPU core.
 
-Zero false alarms across all 12 epochs and all four horizons. Known limitation, reported rather than hidden: at **+6 h** the model over-predicts extreme intensities (November 2003: −478 nT forecast vs −396 nT observed) while under-predicting the fast Halloween 2003 onset (−157 vs −241 nT); the 1 h horizon is the most accurate (MAE 9.2 nT).
+## Architecture
 
+Five stages, all local, none of them requiring a cluster:
 
----
+| Stage | Role | Horizon | Method |
+|---|---|---|---|
+| 1. Impact | probability that the CME reaches Earth | launch | five-member ensemble (LightGBM, XGBoost, logistic regression, a LambdaRank ranker and a physics-interaction logistic model), source-aware switch, beta calibration |
+| 2. Transit | shock arrival time | 12–150 h | LightGBM + XGBoost + ExtraTrees + ridge, blended by inverse out-of-fold MAE, fitted drag-based prior, CQR band |
+| 3. Apex | storm severity, P(Dst_min ≤ t) for t ∈ {−50, −100, −200} nT | 24–72 h | heteroscedastic gradient-boosted regressor; the probability map is chosen per threshold by pre-2020 out-of-fold Brier skill, then Platt-aligned; conformal bands |
+| 4. Magnetic obstacle | detection of an ICME/MC at L1 and extrapolation of the remaining Bz profile | 0–6 h after MO arrival | MO-Net LightGBM on 5-min OMNI windows, 3DCORE-lite constant-α Lundquist fit, Bz_min calibrator fitted out of fold |
+| 5. Tactical | Dst nowcasting at L1 | 1–12 h | Burton–O'Brien–McPherron ODE plus a gradient-boosted residual ensemble, adaptive conformal intervals |
 
-## 🛰️ Interactive Mission Cockpit (`Zar-Manah_HELIOS.html`)
+No synthetic magnetic proxy is used anywhere in the v3 pipeline. The legacy v2 proxies
+are explicitly banned by an automated test. Every merged feature carries a timestamp at
+or before the forecast time; the audit reports zero violations across 41,756 merged rows.
 
-HELIOS 2.0 includes a zero-install, single-file browser cockpit running at 60 FPS on any modern browser:
-- **Live Satellite Feeds:** Polls NOAA SWPC RTSW plasma and magnetic vectors every 60s in live mode.
-- **Master Mission Timeline:** Dual-track interactive canvas visualizing CME 3D transit and magnetospheric ring current response over a 100-hour window.
-- **Lightweight Visualization:** In-browser canvas rendering with client-side caching.
+Every stage runs on one CPU core (`n_jobs=1`). No latency figure is claimed here: this
+study measures accuracy limits, not runtime, and no timing artefact is shipped.
+
+## Quick start
 
 ```bash
-# Launch interactive Mission Cockpit
-open Zar-Manah_HELIOS.html
-# Or execute via Python orchestrator
-python3 scripts/helios_swiss_orchestrator.py --interactive
-```
-
----
-
-## 💻 Quick Start & Real-Time Predictions
-
-### Installation
-```bash
-git clone https://github.com/Zar-Manah/HELIOS-Space-Weather.git
-cd HELIOS-Space-Weather
 pip install -r requirements.txt
+
+# Four-cell limits table (read-only, loads frozen artefacts)
+OMP_NUM_THREADS=1 KMP_DUPLICATE_LIB_OK=TRUE python3 scripts/v3_15_limits_table.py
+
+# Gate audit: 16/20 pass, 4 expected failures (the targets the paper reports as unmet)
+OMP_NUM_THREADS=1 KMP_DUPLICATE_LIB_OK=TRUE python3 scripts/v3_10_verify_all.py
+
+# Tests
+OMP_NUM_THREADS=1 KMP_DUPLICATE_LIB_OK=TRUE python3 -m unittest discover -s tests -p "test_helios_v3.py"
 ```
 
-### 1. Dual-Scale Instant Inference (`predict.py`)
-```bash
-# Tactical Nowcasting (1–6h) with live NOAA SWPC & Kyoto WDC satellite telemetry
-python3 predict.py --live
+Test result: `Ran 21 tests ... OK (expected failures=2)`. The two expected failures are
+exactly the two information-infeasible gates, encoded as tests so that they cannot be
+silently "fixed" by loosening a threshold. The suite loads the frozen artefacts in
+`models/v3/`, which are included.
 
-# Tactical Nowcasting on synthetic extreme benchmark scenario (Dst < -400 nT)
-python3 predict.py --sample extreme
+## What is not in this package
 
-# 24–72h Planetary CME Shock Transit & Impact Severity Forecast
-python3 predict.py --cme-speed 1200 --halo
+- **Raw observations** — the raw archive is not shipped. The six processed
+  inputs needed to rebuild the reported tables are included in `data/processed/`
+  (111.8 MB).
+- **Legacy v2 artefacts** — the superseded models, scripts, results and figures are not
+  shipped.
 
-# Launch Interactive Visual Mission Control Cockpit
-python3 predict.py --dashboard
-```
+The frozen v3 artefacts are included in `models/v3/` (14 files, 72.4 MB).
 
-### 2. Live Swiss Watch Orchestrator (All 4 Gears Synchronized)
-```bash
-python3 scripts/helios_swiss_orchestrator.py
-```
-```text
-🇨🇭 Initializing HELIOS Swiss Watch Pipeline (Apple Silicon M4 GPU)...
-✅ All 4 gears cryptographically verified and loaded into GPU memory in 1042.0 ms.
-=====================================================================================
-🇨🇭 HELIOS SWISS WATCH ENGINE — MULTI-HORIZON SPACE WEATHER REPORT
-📌 Analyzed Event: November 2003 Superstorm (Catastrophic G5 - Dst -422 nT)
-=====================================================================================
-⏱️  Total Inference Latency on M4 GPU: 29.76 ms
-📅 Solar Detection Epoch (t = 0):        2003-11-18 08:50:00
-🚀 3D Radial Kinematics (GCS):          2074 km/s
--------------------------------------------------------------------------------------
-⚙️  GEAR 1 & 2 [24–72h HORIZON | SUN]:
-   • Coronal Chirality:         ⚪ INDETERMINATE POLARITY (59.9%) [Abstain: Awaiting L1 In-Situ] (P_south: 59.9%)
-   • Geomagnetic Severity:      🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT) (P_severe: 55.6% | ROC-AUC: 0.874)
-⚙️  GEAR 3 [12–48h HORIZON | INTERPLANETARY TRANSIT]:
-   • Estimated Flight Time:     37.4 hours (GBDT: 39.6h, MoK: 37.2h)
-   • Conformal Bounds [10–90]:  [24.9h, 57.4h]
-   • Observed Ground Truth:     47.2 hours (Residual: 9.8 hours)
-🛡️  INTEGRATED MITIGATION VERDICT (MISSION CONTROL):
-   🟡 UNRESOLVED COUPLING PROTOCOL: Severe kinetic shock front intercepted, but coronal Bz chirality is INDETERMINATE (P_south=59.9%).
-```
-*Verbatim excerpt of a real run. Per-event wall-clock in the full report path (14.6–29.8 ms) is higher than the 16.55 ms four-tier benchmark because it also times conformal quantile regressors and report formatting.*
+The limits study lives in `paper/limits_study/`:
 
-### 3. Run Comprehensive Randomized Stress Battery
-```bash
-python3 scripts/17_randomized_stress_battery.py
-```
+| File | Contents |
+|---|---|
+| `manuscript_limits.md` | the study |
+| `RESULTS_TABLE.md` | generated four-cell table |
 
-### 4. Export to NASA CCMC Earth CME Scoreboard JSON Format
-```bash
-python3 scripts/export_ccmc_scoreboard.py --demo
-```
+## What this work does not claim
 
-### 5. Reproduce Published Metrics, Latency and Tests
-```bash
-# Recompute tactical CQR coverage / interval width from the published models + feature parquet
-python3 scripts/20_verify_tactical_metrics.py
+- It does not claim state-of-the-art arrival-time accuracy.
+- It does not claim that the benchmark model is served. It is not.
+- It does not claim that the southward field can be predicted from white light.
+- It does not claim that the 35 h interval or the 0.25 BSS target are achievable.
+- It does not use synthetic data, synthetic proxies or imputed labels.
+- It does not tune any threshold against the Cycle 25 cohort.
 
-# Latency benchmark (dry run; add --save to refresh the canonical artifact)
-python3 scripts/19_benchmark_latency.py
+## Status
 
-# Unit and artifact-integrity tests
-python3 -m unittest tests.test_helios_core -v
-```
-`scripts/20_verify_tactical_metrics.py` exits non-zero if the values stored in
-`results/helios_evaluation_metrics.json` ever drift from what the published
-models actually produce.
+Independent research study released as an open package. `CITATION.cff` carries
+no DOI: the citation record of this package is the package itself.
 
----
+## Data attributions
 
-## 📜 Scientific Publication & Citation
+- **NASA SOHO/LASCO CDAW CME Catalog** — NASA GSFC and The Catholic University of
+  America, in cooperation with ESA.
+- **Richardson & Cane ICME Table** — hosted by Caltech ASC.
+- **NASA OMNIWeb** — NASA GSFC Space Physics Data Facility.
+- **Kyoto WDC for Geomagnetism** — Dst index.
+- **NOAA SWPC** — operational RTSW plasma and magnetic field feeds.
+- **NASA SDO/HMI and JSOC SHARP** — source-region magnetism.
+- **CCMC Earth CME Scoreboard** — operational context table.
 
-If you utilize HELIOS 2.0 in academic research, space operations, or utility grid defense, please cite:
+## License
 
-```bibtex
-@article{ZarManah2026HELIOS2,
-  title={{Zar-Manah HELIOS 2.0: A Unified 4-Tier Space Weather Intelligence Architecture Coupling Planetary Shock Kinematics, Helio-Energetic Veto, and L1 In-Situ Attention on Apple Silicon M4}},
-  author={{Zar Manah}},
-  affiliation={Independent Researcher},
-  journal={Zenodo Preprints},
-  year={2026},
-  publisher={Zenodo / CERN},
-  doi={10.5281/zenodo.24262095},
-  url={https://doi.org/10.5281/zenodo.24262095},
-  note={Version DOI: 10.5281/zenodo.24262095 (v2.5.19). Concept DOI: 10.5281/zenodo.24215019}
-}
-```
-
-Machine-readable citation metadata is provided in [`CITATION.cff`](CITATION.cff).
-
----
-
-## 🛰️ Public Scientific Data Attributions
-
-HELIOS 2.0 ingests and builds upon public open-science data from international missions:
-* **NASA SOHO/LASCO CDAW CME Catalog:** Maintained by NASA GSFC and The Catholic University of America in cooperation with ESA.
-* **Richardson & Cane ICME Table:** Curated by I. G. Richardson and H. V. Cane, hosted by Caltech ASC.
-* **NASA OMNIWeb Data:** High-resolution solar wind, IMF, and plasma data provided by NASA GSFC Space Physics Data Facility (SPDF).
-* **Kyoto WDC for Geomagnetism:** Real-time and definitive Dst index series provided by Kyoto University.
-* **NOAA Space Weather Prediction Center (SWPC):** Operational RTSW plasma and magnetic field feeds.
-* **NASA Solar Dynamics Observatory (SDO):** HMI magnetograms and AIA EUV coronal observations.
-
----
-
-## 📄 License & Open Science
-
-* **Software & Code:** Distributed under the **MIT License** ([`LICENSE`](LICENSE)).
-* **Preprint & Data Compilations:** Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)** ([`LICENSE-DATA.md`](LICENSE-DATA.md)) via CERN Zenodo (Concept DOI: [10.5281/zenodo.24215019](https://doi.org/10.5281/zenodo.24215019); v2.5.19 DOI: [10.5281/zenodo.24262095](https://doi.org/10.5281/zenodo.24262095)).
-* Crafted with scientific passion in Spain 🇪🇸 by **Zar Manah**.
+- **Code:** MIT ([`LICENSE`](LICENSE)).
+- **Text and data compilations:** CC BY 4.0 ([`LICENSE-DATA.md`](LICENSE-DATA.md)).

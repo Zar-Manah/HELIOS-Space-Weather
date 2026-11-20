@@ -1,0 +1,276 @@
+{
+  "generated_utc": "2026-11-18T16:12:28.848047+00:00",
+  "source_sha256": {
+    "v3_common.py": "12f388844ec7cb98488f2ba73bd3ef5547fbd5239b27a3f6591756a648766af8",
+    "predict.py": "c395bb3e405f56574d9c78404b0691f5751a65fa586aa1cd6fbc957263cab992"
+  },
+  "source_sha256_note": "Refreshed after textual-only edits (docstring version, timezone-aware timestamp, pa_consistency comment, backside-label comment) and after completing the serving-side three-way Bz risk tag used in v3_07 (new --cme_sharp_r input; the branch is a southern-source flag, not a Hale measurement, because SHARP R_VALUE is unsigned). v3_common.py is unchanged and every measurement in this file comes from the original run.",
+  "parity": {
+    "batch_vs_single_row": {
+      "v_diff_ambient": 0.0,
+      "drag_accel_proxy": 0.0,
+      "v_effective_dbm": 0.0,
+      "transit_hours_dbm_prior": 0.0,
+      "is_fast_cme": 0.0,
+      "sin_cycle": 0.0,
+      "cos_cycle": 0.0,
+      "dbm0_w350_g8": 0.0,
+      "dbm1_w400_g8": 0.0,
+      "dbm2_w450_g8": 0.0,
+      "dbm3_w500_g8": 0.0,
+      "dbm4_w350_g8": 0.0,
+      "dbm5_w450_g8": 0.0
+    },
+    "all_derived_columns_identical": true,
+    "n_rows": 64,
+    "nan_v_lin_path": {
+      "batch_fill_km_s": 1497.8157707856283,
+      "single_row_fill_km_s": 400.0,
+      "reachable_at_serve": false,
+      "why": "predict.build_cme always sets v_lin from --cme_speed (default 1200 km/s), so the NaN branch cannot fire in the live CLI"
+    }
+  },
+  "physics": {
+    "t_phys_max_abs_diff_h": 0.0,
+    "v1au_max_abs_diff_km_s": 0.0,
+    "identical": true,
+    "w_amb_km_s": 419.9995732679588,
+    "gamma_km_inv": 1.9074347013964563e-08
+  },
+  "ambient_constant_vs_fitted_abs_diff_km_s": 0.0004267320412054687,
+  "constants": [
+    {
+      "name": "ambient_speed_km_s",
+      "value": 420.0,
+      "function": "add_transit_features",
+      "kind": "physical_literal",
+      "backing": "ambient solar-wind speed at 1 AU; independently recovered by the DBM fit in v3_06 (`physics.w_amb_km_s`, checked below)",
+      "file": "scripts/v3_common.py",
+      "line": 222,
+      "train_serve_parity": true,
+      "verdict": "PASS"
+    },
+    {
+      "name": "drag_gamma_km_inv",
+      "value": 1e-07,
+      "function": "add_transit_features",
+      "kind": "model_basis_hyperparameter",
+      "backing": "fixed drag coefficient of the prior-feature basis; not a fitted claim and not a substitute for data; the fitted physics backbone uses its own gamma from v3_06",
+      "file": "scripts/v3_common.py",
+      "line": 223,
+      "train_serve_parity": true,
+      "verdict": "RETAINED_BASIS_NOT_A_PHYSICAL_CLAIM"
+    },
+    {
+      "name": "prior_path_fraction_au",
+      "value": 0.4,
+      "function": "add_transit_features",
+      "kind": "model_basis_hyperparameter",
+      "backing": "fraction of the 1-AU path used by the exponential prior; a frozen basis constant, not a physical claim (the exact DBM integral is carried by the six `dbm*` grid columns).  Flagged as the weakest link of the block; retained because changing a feature basis without an OOF win would be tuning, not auditing",
+      "file": "scripts/v3_common.py",
+      "line": 224,
+      "train_serve_parity": true,
+      "verdict": "RETAINED_BASIS_NOT_A_PHYSICAL_CLAIM"
+    },
+    {
+      "name": "speed_floor_km_s",
+      "value": 50.0,
+      "function": "add_transit_features",
+      "kind": "numerical_guard",
+      "backing": "denominator guard for the ballistic fallback; no physical claim",
+      "file": "scripts/v3_common.py",
+      "line": 226,
+      "train_serve_parity": true,
+      "verdict": "PASS"
+    },
+    {
+      "name": "fast_cme_threshold_km_s",
+      "value": 1000.0,
+      "function": "add_transit_features",
+      "kind": "literature_threshold",
+      "backing": "standard definition of a fast CME (>= 1000 km/s, e.g. Gopalswamy 2001)",
+      "file": "scripts/v3_common.py",
+      "line": 227,
+      "train_serve_parity": true,
+      "verdict": "PASS"
+    },
+    {
+      "name": "cycle_epoch_year",
+      "value": 1996,
+      "function": "add_transit_features",
+      "kind": "literature_threshold",
+      "backing": "Solar Cycle 23 minimum (1996); phase = ((year-1996) mod 11)/11",
+      "file": "scripts/v3_common.py",
+      "line": 229,
+      "train_serve_parity": true,
+      "verdict": "PASS"
+    },
+    {
+      "name": "cycle_period_years",
+      "value": 11,
+      "function": "add_transit_features",
+      "kind": "literature_threshold",
+      "backing": "mean solar-cycle period (11 yr)",
+      "file": "scripts/v3_common.py",
+      "line": 229,
+      "train_serve_parity": true,
+      "verdict": "PASS"
+    },
+    {
+      "name": "ballistic_speed_floor_km_s",
+      "value": 50.0,
+      "function": "transit_physics",
+      "kind": "numerical_guard",
+      "backing": "same denominator guard as the feature block",
+      "file": "scripts/v3_common.py",
+      "line": 247,
+      "train_serve_parity": true,
+      "verdict": "PASS"
+    },
+    {
+      "name": "deprojection_cos_floor",
+      "value": 0.45,
+      "function": "effective_launch_speed",
+      "kind": "numerical_guard",
+      "backing": "de-projection cap at ~63 deg from disk centre; prevents the 1/cos blow-up for limb events, no physical claim beyond that",
+      "file": "scripts/v3_common.py",
+      "line": 202,
+      "train_serve_parity": true,
+      "verdict": "PASS"
+    }
+  ],
+  "literal_scan": {
+    "add_transit_features": [
+      {
+        "value": 400.0,
+        "line": 221
+      },
+      {
+        "value": 420.0,
+        "line": 222
+      },
+      {
+        "value": 1e-07,
+        "line": 223
+      },
+      {
+        "value": 1e-07,
+        "line": 224
+      },
+      {
+        "value": 0.4,
+        "line": 224
+      },
+      {
+        "value": 1.0,
+        "line": 224
+      },
+      {
+        "value": 1e-07,
+        "line": 225
+      },
+      {
+        "value": 0.4,
+        "line": 225
+      },
+      {
+        "value": 420.0,
+        "line": 225
+      },
+      {
+        "value": 50.0,
+        "line": 226
+      },
+      {
+        "value": 3600.0,
+        "line": 226
+      },
+      {
+        "value": 1000.0,
+        "line": 227
+      },
+      {
+        "value": 11.0,
+        "line": 229
+      },
+      {
+        "value": 11.0,
+        "line": 229
+      },
+      {
+        "value": 1996.0,
+        "line": 229
+      },
+      {
+        "value": 2.0,
+        "line": 230
+      },
+      {
+        "value": 2.0,
+        "line": 231
+      },
+      {
+        "value": 50.0,
+        "line": 234
+      },
+      {
+        "value": 3600.0,
+        "line": 234
+      }
+    ],
+    "transit_physics": [
+      {
+        "value": 400.0,
+        "line": 242
+      },
+      {
+        "value": 50.0,
+        "line": 247
+      },
+      {
+        "value": 3600.0,
+        "line": 247
+      }
+    ],
+    "effective_launch_speed": [
+      {
+        "value": 0.45,
+        "line": 202
+      },
+      {
+        "value": 1.0,
+        "line": 202
+      },
+      {
+        "value": 1.0,
+        "line": 202
+      }
+    ]
+  },
+  "leakage": {
+    "inputs_read": [
+      "v_lin",
+      "t_launch"
+    ],
+    "future_columns_used": [],
+    "uses_only_launch_time_observables": true,
+    "note": "the block reads v_lin and t_launch only; every DBM grid column is a deterministic function of v_lin, so nothing after t_launch enters"
+  },
+  "same_callable_in_train_and_serve": {
+    "v3_06": true,
+    "predict.py": true
+  },
+  "feature_importance": {
+    "transit_hours_dbm_prior": {
+      "n_models": 8,
+      "mean_gain": 12.138908729422837,
+      "share": 0.05724218932265588
+    },
+    "drag_accel_proxy": {
+      "n_models": 8,
+      "mean_gain": 48.9686451589223,
+      "share": 0.1853299141517117
+    }
+  },
+  "verdict": "PASS_NO_TRAIN_SERVE_SKEW"
+}

@@ -3,7 +3,7 @@
 Copyright (c) 2026 Zar Manah
 
 The scientific manuscripts, preprints, figures, and compiled space weather
-datasets in this repository are licensed under the Creative Commons
+datasets in this package are licensed under the Creative Commons
 Attribution 4.0 International License (CC BY 4.0).
 
 To view a copy of this license, visit:

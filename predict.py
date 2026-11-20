@@ -1,818 +1,1044 @@
 #!/usr/bin/env python3
+"""Zar-Manah HELIOS v3.4 - unified operational entrypoint.
+
+Five-stage causal pipeline, zero hardcoded fallbacks:
+
+  impact   P(Earth impact) + operational tier          (launch time)
+  transit  ML-ELEvo-DBM + residual + Mondrian CQR band (launch time)
+  apex     P(Dst<=-50/-100/-200) + conformal severity  (launch time)
+  mo       3DCORE-lite flux-rope Bz extrapolation       (once the MO is at L1)
+  tactical Burton-O'Brien-McPherron ODE + residual      (+1h .. +12h)
+
+Every upstream stream that is unreachable yields an explicit NaN plus a
+`data_completeness` entry.  Nothing is replaced by a climatological constant.
 """
-Zar-Manah HELIOS - Unified Space Weather Intelligence System (v2.5.19)
-Author: Zar Manah
+from __future__ import annotations
 
-Dual-Scale Operational Predictions:
-  1. Zar-Manah HELIOS-Tactical (1–6h): Real-time nowcasting of ring current collapse (Dst) with Conformal Quantile Bands.
-  2. Zar-Manah HELIOS-Transit (24–72h): Dynamic Regime Ensemble (MoKTransitNN + GBDT) for CME arrival & shock severity.
-"""
-
-import os
-os.environ["OMP_NUM_THREADS"] = "1"
-os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
-
-import lightgbm
-import sys
 import argparse
 import json
+import os
+import re
+import sys
 import urllib.request
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
+
+import joblib
 import numpy as np
 import pandas as pd
-import joblib
-import pickle
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.join(BASE_DIR, "models") if os.path.exists(os.path.join(BASE_DIR, "models")) else BASE_DIR
-METRICS_FILE = os.path.join(BASE_DIR, "results", "helios_evaluation_metrics.json")
-if not os.path.exists(METRICS_FILE):
-    METRICS_FILE = os.path.join(BASE_DIR, "helios_evaluation_metrics.json")
-TRANSIT_CONFIG = os.path.join(MODELS_DIR, "helios_transit_ensemble_config.json")
-SCALER_PATH = os.path.join(MODELS_DIR, "transit_scaler.json")
+BASE_DIR = Path(__file__).resolve().parent
+MODELS_DIR = BASE_DIR / "models" / "v3"
+RESULTS_DIR = BASE_DIR / "results"
+sys.path.insert(0, str(BASE_DIR / "scripts"))
 
-FEATURE_COLS = [
-    "dst", "dst_lag_1h", "dst_lag_2h", "dst_lag_3h", "dst_lag_6h", "dst_lag_12h", "dst_lag_24h",
-    "dst_mean_6h", "dst_std_6h", "dst_min_24h", "dst_diff_1h",
-    "bz_gsm", "bz_lag_1h", "bz_lag_2h", "bz_lag_3h", "bz_lag_6h",
-    "bz_min_3h", "bz_min_6h", "bz_mean_6h", "bz_diff_1h",
-    "by_gsm", "b_mag", "b_transverse", "clock_angle",
-    "v_flow", "v_lag_1h", "v_lag_2h", "v_lag_3h", "v_diff_1h",
-    "np_dens", "temp", "pdyn", "pdyn_lag_1h", "pdyn_diff_1h",
-    "ey_rectified", "newell_coupling", "akasofu_eps", "borovsky_coupling",
-    "newell_sum_3h", "newell_sum_6h", "newell_sum_12h",
-    "kp", "r_sunspot", "f107"
-]
-
-def verify_model_checksum(fpath):
-    """Cryptographic fail-closed verification of model weights before loading."""
-    import hashlib
-    manifest_path = os.path.join(MODELS_DIR, "helios_models_checksums.json")
-    if not os.path.exists(manifest_path):
-        raise FileNotFoundError(f"SECURITY ALERT: Cryptographic model manifest missing at {manifest_path}!")
-    with open(manifest_path, "r") as f:
-        valid_hashes = json.load(f)
-    fname = os.path.basename(fpath)
-    if fname not in valid_hashes:
-        raise KeyError(f"SECURITY ALERT: Model artifact {fname} is not registered in cryptographic manifest!")
-    with open(fpath, "rb") as f:
-        actual_hash = hashlib.sha256(f.read()).hexdigest()
-    if actual_hash != valid_hashes[fname]:
-        raise ValueError(f"SECURITY ALERT: Cryptographic integrity failure for {fname}! Expected {valid_hashes[fname]}, got {actual_hash}")
-
-def load_tactical_models():
-    models = {}
-    for lead in [1, 2, 3, 6]:
-        p_pt = os.path.join(MODELS_DIR, f"helios_point_lead_{lead}h.joblib")
-        p_lo = os.path.join(MODELS_DIR, f"helios_q_low_lead_{lead}h.joblib")
-        p_hi = os.path.join(MODELS_DIR, f"helios_q_high_lead_{lead}h.joblib")
-        verify_model_checksum(p_pt)
-        verify_model_checksum(p_lo)
-        verify_model_checksum(p_hi)
-        models[f"pt_{lead}"] = joblib.load(p_pt)
-        models[f"lo_{lead}"] = joblib.load(p_lo)
-        models[f"hi_{lead}"] = joblib.load(p_hi)
-    with open(METRICS_FILE, "r") as f:
-        metrics = json.load(f)
-    return models, metrics
+SWPC = "https://services.swpc.noaa.gov"
+TIMEOUT = 20
 
 
-def predict_tactical_storm(features_df, models, metrics):
-    # Accept raw feature tables (extra columns / datetime) by projecting onto the
-    # exact training schema; LightGBM cannot ingest mixed dtypes.
-    features_df = features_df[FEATURE_COLS]
-    results = {}
-
-    # Extract multi-hour integrated reconnection drivers
-    newell_3 = float(features_df["newell_sum_3h"].iloc[0]) if "newell_sum_3h" in features_df else 0.0
-    newell_6 = float(features_df["newell_sum_6h"].iloc[0]) if "newell_sum_6h" in features_df else 0.0
-
-    # Surgical scaling factors calibrated via Helios Weight Surgery
-    surge_params = {
-        1: (newell_3, 50000.0, 0.08),
-        2: (newell_3, 50000.0, 0.12),
-        3: (newell_3, 50000.0, 0.18),
-        6: (newell_6, 80000.0, 0.28)
-    }
-
-    for lead in [1, 2, 3, 6]:
-        pt = models[f"pt_{lead}"].predict(features_df)[0]
-        lo = models[f"lo_{lead}"].predict(features_df)[0]
-        hi = models[f"hi_{lead}"].predict(features_df)[0]
-
-        # Apply Extreme Surge Surgery during severe interplanetary injection
-        n_val, thresh, scale_factor = surge_params[lead]
-        act = 1.0 / (1.0 + np.exp(-(n_val - thresh) / (thresh * 0.25)))
-        pt_surg = pt * (1.0 + scale_factor * act)
-        lo_surg = lo * (1.0 + scale_factor * act)
-
-        q_adj = metrics[f"lead_{lead}h"]["conformal"].get("q_conformal_adjustment", 0.5)
-        # Monotonic quantile rearrangement (Chernozhukov et al.) to prevent quantile crossing on extreme OOD
-        lo_final = min(lo_surg, pt_surg) - q_adj
-        hi_final = max(hi, pt_surg) + q_adj
-        results[lead] = {
-            "pred": pt_surg,
-            "q10": lo_final,
-            "q90": hi_final,
-            "margin": (hi_final - lo_final) / 2.0
-        }
-    return results
-
-
-def check_cme_physical_bounds(speed=None, lat=None, lon=None, width=None):
-    """Enforces physical celestial mechanics and solar eruptive constraints."""
-    if speed is not None and (speed < 100.0 or speed > 3500.0):
-        raise ValueError(f"Unphysical CME speed: {speed} km/s. Physical solar launch speeds must reside in [100.0, 3500.0] km/s.")
-    if lat is not None and abs(lat) > 90.0:
-        raise ValueError(f"Unphysical CME heliographic latitude: {lat}°. Must reside in [-90.0, +90.0]°.")
-    if lon is not None and abs(lon) > 180.0:
-        raise ValueError(f"Unphysical CME heliographic longitude: {lon}°. Must reside in [-180.0, +180.0]°.")
-    if width is not None and (width <= 0.0 or width > 360.0):
-        raise ValueError(f"Unphysical CME angular width: {width}°. Must reside in (0.0, 360.0]°.")
-
-
-def check_cme_earth_trajectory(lat, lon, width):
-    """
-    Deterministic 3D Cone Trajectory Filter.
-    Calculates great-circle angular distance from the Sun-Earth subsolar point (0°, 0°)
-    to the eruption coordinates (lat, lon) and verifies cone intersection.
-    """
-    rad_lat = np.radians(lat)
-    rad_lon = np.radians(lon)
-    cos_alpha = np.cos(rad_lat) * np.cos(rad_lon)
-    delta_alpha = np.degrees(np.arccos(np.clip(cos_alpha, -1.0, 1.0)))
-    half_width = width / 2.0
-    is_impact = delta_alpha <= half_width
-    return is_impact, delta_alpha, half_width
-
-
-def predict_transit_cme(speed, width=360.0, accel=0.0, is_halo=1, lat=0.0, lon=0.0, as_json=False, launch_time=None):
-    # Enforce physical constraints
-    check_cme_physical_bounds(speed=speed, lat=lat, lon=lon, width=width)
-
-    # 0. Deterministic Geometric Impact Verification
-    is_impact, delta_alpha, half_width = check_cme_earth_trajectory(lat, lon, width)
-    if not is_impact:
-        if as_json:
-            out = {
-                "system": "Zar-Manah HELIOS 2.0",
-                "version": "2.5.19",
-                "doi": "10.5281/zenodo.24215019",
-                "concept_doi": "10.5281/zenodo.24215019",
-                "version_doi": "10.5281/zenodo.24262095",
-                "type": "cme_trajectory_assessment",
-                "status": "ALL-CLEAR / MISS",
-                "earth_impact": False,
-                "source_lat": float(lat),
-                "source_lon": float(lon),
-                "angular_separation_deg": round(float(delta_alpha), 2),
-                "cone_half_width_deg": round(float(half_width), 2),
-                "message": "CME expansion cone does not intercept the Sun-Earth line of sight."
-            }
-            print(json.dumps(out, indent=2))
-            return out
-
-        print("\n" + "=" * 78)
-        print("🛡️  ZAR-MANAH HELIOS-TRANSIT: GEOMETRIC TRAJECTORY FILTER")
-        print("=" * 78)
-        print(f"• Solar Source Coordinates:   Lat {lat:+.1f}°, Lon {lon:+.1f}° (Angular Offset: {delta_alpha:.1f}°)")
-        print(f"• CME Angular Width:          {width:.1f}° (Cone Half-Width: {half_width:.1f}°)")
-        print(f"• Trajectory Evaluation:      🟢 ALL-CLEAR / MISS (No Earth Impact Expected)")
-        print(f"• Physics Assessment:         The expansion cone does not intercept the Earth line-of-sight.")
-        print(f"                              Zero false alarm: no transit time will be calculated.")
-        print("=" * 78)
+# ---------------------------------------------------------------------------
+# live telemetry (every failure is explicit, never silently imputed)
+# ---------------------------------------------------------------------------
+def _get_json(url: str):
+    try:
+        with urllib.request.urlopen(url, timeout=TIMEOUT) as r:
+            return json.loads(r.read().decode())
+    except Exception:
         return None
 
-    L_AU = 1.495978707e8
-    v_amb = 420.0
-    gamma = 1.0e-7
 
-    # 1. Physics Features
-    v_diff = speed - v_amb
-    drag_accel = -gamma * v_diff * abs(v_diff)
-    v_eff = speed * np.exp(-gamma * L_AU * 0.4) + v_amb * (1.0 - np.exp(-gamma * L_AU * 0.4))
-    t_prior = L_AU / (v_eff * 3600.0)
+def _get_text(url: str):
+    try:
+        with urllib.request.urlopen(url, timeout=TIMEOUT) as r:
+            return r.read().decode(errors="replace")
+    except Exception:
+        return None
 
-    now = datetime.now(timezone.utc).replace(tzinfo=None)
-    # Historical epochs must use their own solar-cycle phase and launch date;
-    # live forecasts fall back to "now".
-    ref_time = launch_time or now
-    cycle_phase = (ref_time.year - 1996) % 11 / 11.0
-    sin_c = np.sin(2 * np.pi * cycle_phase)
-    cos_c = np.cos(2 * np.pi * cycle_phase)
 
-    # 2. Tree Inference First (GBDT + Quantiles)
-    p_time = os.path.join(MODELS_DIR, "helios_transit_time.joblib")
-    p_low = os.path.join(MODELS_DIR, "helios_transit_q_low.joblib")
-    p_high = os.path.join(MODELS_DIR, "helios_transit_q_high.joblib")
-    p_dst = os.path.join(MODELS_DIR, "helios_transit_dst.joblib")
-    for p in [p_time, p_low, p_high, p_dst]:
-        verify_model_checksum(p)
-    m_time = joblib.load(p_time)
-    m_low  = joblib.load(p_low)
-    m_high = joblib.load(p_high)
-    m_dst  = joblib.load(p_dst)
+def fetch_swpc_series(name: str) -> pd.DataFrame:
+    """Fetch an SWPC RTSW JSON time series and normalise it to (time, value...).
 
-    tree_sample = pd.DataFrame([{
-        "cme_speed": speed,
-        "cme_width": width,
-        "cme_accel": accel,
-        "is_halo": is_halo,
-        "v_diff_ambient": v_diff,
-        "drag_accel_proxy": drag_accel,
-        "transit_hours_dbm_prior": t_prior,
-        "is_fast_cme": 1 if speed >= 1000.0 else 0,
-        "sin_cycle": sin_c,
-        "cos_cycle": cos_c
-    }])
+    The operational DSCOVR/ACE feed lives at /json/rtsw/<name>.json; the old
+    /products/solar-wind/ path returns 404 and used to leave the live frame
+    empty (silently degrading the tactical stage).
+    """
+    raw = _get_json(f"{SWPC}/json/rtsw/{name}.json")
+    if not raw:
+        return pd.DataFrame()
+    rows = []
+    for r in raw:
+        t = r.get("time_tag")
+        if not t:
+            continue
+        rec = {"datetime": pd.to_datetime(t, errors="coerce", utc=True).tz_localize(None)}
+        for k, v in r.items():
+            if k == "time_tag":
+                continue
+            try:
+                rec[k] = float(v)
+            except (TypeError, ValueError):
+                continue
+        rows.append(rec)
+    # the RTSW feed interleaves several spacecraft per minute -> duplicate stamps
+    return (pd.DataFrame(rows).dropna(subset=["datetime"])
+            .drop_duplicates("datetime", keep="last").sort_values("datetime"))
 
-    pred_h_tree = float(m_time.predict(tree_sample)[0])
-    q_low_tree  = float(m_low.predict(tree_sample)[0])
-    q_high_tree = float(m_high.predict(tree_sample)[0])
-    pred_dst    = float(m_dst.predict(tree_sample)[0])
 
-    # 3. Neural Inference Second (MoKTransitNN Weight-Edited)
-    import torch
-    import torch.nn as nn
-
-    class MoKTransitNN(nn.Module):
-        def __init__(self, in_features=8):
-            super().__init__()
-            self.expert_fast_backbone = nn.Sequential(
-                nn.Linear(in_features, 32),
-                nn.GELU(),
-                nn.Linear(32, 16),
-                nn.GELU()
-            )
-            self.expert_fast_head = nn.Linear(16, 1)
-            self.expert_slow_backbone = nn.Sequential(
-                nn.Linear(in_features, 32),
-                nn.GELU(),
-                nn.Linear(32, 16),
-                nn.GELU()
-            )
-            self.expert_slow_head = nn.Linear(16, 1)
-            self.gate = nn.Sequential(
-                nn.Linear(in_features, 8),
-                nn.Tanh(),
-                nn.Linear(8, 1),
-                nn.Sigmoid()
-            )
-
-        def forward_experts(self, x):
-            h_fast = self.expert_fast_backbone(x)
-            h_slow = self.expert_slow_backbone(x)
-            y_fast = self.expert_fast_head(h_fast)
-            y_slow = self.expert_slow_head(h_slow)
-            g = self.gate(x)
-            return g, y_fast, y_slow
-
-        def forward(self, x):
-            g, y_fast, y_slow = self.forward_experts(x)
-            return (g * y_fast + (1.0 - g) * y_slow).squeeze(1)
-
-    with open(SCALER_PATH) as f:
-        s_data = json.load(f)
-    s_mean = np.array(s_data["mean"])
-    s_scale = np.array(s_data["scale"])
-
-    log_speed = np.log(speed)
-    inv_speed = 1.0 / (speed + 10.0)
-    energy_proxy = (speed / 1000.0) ** 2
-    width_norm = width / 360.0
-
-    raw_nn_feats = np.array([speed, log_speed, inv_speed, energy_proxy, width_norm, accel, is_halo, t_prior], dtype=np.float32)
-    scaled_nn = (raw_nn_feats - s_mean) / s_scale
-
-    net = MoKTransitNN(in_features=8)
-    p_mok = os.path.join(MODELS_DIR, "helios_transit_mok_edited.pt")
-    verify_model_checksum(p_mok)
-    net.load_state_dict(torch.load(p_mok, map_location="cpu", weights_only=True))
-    net.eval()
-
-    with torch.no_grad():
-        x_tensor = torch.tensor(scaled_nn.reshape(1, -1), dtype=torch.float32)
-        pred_h_mok = max(16.0, float(net(x_tensor)[0]))
-
-    # 4. Dynamic Regime Ensemble
-    w_dyn = 0.45 + 0.45 / (1.0 + np.exp(-(speed - 950.0) / 100.0))
-    pred_h = max(16.0, w_dyn * pred_h_mok + (1.0 - w_dyn) * pred_h_tree)
-
-    # 5. Conformal Coverage Window (Honest calibration without hardcoded padding)
-    low_h = max(14.0, float(q_low_tree))
-    high_h = max(low_h + 4.0, float(q_high_tree))
-
-    arrival_dt = ref_time + timedelta(hours=pred_h)
-
-    # 6. APEX 24–72h Solar Evaluation (Gear 1: Southward Bz & Gear 2: Severe Storm Veto)
-    apex_storm_path = os.path.join(MODELS_DIR, "helios_storm_apex.pkl")
-    apex_vision_path = os.path.join(MODELS_DIR, "helios_vision_apex.pkl")
-    apex_info = None
-    if os.path.exists(apex_storm_path) and os.path.exists(apex_vision_path):
+def fetch_dst() -> pd.DataFrame:
+    raw = _get_json(f"{SWPC}/products/kyoto-dst.json")
+    if not raw:
+        return pd.DataFrame()
+    rows = []
+    for r in raw:
+        t = r.get("time_tag")
         try:
-            verify_model_checksum(apex_vision_path)
-            verify_model_checksum(apex_storm_path)
-            with open(apex_vision_path, "rb") as f:
-                pkg_m1 = pickle.load(f)
-            with open(apex_storm_path, "rb") as f:
-                pkg_m2 = pickle.load(f)
+            rows.append({"datetime": pd.to_datetime(t, utc=True).tz_localize(None),
+                         "dst": float(r.get("dst"))})
+        except (TypeError, ValueError):
+            continue
+    return pd.DataFrame(rows).dropna().sort_values("datetime")
 
-            theta = np.deg2rad(np.clip(np.sqrt(lat**2 + lon**2), 0.0, 75.0))
-            cos_t = np.clip(np.cos(theta), 0.35, 1.0)
-            v_3d = float(speed / cos_t)
-            m_grams = 1.0e16 if is_halo else 5.0e15
-            log_m = np.log10(m_grams)
-            log_v_cms = np.log10(np.clip(v_3d, 100.0, 4000.0) * 1e5)
-            e_3d = float(np.log10(0.5) + log_m + 2.0 * log_v_cms)
-            f107_val = 145.0
-            r_ss = max(10.0, (f107_val - 60.0) * 1.1)
-            flare_proxy = float(np.log10(np.clip(v_3d * f107_val / 100.0, 1.0, 1e6)))
 
-            phys_vals = {
-                "v_launch_3d": v_3d,
-                "width": float(360.0 if is_halo else width),
-                "accel": float(accel if accel > 0 else 880.0),
-                "mass": float(m_grams),
-                "energy_3d": e_3d,
-                "is_halo": int(is_halo),
-                "f107": f107_val,
-                "r_sunspot": r_ss,
-                "v_sw_launch": 450.0,
-                "prior_v": 550.0,
-                "shear_angle_proxy": 59.5,
-                "free_energy_proxy": 1.25,
-                "helicity_proxy": 0.0,
-                "flare_flux_proxy": flare_proxy
+def fetch_kp() -> pd.DataFrame:
+    raw = _get_json(f"{SWPC}/products/noaa-planetary-k-index.json")
+    if not raw:
+        return pd.DataFrame()
+    rows = []
+    for r in raw:
+        t = r.get("time_tag")
+        try:
+            rows.append({"datetime": pd.to_datetime(t, utc=True).tz_localize(None),
+                         "kp": float(r.get("Kp"))})
+        except (TypeError, ValueError):
+            continue
+    return pd.DataFrame(rows).dropna().sort_values("datetime")
+
+
+def fetch_f107() -> float:
+    raw = _get_json(f"{SWPC}/json/f107_cm_flux.json")
+    if not raw:
+        return np.nan
+    vals = []
+    for r in raw:
+        try:
+            vals.append(float(r.get("flux")))
+        except (TypeError, ValueError):
+            continue
+    return float(np.median(vals)) if vals else np.nan
+
+
+def fetch_ace_hourly() -> pd.DataFrame:
+    """ACE 1-hour mag + plasma (real L1 data, ~26 days of history).
+
+    The RTSW 1-minute feed only carries the last 24 h, which is not enough for
+    the 24 h lags and the MO detector; the ACE hourly archive covers a full
+    solar-rotation-scale window and is the operational fallback.
+    """
+    mag = _get_json(f"{SWPC}/json/ace/mag/ace_mag_1h.json") or []
+    pla = _get_json(f"{SWPC}/json/ace/swepam/ace_swepam_1h.json") or []
+    if not mag and not pla:
+        return pd.DataFrame()
+
+    def frame(rows, mapping):
+        out = []
+        for r in rows:
+            t = r.get("time_tag")
+            if not t:
+                continue
+            rec = {"datetime": pd.to_datetime(t, errors="coerce", utc=True)}
+            for src, dst in mapping.items():
+                try:
+                    rec[dst] = float(r[src])
+                except (KeyError, TypeError, ValueError):
+                    rec[dst] = np.nan
+            out.append(rec)
+        return pd.DataFrame(out).dropna(subset=["datetime"])
+
+    m = frame(mag, {"gsm_bx": "bx_gsm", "gsm_by": "by_gsm",
+                    "gsm_bz": "bz_gsm", "bt": "b_mag"})
+    w = frame(pla, {"speed": "v_flow", "dens": "np_dens", "temperature": "temp"})
+    df = m.set_index("datetime").join(w.set_index("datetime"), how="outer") \
+        if not m.empty and not w.empty else (m if not m.empty else w).set_index("datetime")
+    df.index = df.index.tz_localize(None)
+    return df.sort_index()
+
+
+def xray_class(flux: float) -> str | None:
+    """Standard GOES class from peak flux in W/m^2 (NOAA scale)."""
+    if not np.isfinite(flux) or flux <= 0:
+        return None
+    for letter, lo in (("X", 1e-4), ("M", 1e-5), ("C", 1e-6), ("B", 1e-7)):
+        if flux >= lo:
+            return f"{letter}{flux / lo:.1f}"
+    return f"A{flux / 1e-8:.1f}"
+
+
+def build_live_5min() -> pd.DataFrame:
+    """Causal 5-minute L1 frame in the exact GSE/GSM basis used in training.
+
+    v3.1 fed `detect_mo`/`run_3dcore` an *hourly* GSM frame, while v3_08 trained
+    on 5-minute OMNI with GSE for `rot_angle` and `bx_gse`.  That train/serve
+    skew is removed here: RTSW 1-minute mag/wind are resampled to 5 min and the
+    GSM vector is rotated to GSE with the same dipole tilt used at training.
+    """
+    mag = fetch_swpc_series("rtsw_mag_1m")
+    wind = fetch_swpc_series("rtsw_wind_1m")
+    if mag.empty or wind.empty:
+        return pd.DataFrame()
+    keep_m = [c for c in ("datetime", "bx_gsm", "by_gsm", "bz_gsm", "bt") if c in mag]
+    m = mag[keep_m].rename(columns={"bt": "b_mag"}).set_index("datetime")
+    ren = {"proton_speed": "v_flow", "proton_density": "np_dens",
+           "proton_temperature": "temp", "pressure": "pdyn"}
+    w = wind.rename(columns={k: v for k, v in ren.items() if k in wind})
+    keep_w = [c for c in ("v_flow", "np_dens", "temp", "pdyn") if c in w]
+    w = w[["datetime"] + keep_w].set_index("datetime")
+    df = pd.concat([m, w], axis=1).sort_index().resample("5min").mean()
+    if df.empty:
+        return pd.DataFrame()
+    psi = dipole_tilt_rad(df.index)
+    bx = df.get("bx_gsm", pd.Series(np.nan, index=df.index))
+    by = df.get("by_gsm", pd.Series(np.nan, index=df.index))
+    bz = df.get("bz_gsm", pd.Series(np.nan, index=df.index))
+    # GSM -> GSE: rotation about the X axis by the dipole tilt (Hapgood).
+    df["bx_gse"] = bx
+    df["by_gse"] = by * np.cos(psi) + bz * np.sin(psi)
+    df["bz_gse"] = -by * np.sin(psi) + bz * np.cos(psi)
+    if "b_mag" not in df:
+        df["b_mag"] = np.sqrt(by ** 2 + bz ** 2)
+    if "pdyn" not in df and {"np_dens", "v_flow"} <= set(df.columns):
+        df["pdyn"] = 1.6726e-6 * df["np_dens"] * df["v_flow"] ** 2
+    if "beta" not in df and {"np_dens", "temp", "b_mag"} <= set(df.columns):
+        df["beta"] = 3.4696e-5 * df["np_dens"] * df["temp"] / df["b_mag"] ** 2
+    df["t_exp"] = (0.031 * df["v_flow"] - 5.1) ** 2 * 1e3
+    df["t_ratio"] = df["temp"] / df["t_exp"]
+    return df.reset_index()
+
+
+def dipole_tilt_rad(index: pd.DatetimeIndex) -> np.ndarray:
+    doy = index.dayofyear.values + index.hour.values / 24.0
+    return np.radians(7.25) * np.sin(2 * np.pi * (doy - 80) / 365.25)
+
+
+def fetch_goes_xray() -> dict:
+    """GOES primary X-ray flux + the 7-day flare list (both real SWPC feeds)."""
+    xr = _get_json(f"{SWPC}/json/goes/primary/xrays-1-day.json") or []
+    fl = _get_json(f"{SWPC}/json/goes/primary/xray-flares-7-day.json") or []
+    rows = []
+    for r in xr:
+        try:
+            rows.append((pd.to_datetime(r["time_tag"], utc=True).tz_localize(None),
+                         float(r["flux"])))
+        except (KeyError, TypeError, ValueError):
+            continue
+    out: dict = {"n_xray_1d": len(rows), "n_flares_7d": len(fl)}
+    if rows:
+        rows.sort()
+        t_last, f_last = rows[-1]
+        f24 = [f for t, f in rows if t >= t_last - pd.Timedelta(hours=24)]
+        out.update({"as_of": str(t_last), "flux_now_wm2": f_last,
+                    "class_now": xray_class(f_last),
+                    "max_class_24h": xray_class(max(f24) if f24 else f_last),
+                    "max_flux_24h_wm2": max(f24) if f24 else f_last})
+    recent = []
+    for r in fl[-5:]:
+        recent.append({"begin": r.get("begin_time"), "peak": r.get("peak_time"),
+                       "end": r.get("end_time"), "class": r.get("max_class"),
+                       "region": r.get("active_region")})
+    out["recent_flares"] = recent
+    return out
+
+
+def fetch_hek_events(days: int = 3) -> dict:
+    """HEK frontside flares + active regions with true heliographic positions."""
+    end = pd.Timestamp.now(tz="UTC").tz_localize(None)
+    start = end - pd.Timedelta(days=days)
+    base = "https://www.lmsal.com/hek/her"
+    out: dict = {"window_days": days, "flares": [], "active_regions": []}
+    for etype, key, ret in (
+        ("FL", "flares", "event_starttime,event_peaktime,fl_goescls,ar_noaanum,hgs_x,hgs_y"),
+        ("AR", "active_regions", "event_starttime,ar_noaanum,hgs_x,hgs_y"),
+    ):
+        q = (f"{base}?cosec=2&cmd=search&type=column&event_type={etype}"
+             f"&event_starttime={start:%Y-%m-%dT%H:%M:%S}"
+             f"&event_endtime={end:%Y-%m-%dT%H:%M:%S}"
+             f"&event_coordsys=helioprojective&x1=-2000&x2=2000&y1=-2000&y2=2000"
+             f"&result_limit=200&return={ret}")
+        body = _get_text(q)
+        if not body:
+            out[f"{key}_error"] = "unreachable"
+            continue
+        try:
+            payload = json.loads(body)
+        except json.JSONDecodeError:
+            out[f"{key}_error"] = "bad_json"
+            continue
+        rows = payload.get("result") or []
+        if etype == "FL":
+            rows = sorted(rows, key=lambda r: r.get("event_starttime") or "", reverse=True)
+        out[key] = rows[:20]
+        out[f"n_{key}"] = len(rows)
+    return out
+
+
+def fetch_enlil() -> dict:
+    """Latest WSA-ENLIL run visible on SWPC.
+
+    SWPC publishes ENLIL only as rendered frames (no numeric 1 AU time series),
+    so this reports the newest frame timestamp and the frame count and states
+    explicitly that no numeric profile is available.  No value is imputed.
+    """
+    frames = _get_json(f"{SWPC}/products/animations/enlil.json") or []
+    times = []
+    for f in frames:
+        m = re.search(r"(\d{8}T\d{6})", f.get("url", ""))
+        if m:
+            try:
+                times.append(pd.Timestamp(m.group(1)))
+            except ValueError:
+                continue
+    out = {"n_frames": len(frames), "numeric_1au_profile": False}
+    if times:
+        out["latest_frame_utc"] = str(max(times))
+    if not frames:
+        out["status"] = "unreachable"
+    return out
+
+
+def build_live_frame() -> tuple[pd.DataFrame, dict]:
+    """Merge RTSW mag/wind with Dst and Kp into an hourly causal frame."""
+    mag = fetch_swpc_series("rtsw_mag_1m")
+    wind = fetch_swpc_series("rtsw_wind_1m")
+    ace = fetch_ace_hourly()
+    dst = fetch_dst()
+    kp = fetch_kp()
+    f107 = fetch_f107()
+    completeness = {
+        "rtsw_mag_1m": int(len(mag)),
+        "rtsw_wind_1m": int(len(wind)),
+        "ace_hourly": int(len(ace)),
+        "kyoto_dst": int(len(dst)),
+        "kp": int(len(kp)),
+        "f107": bool(np.isfinite(f107)),
+    }
+    if mag.empty and wind.empty and ace.empty:
+        return pd.DataFrame(), completeness
+    frames = []
+    if not mag.empty:
+        keep = [c for c in ("datetime", "bx_gsm", "by_gsm", "bz_gsm", "bt") if c in mag]
+        m = mag[keep].rename(columns={"bt": "b_mag"})
+        frames.append(m.set_index("datetime"))
+    if not wind.empty:
+        ren = {"proton_speed": "v_flow", "proton_density": "np_dens",
+               "proton_temperature": "temp", "pressure": "pdyn"}
+        w = wind.rename(columns={k: v for k, v in ren.items() if k in wind})
+        keep = [c for c in ("v_flow", "np_dens", "temp", "pdyn") if c in w]
+        frames.append(w[["datetime"] + keep].set_index("datetime"))
+    rtsw = pd.concat(frames, axis=1).sort_index() if frames else pd.DataFrame()
+    # base = ACE hourly archive, overlay = the freshest RTSW minutes
+    df = ace.copy() if not ace.empty else pd.DataFrame(index=rtsw.index)
+    if not rtsw.empty:
+        rtsw = rtsw.resample("1h").mean()
+        df = rtsw.combine_first(df)
+    if df.empty:
+        return pd.DataFrame(), completeness
+    if "pdyn" not in df and {"np_dens", "v_flow"} <= set(df.columns):
+        # Pdyn [nPa] = 1.6726e-6 * n[cm^-3] * v[km/s]^2  (physical, not fitted)
+        df["pdyn"] = 1.6726e-6 * df["np_dens"] * df["v_flow"] ** 2
+    if "b_mag" not in df:
+        df["b_mag"] = np.sqrt(df.get("by_gsm", np.nan) ** 2 + df.get("bz_gsm", np.nan) ** 2)
+    if "beta" not in df and {"np_dens", "temp", "b_mag"} <= set(df.columns):
+        # plasma beta = 2 mu0 n k T / B^2  ->  3.47e-5 * n[cm^-3] T[K] / B[nT]^2
+        df["beta"] = 3.4696e-5 * df["np_dens"] * df["temp"] / df["b_mag"] ** 2
+    df["e_field"] = -df.get("v_flow", np.nan) * df.get("bz_gsm", np.nan) / 1000.0
+    # Dst is a 1 h index and Kp a 3 h index: carrying the last published value
+    # forward is physically correct.  A hard limit used to leave the newest row
+    # with NaN Kp, which sent the XGB residual to -150 nT on a dead-quiet hour.
+    if not dst.empty:
+        df = df.join(dst.set_index("datetime")["dst"], how="left")
+        df["dst"] = df["dst"].ffill()
+    else:
+        df["dst"] = np.nan
+    if not kp.empty:
+        df = df.join(kp.set_index("datetime")["kp"], how="left")
+        df["kp"] = df["kp"].ffill()
+    else:
+        df["kp"] = np.nan
+    df["f107"] = f107
+    df = df.reset_index()
+    completeness["f107_value"] = f107 if np.isfinite(f107) else None
+    return df, completeness
+
+
+# ---------------------------------------------------------------------------
+# stage 5: tactical
+# ---------------------------------------------------------------------------
+def run_tactical(live: pd.DataFrame, bz_forecast: float | None = None) -> dict:
+    from v3_09_train_tactical import (FEATURES, HORIZONS, add_ode_columns,
+                                      build_features, ode_rollout)
+
+    if live.empty or len(live) < 30:
+        return {"status": "insufficient_l1_data", "n_hours": int(len(live))}
+    h = build_features(live.copy())
+    h = add_ode_columns(h)
+    h = h.loc[:, ~h.columns.duplicated(keep="last")]
+    missing = [c for c in FEATURES if c not in h.columns]
+    for c in missing:
+        h[c] = np.nan
+    X = h[FEATURES].replace([np.inf, -np.inf], np.nan).tail(1)
+    for c in ("kp", "dst"):
+        if c in X and X[c].isna().any():
+            X[c] = X[c].fillna(float(h[c].dropna().iloc[-1])) if h[c].notna().any() else X[c]
+    out = {"as_of": str(h["datetime"].iloc[-1]), "dst_now": _f(h["dst"].iloc[-1]),
+           "horizons": {}, "missing_features": missing,
+           "nan_in_last_row": sorted(X.columns[X.isna().any()].tolist())}
+    for hor in HORIZONS:
+        path = MODELS_DIR / f"tactical_h{hor}.joblib"
+        if not path.exists():
+            continue
+        blob = joblib.load(path)
+        Xh = X.reindex(columns=blob["features"])
+        members = blob.get("members") or [blob[k] for k in ("lgb", "xgb", "lgb_huber")
+                                         if k in blob]
+        resid = float(np.mean([m.predict(Xh)[0] for m in members]))
+        base = _f(h[f"dst_ode_{hor}"].iloc[-1])
+        raw = base + resid if np.isfinite(base) else float(resid)
+        dst_now = h["dst"].iloc[-1]
+        # The persistence blend weight was chosen by pre-2020 rolling-origin CV.
+        wb = blob.get("blend_persistence_weight")
+        wb = 1.0 if wb is None else float(wb)
+        pred = wb * raw + (1 - wb) * float(dst_now) if np.isfinite(dst_now) else raw
+        # Storm-tail gain fitted on the pre-2020 CV fold (stored in the model).
+        tg = float(blob.get("tail_gain") or 1.0)
+        if tg != 1.0 and np.isfinite(pred) and pred < -30.0:
+            pred = -30.0 + tg * (pred + 30.0)
+        reg = 0 if (not np.isfinite(dst_now) or dst_now > -30) else (1 if dst_now > -60 else 2)
+        q_state = blob.get("aci_q0") or {}
+        qq = q_state.get(reg, q_state.get(str(reg)))
+        scale = 1.0
+        if blob.get("aci_mode") == "normalized":
+            ref = float(blob.get("scale_ref") or 1.0)
+            std_now = float(h["dst_std_6h"].iloc[-1]) if "dst_std_6h" in h else np.nan
+            if np.isfinite(std_now) and ref > 1e-6:
+                scale = float(np.clip(std_now / ref, 0.5, 3.0))
+        entry = {"dst_pred": _f(pred), "dst_ode": _f(base), "residual": _f(resid),
+                 "persistence_weight": _f(1 - wb)}
+        if qq is not None and np.isfinite(qq):
+            entry.update({"dst_band": [_f(pred - qq * scale), _f(pred + qq * scale)],
+                          "aci_width": _f(2 * qq * scale),
+                          "aci_regime": int(reg),
+                          "aci_mode": blob.get("aci_mode", "raw")})
+        out["horizons"][f"+{hor}h"] = entry
+    # ---- 3DCORE -> tactical coupling -------------------------------------
+    # When a magnetic obstacle is being crossed, the flux-rope extrapolation
+    # supplies a forecast Bz that replaces the persistent-Bz assumption inside
+    # the ring-current ODE.  This is physics, not a fitted correction: no model
+    # is retrained and the uncoupled prediction stays visible for comparison.
+    if bz_forecast is not None and np.isfinite(bz_forecast):
+        last = h.iloc[-1]
+        v_now = _f(last.get("v_flow"))
+        p_now = _f(last.get("pdyn"))
+        d_now = _f(last.get("dst"))
+        if v_now is not None and d_now is not None:
+            ey = -v_now * float(bz_forecast) / 1000.0
+            out["coupled_3dcore"] = {
+                "bz_forecast_nt": _f(bz_forecast), "ey_forecast_mvm": _f(ey),
+                "dst_pred_6h_ode_coupled": _f(ode_rollout(d_now, p_now or np.nan, ey, 6)),
+                "note": "ODE re-run with the flux-rope Bz; uncoupled horizons above",
             }
-            cols = pkg_m1["phys_cols"]
-            vec = np.array([phys_vals.get(c, 0.0) for c in cols], dtype=np.float32)
-            std_safe = np.where(pkg_m1["p_std"] == 0, 1.0, pkg_m1["p_std"])
-            norm_vec = ((vec - pkg_m1["p_mean"]) / std_safe).reshape(1, -1)
-            norm_vec = np.nan_to_num(norm_vec)
+    return out
 
-            p_south = float(pkg_m1["clf"].predict_proba(norm_vec)[0, 1])
-            # Rejection zone / Selective classification policy:
-            # When 0.40 < p_south < 0.60, model is near chance and must abstain to avoid false security
-            if p_south >= 0.60:
-                chirality_state = "SOUTHWARD_THREAT"
-                is_south = True
-            elif p_south <= 0.40:
-                chirality_state = "NORTHWARD_POLARITY"
-                is_south = False
+
+def _f(x):
+    try:
+        v = float(x)
+        return v if np.isfinite(v) else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _scalar(row, key: str, default=np.nan) -> float:
+    """Read one numeric cell from a one-row frame or a plain mapping.
+
+    `run_apex` builds `pd.DataFrame([cme])`, so `row.get(key)` returns a
+    `Series` as soon as the column exists (live path with ambient telemetry, or
+    the historical battery).  `float(Series)` raises, which is how the v3.2
+    `float.abs()` bug survived: it only failed when the key was present.
+    """
+    if hasattr(row, "columns"):
+        if key not in row.columns:
+            return default
+        v = row[key]
+        if hasattr(v, "iloc"):
+            if len(v) == 0:
+                return default
+            v = v.iloc[0]
+    else:
+        v = row.get(key, default)
+    try:
+        out = float(v)
+    except (TypeError, ValueError):
+        return default
+    return out if np.isfinite(out) else default
+
+
+# ---------------------------------------------------------------------------
+# stage 3: transit
+# ---------------------------------------------------------------------------
+def run_transit(cme: dict) -> dict:
+    """Point transit + conformal window from the fitted model blob.
+
+    The physics backbone (w_amb, gamma) and the DBM grid features are built by
+    the exact same shared code used at training time, so there is no
+    train/serve skew.
+    """
+    from v3_common import (add_transit_features, design_matrix,
+                           transit_physics)
+
+    path = MODELS_DIR / "transit_v3.joblib"
+    if not path.exists():
+        return {"status": "model_missing"}
+    blob = joblib.load(path)
+    row = pd.DataFrame([cme])
+    for c in set(blob["features"]) | {"t_launch"}:
+        if c not in row:
+            row[c] = np.nan
+    if "t_launch" not in row or pd.isna(row["t_launch"].iloc[0]):
+        row["t_launch"] = pd.Timestamp(cme["launch_time"])
+    row = add_transit_features(row)
+    t_phys, v1, reach = transit_physics(row, blob["physics"])
+    if not bool(reach[0]):
+        # launch speed does not exceed the fitted ambient wind: the drag model
+        # has no physical solution, so report that instead of inventing a time.
+        return {"status": "unreachable_physics",
+                "v_launch_km_s": _f(cme.get("v_lin")),
+                "w_amb_km_s": _f(blob["physics"]["w_amb_km_s"]),
+                "gamma_km_inv": _f(blob["physics"]["gamma_km_inv"]),
+                "fallback_ballistic_h": _f(t_phys[0])}
+    X = design_matrix(row, blob["features"])
+    # Weighted blend of the members chosen by pre-2020 OOF (v3.2).  `models`
+    # may be heterogeneous (LightGBM bag, XGBoost, ExtraTrees, Ridge, DBM
+    # residual learner), so the weights are part of the artefact.
+    ws = blob.get("model_weights") or [1.0 / len(blob["models"])] * len(blob["models"])
+    # v3.4: members may have been trained on log(T); the artefact records the
+    # target space so serving applies the same exponentiation as training.
+    is_log = blob.get("target_space") == "log"
+    t_hat = 0.0
+    for m, w in zip(blob["models"], ws):
+        if isinstance(m, list):
+            if is_log:
+                pred = float(np.mean([np.exp(np.clip(x.predict(X)[0], 1.5, 5.1))
+                                      for x in m]))
             else:
-                chirality_state = "INDETERMINATE"
-                is_south = None
-            q10_bz = float(pkg_m1["q10"].predict(norm_vec)[0])
-            q50_bz = float(pkg_m1["q50"].predict(norm_vec)[0])
-            q90_bz = float(pkg_m1["q90"].predict(norm_vec)[0])
-
-            p_severe = float(pkg_m2["clf"].predict_proba(norm_vec)[0, 1])
-            is_severe = bool(p_severe >= pkg_m2["decision_threshold"])
-            q10_dst = float(pkg_m2["q10"].predict(norm_vec)[0])
-            q50_dst = float(pkg_m2["q50"].predict(norm_vec)[0])
-            q90_dst = float(pkg_m2["q90"].predict(norm_vec)[0])
-
-            apex_info = {
-                "southward_bz_threat": {
-                    "prob_south": round(p_south, 3),
-                    "is_threat": is_south,
-                    "chirality_state": chirality_state,
-                    "bz_median_nT": round(q50_bz, 1),
-                    "bz_conformal_range_nT": [round(q10_bz, 1), round(q90_bz, 1)]
-                },
-                "severe_storm_veto": {
-                    "prob_severe": round(p_severe, 3),
-                    "is_severe_alert": is_severe,
-                    "dst_median_nT": round(q50_dst, 1),
-                    "dst_conformal_range_nT": [round(q10_dst, 1), round(q90_dst, 1)]
-                }
-            }
-        except Exception as e:
-            import sys
-            print(f"⚠️ Warning: APEX inference encountered an error: {e}", file=sys.stderr)
-            apex_info = None
-
-    if as_json:
-        out = {
-            "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.19",
-            "doi": "10.5281/zenodo.24215019",
-            "concept_doi": "10.5281/zenodo.24215019",
-            "version_doi": "10.5281/zenodo.24262095",
-            "type": "transit_cme_forecast",
-            "speed_km_s": float(speed),
-            "angular_width_deg": float(width),
-            "source_lat": float(lat),
-            "source_lon": float(lon),
-            "is_halo": bool(is_halo),
-            "earth_impact": True,
-            "transit_hours": round(float(pred_h), 2),
-            "conformal_window_hours": [round(float(low_h), 2), round(float(high_h), 2)],
-            "arrival_time_utc": arrival_dt.strftime("%Y-%m-%d %H:%M UTC"),
-            "predicted_shock_dst_nT": round(float(pred_dst), 2),
-            "solar_apex_evaluation": apex_info
-        }
-        print(json.dumps(out, indent=2))
-        return out
-
-    print("\n" + "=" * 78)
-    print("🚀 ZAR-MANAH HELIOS-TRANSIT v2.5: 24–72H DYNAMIC REGIME ENSEMBLE FORECAST")
-    print("=" * 78)
-    print(f"Observed Solar Launch: Speed = {speed:.1f} km/s | Halo CME: {'YES (360°)' if is_halo else 'NO'}")
-    print(f"Solar Source: Lat {lat:+.1f}°, Lon {lon:+.1f}° | Trajectory: DIRECT IMPACT (Offset: {delta_alpha:.1f}° <= Half-Width: {half_width:.1f}°)")
-    print("-" * 78)
-    print(f"• Dynamic Hybrid Transit Time: {pred_h:.1f} hours ({pred_h/24.0:.1f} days)")
-    print(f"• Kinematic Decomposition:    MoK Neural: {pred_h_mok:.1f}h ({w_dyn*100:.0f}%) | GBDT: {pred_h_tree:.1f}h ({(1-w_dyn)*100:.0f}%)")
-    print(f"• 92% Conformal Window:       [{low_h:.1f}h, {high_h:.1f}h] (Margin: ±{(high_h-low_h)/2.0:.1f}h)")
-    print(f"• Expected Earth Impact:      {arrival_dt.strftime('%Y-%m-%d %H:%M UTC')}")
-    print(f"• Expected Storm Shock (Dst): {pred_dst:.1f} nT")
-
-    if apex_info:
-        print("-" * 78)
-        print("☀️  24–72H SOLAR APEX FRONTIER COGNITION (GEARS 1 & 2):")
-        sbz = apex_info["southward_bz_threat"]
-        sst = apex_info["severe_storm_veto"]
-        ch_st = sbz.get("chirality_state", "SOUTHWARD_THREAT" if sbz["is_threat"] else "NORTHWARD_POLARITY")
-        if ch_st == "SOUTHWARD_THREAT":
-            status_bz = "🔴 SOUTHWARD THREAT (Bz <= -10 nT)"
-        elif ch_st == "NORTHWARD_POLARITY":
-            status_bz = "🟢 NORTHWARD / BENIGN"
+                pred = float(np.mean([x.predict(X)[0] for x in m]))
         else:
-            status_bz = f"⚪ INDETERMINATE POLARITY ({sbz['prob_south']*100:.1f}%) [Abstain: Requires L1 In-Situ]"
-        status_st = "🚨 MAJOR ALERT G3-G4+ (Dst <= -110 nT)" if sst["is_severe_alert"] else "✅ NO SEVERE STORM RISK"
-        print(f"   • Coronal Southward Bz:    {status_bz} (P_south: {sbz['prob_south']*100:.1f}%) | Range: [{sbz['bz_conformal_range_nT'][0]:+.1f}, {sbz['bz_conformal_range_nT'][1]:+.1f}] nT")
-        print(f"   • Geomagnetic Severity:    {status_st} (P_severe: {sst['prob_severe']*100:.1f}%) | Range: [{sst['dst_conformal_range_nT'][0]:.0f}, {sst['dst_conformal_range_nT'][1]:.0f}] nT")
-
-    print("-" * 78)
-
-    if pred_dst <= -200:
-        print("• Threat Level:               🔴 G5 EXTREME SUPERSTORM ALERT")
-    elif pred_dst <= -100:
-        print("• Threat Level:               🟠 G3/G4 SEVERE GEOMAGNETIC STORM")
-    elif pred_dst <= -50:
-        print("• Threat Level:               🟡 G1/G2 MODERATE STORM")
+            pv = float(m.predict(X)[0])
+            pred = float(np.exp(np.clip(pv, 1.5, 5.1))) if is_log else pv
+        t_hat += float(w) * pred
+    edges = blob["regime_edges_v_lin"]
+    regime_idx = int(np.digitize([float(cme.get("v_lin", 0.0))], edges)[0])
+    # Serve exactly the band the training run selected on out-of-fold data;
+    # no clamp, no fallback level.  A mismatch here would be train/serve skew.
+    band_mode = blob.get("band_mode", "cqr")
+    if band_mode == "abs_conformal":
+        q = float(blob["q_abs"].get(str(regime_idx), blob["q_abs"]["global"]))
+        lo = t_hat - q
+        hi = t_hat + q
+    elif band_mode == "abs_conformal_normalized":
+        q = float(blob["q_norm"].get(str(regime_idx), blob["q_norm"]["global"]))
+        sg = float(blob["regime_sigma"].get(str(regime_idx),
+                                            blob["regime_sigma"]["global"]))
+        lo = t_hat - q * sg
+        hi = t_hat + q * sg
     else:
-        print("• Threat Level:               🟢 MINOR / GLANCING BLOW")
-    print("-" * 78)
-    print("Note: Validated on unseen Solar Cycle 25 OOD with zero synthetic leakage.")
-    print("      Global MAE: ±11.69h (GBDT: ±10.63h, Median: ±7.45h) vs DBM: ±28.95h.")
-    print("      Reference Context: NASA WSA-ENLIL historical Cycle 24 benchmark is ±10.4h (Wold et al. 2018).")
-
-
-def fetch_noaa_live(as_json=False):
-    if not as_json:
-        print("📡 Contacting NOAA Space Weather Prediction Center (SWPC) & Kyoto WDC feeds...")
-
-    def _fetch_url(url):
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Zar-Manah-HELIOS/2.5"})
-            with urllib.request.urlopen(req, timeout=7) as r:
-                return json.loads(r.read())
-        except Exception:
-            return None
-
-    urls = {
-        "mag": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
-        "wind": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
-        "dst": "https://services.swpc.noaa.gov/products/kyoto-dst.json",
-        "kp": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
-        "f107": "https://services.swpc.noaa.gov/products/10cm-flux-30-day.json",
+        q = float(blob["q"].get(str(regime_idx), blob["q"]["global"]))
+        lo = float(blob["lo_model"].predict(X)[0]) - q
+        hi = float(blob["hi_model"].predict(X)[0]) + q
+    return {
+        "arrival_hours": _f(t_hat),
+        "arrival_time_utc": (pd.Timestamp(cme["launch_time"])
+                             + pd.Timedelta(hours=t_hat)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "window_hours": [_f(lo), _f(hi)],
+        "window_width_h": _f(hi - lo),
+        "conformal_regime": regime_idx, "band_mode": band_mode, "q": _f(q),
+        "t_phys_h": _f(t_phys[0]),
+        "v1au_km_s": _f(v1[0]),
+        "w_amb_km_s": _f(blob["physics"]["w_amb_km_s"]),
+        "gamma_km_inv": _f(blob["physics"]["gamma_km_inv"]),
+        "reachable_physics": True,
     }
 
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        futures = {k: executor.submit(_fetch_url, u) for k, u in urls.items()}
-        data = {k: f.result() for k, f in futures.items()}
 
-    mag_data = data.get("mag") or []
-    wind_data = data.get("wind") or []
-    dst_data = data.get("dst") or []
-    kp_data = data.get("kp") or []
-    f107_data = data.get("f107") or []
+def _fill(s, default):
+    try:
+        v = float(s.iloc[0])
+        return v if np.isfinite(v) else default
+    except (TypeError, ValueError, IndexError):
+        return default
 
-    if not mag_data or not wind_data:
-        raise RuntimeError("Failed to retrieve primary RTSW telemetry streams from NOAA SWPC.")
 
-    # Convert to DataFrames and sort chronologically
-    df_m = pd.DataFrame(mag_data)
-    df_w = pd.DataFrame(wind_data)
+# ---------------------------------------------------------------------------
+# stage 2: impact
+# ---------------------------------------------------------------------------
+def _eval_impact_blob(blob: dict, row: pd.DataFrame) -> float:
+    """Calibrated impact probability for one fitted pipeline blob."""
+    from v3_common import design_matrix
+    from v3_05_train_impact import apply_calibration
 
-    df_m["dt"] = pd.to_datetime(df_m["time_tag"], errors="coerce")
-    df_w["dt"] = pd.to_datetime(df_w["time_tag"], errors="coerce")
+    X = design_matrix(row, blob["features"])
+    raw = np.column_stack([m.predict_proba(X)[:, 1] for m in blob["models"]])
+    p_raw = blob["meta"].predict_proba(raw)[:, 1]
+    return float(apply_calibration(p_raw, blob["calib"], blob["calib_method"])[0])
 
-    df_m = df_m.dropna(subset=["dt", "bz_gsm", "bt"]).sort_values("dt").reset_index(drop=True)
-    speed_col = "proton_speed" if "proton_speed" in df_w.columns else "speed"
-    dens_col = "proton_density" if "proton_density" in df_w.columns else "density"
-    temp_col = "proton_temperature" if "proton_temperature" in df_w.columns else "temperature"
-    df_w = df_w.dropna(subset=["dt", speed_col]).sort_values("dt").reset_index(drop=True)
 
-    # High-precision nearest timestamp merge (1-minute grid)
-    df_1m = pd.merge_asof(df_m, df_w, on="dt", direction="nearest", tolerance=pd.Timedelta("2min")).dropna(subset=["bz_gsm", speed_col])
-
-    v = df_1m[speed_col].astype(float).values
-    np_d = df_1m[dens_col].fillna(4.0).astype(float).values
-    t_val = df_1m[temp_col].fillna(50000.0).astype(float).values
-    bz = df_1m["bz_gsm"].astype(float).values
-    by = df_1m.get("by_gsm", pd.Series(0.0, index=df_1m.index)).fillna(0.0).astype(float).values
-    bt = df_1m["bt"].astype(float).values
-
-    # Physical derivations per minute (exact formulas matching NASA OMNI2 feature training)
-    b_trans = np.sqrt(by**2 + bz**2)
-    clock_angle = np.arctan2(by, bz)
-    pdyn = 1.6726e-6 * np_d * (v**2)
-    ey_rec = np.maximum(0.0, -v * bz * 1e-3)
-    sin_half = np.abs(np.sin(clock_angle / 2.0))
-    newell = (v ** (4.0 / 3.0)) * (b_trans ** (2.0 / 3.0)) * (sin_half ** (8.0 / 3.0))
-    akasofu = v * (bt**2) * (sin_half**4) * 1e-3
-    borovsky = v * bt * sin_half
-
-    calc_df = pd.DataFrame({
-        "bz_gsm": bz, "by_gsm": by, "b_mag": bt, "b_transverse": b_trans,
-        "clock_angle": clock_angle, "v_flow": v, "np_dens": np_d, "temp": t_val,
-        "pdyn": pdyn, "ey_rectified": ey_rec, "newell_coupling": newell,
-        "akasofu_eps": akasofu, "borovsky_coupling": borovsky
-    }, index=pd.DatetimeIndex(df_1m["dt"]))
-
-    # Resample into 1-hour physical intervals (matching NASA OMNI2 hourly training standard)
-    hourly = calc_df.resample("1h").mean().dropna()
-
-    # Ensure minimum hourly buffer
-    if len(hourly) < 7:
-        pad_rows = [hourly.iloc[0:1]] * (7 - len(hourly))
-        hourly = pd.concat(pad_rows + [hourly])
-
-    # Extract instantaneous values
-    curr_v = float(df_1m[speed_col].iloc[-1])
-    curr_bz = float(df_1m["bz_gsm"].iloc[-1])
-    curr_by = float(df_1m["by_gsm"].iloc[-1]) if "by_gsm" in df_1m.columns else 0.0
-    curr_bt = float(df_1m["bt"].iloc[-1])
-    curr_np = float(df_1m[dens_col].iloc[-1])
-    curr_temp = float(df_1m[temp_col].iloc[-1])
-    curr_b_trans = np.sqrt(curr_by**2 + curr_bz**2)
-    curr_clock = np.arctan2(curr_by, curr_bz)
-    curr_pdyn = 1.6726e-6 * curr_np * (curr_v**2)
-    curr_ey = max(0.0, -curr_v * curr_bz * 1e-3)
-    curr_sin_half = np.abs(np.sin(curr_clock / 2.0))
-    curr_newell = (curr_v ** (4.0 / 3.0)) * (curr_b_trans ** (2.0 / 3.0)) * (curr_sin_half ** (8.0 / 3.0))
-    curr_akasofu = curr_v * (curr_bt**2) * (curr_sin_half**4) * 1e-3
-    curr_borovsky = curr_v * curr_bt * curr_sin_half
-
-    # Extract multi-hour IMF & plasma dynamics
-    bz_hourly = hourly["bz_gsm"].values
-    v_hourly = hourly["v_flow"].values
-    pdyn_hourly = hourly["pdyn"].values
-    newell_hourly = hourly["newell_coupling"].values
-
-    bz_l1 = float(bz_hourly[-2]) if len(bz_hourly) >= 2 else curr_bz
-    bz_l2 = float(bz_hourly[-3]) if len(bz_hourly) >= 3 else bz_l1
-    bz_l3 = float(bz_hourly[-4]) if len(bz_hourly) >= 4 else bz_l2
-    bz_l6 = float(bz_hourly[-7]) if len(bz_hourly) >= 7 else bz_l3
-    bz_min3 = float(np.min(bz_hourly[-3:]))
-    bz_min6 = float(np.min(bz_hourly[-6:]))
-    bz_mean6 = float(np.mean(bz_hourly[-6:]))
-    bz_diff1 = float(curr_bz - bz_l1)
-
-    v_l1 = float(v_hourly[-2]) if len(v_hourly) >= 2 else curr_v
-    v_l2 = float(v_hourly[-3]) if len(v_hourly) >= 3 else v_l1
-    v_l3 = float(v_hourly[-4]) if len(v_hourly) >= 4 else v_l2
-    v_diff1 = float(curr_v - v_l1)
-
-    pdyn_l1 = float(pdyn_hourly[-2]) if len(pdyn_hourly) >= 2 else curr_pdyn
-    pdyn_diff1 = float(curr_pdyn - pdyn_l1)
-
-    newell_sum3 = float(np.sum(newell_hourly[-3:]))
-    newell_sum6 = float(np.sum(newell_hourly[-6:]))
-    newell_sum12 = float(np.sum(newell_hourly[-12:])) if len(newell_hourly) >= 12 else newell_sum6 * 2.0
-
-    # Parse Kyoto Dst series
-    dst_vals = [float(x["dst"]) for x in dst_data if x.get("dst") is not None]
-    if len(dst_vals) >= 25:
-        dst_now = dst_vals[-1]
-        dst_l1 = dst_vals[-2]
-        dst_l2 = dst_vals[-3]
-        dst_l3 = dst_vals[-4]
-        dst_l6 = dst_vals[-7]
-        dst_l12 = dst_vals[-13]
-        dst_l24 = dst_vals[-25]
-        dst_m6 = float(np.mean(dst_vals[-6:]))
-        dst_s6 = float(np.std(dst_vals[-6:]))
-        dst_min24 = float(np.min(dst_vals[-24:]))
-        dst_d1 = dst_now - dst_l1
+def run_impact(cme: dict) -> dict:
+    path = MODELS_DIR / "impact_full.joblib"
+    if not path.exists():
+        return {"status": "model_missing"}
+    full = joblib.load(path)
+    row = pd.DataFrame([cme])
+    lon = cme.get("src_lon", np.nan)
+    row = _fill_geometry(row, cme)
+    row["no_source_halo"] = int((not np.isfinite(lon)) and cme.get("is_halo", 0) == 1)
+    row["cpa_sin"] = np.sin(np.radians(cme.get("cpa", 0.0) if np.isfinite(cme.get("cpa", np.nan)) else 0.0))
+    row["cpa_cos"] = np.cos(np.radians(cme.get("cpa", 0.0) if np.isfinite(cme.get("cpa", np.nan)) else 0.0))
+    has_pos = bool(np.isfinite(cme.get("src_lon", np.nan))
+                   and np.isfinite(cme.get("src_lat", np.nan)))
+    # The served impact predictor is whichever model won the pre-2020 OOF
+    # comparison in v3_05: the unified model, the source-aware switch or the
+    # 0.4/0.4/0.2 blend of full + switch + no-source.  Each branch loads the
+    # artefacts the training run actually persisted, so the live path and the
+    # backtest parquet cannot disagree.
+    sw_path = MODELS_DIR / "impact_switch.joblib"
+    bl_path = MODELS_DIR / "impact_blend.joblib"
+    ns_path = MODELS_DIR / "impact_no_source.joblib"
+    sw = joblib.load(sw_path) if sw_path.exists() else None
+    bl = joblib.load(bl_path) if bl_path.exists() else None
+    ns = joblib.load(ns_path) if ns_path.exists() else None
+    needed = set(full["features"])
+    if sw:
+        needed |= set(sw["localized"]["features"]) | set(sw["blind"]["features"])
+    if ns:
+        needed |= set(ns["features"])
+    for c in needed:
+        if c not in row:
+            row[c] = np.nan
+    if bl is not None and sw is not None and ns is not None:
+        w = bl.get("weights") or [0.4, 0.4, 0.2]
+        branch = sw["localized"] if has_pos else sw["blind"]
+        p = (float(w[0]) * _eval_impact_blob(full, row)
+             + float(w[1]) * _eval_impact_blob(branch, row)
+             + float(w[2]) * _eval_impact_blob(ns, row))
+        tau_watch = float(bl["tau_watch"])
+        tau_high = float(bl["tau_high"])
+        served = "impact_blend"
+    elif sw is not None:
+        branch = sw["localized"] if has_pos else sw["blind"]
+        p = _eval_impact_blob(branch, row)
+        tau_watch = float(sw["tau_watch"])
+        tau_high = float(sw["tau_high"])
+        served = "source_aware_localized" if has_pos else "source_aware_blind"
     else:
-        dst_now = -15.0
-        dst_l1 = -15.0; dst_l2 = -14.0; dst_l3 = -12.0; dst_l6 = -10.0; dst_l12 = -8.0; dst_l24 = -5.0
-        dst_m6 = -13.0; dst_s6 = 2.0; dst_min24 = -20.0; dst_d1 = 0.0
+        p = _eval_impact_blob(full, row)
+        tau_watch = float(full["tau_watch"])
+        tau_high = float(full["tau_high"])
+        served = "model_full"
+    tier = ("DIRECT_HIT_ALERT" if p >= tau_high
+            else "GLANCING_OR_WATCH" if p >= tau_watch else "ALL_CLEAR")
+    return {"p_impact": _f(p), "tier": tier, "model": served,
+            "tau_watch": _f(tau_watch), "tau_high": _f(tau_high)}
 
-    # Parse Kp & F10.7
-    kp_now = float(kp_data[-1].get("Kp", 2.0)) if kp_data else 2.0
-    f107_now = float(f107_data[-1].get("flux", 140.0)) if f107_data else 140.0
-    r_sunspot = max(10.0, (f107_now - 63.7) / 0.72)
 
-    latest_dt = df_1m["dt"].iloc[-1]
-    if not as_json:
-        print(f"✅ Ingested Multi-Station Live Telemetry (NOAA SWPC + Kyoto WDC):")
-        print(f"   • Telemetry Epoch:    {latest_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
-        print(f"   • Solar Wind Flow V:  {curr_v:.1f} km/s (1h lag: {v_l1:.1f} km/s, Δ1h: {v_diff1:+.1f} km/s)")
-        print(f"   • Proton Density Np:  {curr_np:.1f} cm⁻³ | Pdyn: {curr_pdyn:.2f} nPa")
-        print(f"   • IMF Field (GSM):    Bz = {curr_bz:.2f} nT (3h min: {bz_min3:.2f} nT, 6h min: {bz_min6:.2f} nT)")
-        print(f"   • Total Field Bt:     {curr_bt:.2f} nT | Transverse B: {curr_b_trans:.2f} nT")
-        print(f"   • Newell Coupling:    {curr_newell:.0f} (3h sum: {newell_sum3:.0f}, 6h sum: {newell_sum6:.0f})")
-        print(f"   • Geomagnetic Kyoto:  Dst = {dst_now:.1f} nT (24h min: {dst_min24:.1f} nT, Δ1h: {dst_d1:+.1f} nT)")
-        print(f"   • Planetary Indices:  Kp = {kp_now:.2f} | Penticton F10.7 = {f107_now:.1f} sfu (Est. SSN: {r_sunspot:.0f})")
+def build_ambient_context(live: pd.DataFrame) -> dict:
+    """Hourly OMNI-style context features, identical to v3_04's definitions.
 
-    row = {
-        "dst": dst_now, "dst_lag_1h": dst_l1, "dst_lag_2h": dst_l2, "dst_lag_3h": dst_l3,
-        "dst_lag_6h": dst_l6, "dst_lag_12h": dst_l12, "dst_lag_24h": dst_l24,
-        "dst_mean_6h": dst_m6, "dst_std_6h": dst_s6, "dst_min_24h": dst_min24, "dst_diff_1h": dst_d1,
-        "bz_gsm": curr_bz, "bz_lag_1h": bz_l1, "bz_lag_2h": bz_l2, "bz_lag_3h": bz_l3, "bz_lag_6h": bz_l6,
-        "bz_min_3h": bz_min3, "bz_min_6h": bz_min6, "bz_mean_6h": bz_mean6, "bz_diff_1h": bz_diff1,
-        "by_gsm": curr_by, "b_mag": curr_bt, "b_transverse": curr_b_trans, "clock_angle": curr_clock,
-        "v_flow": curr_v, "v_lag_1h": v_l1, "v_lag_2h": v_l2, "v_lag_3h": v_l3, "v_diff_1h": v_diff1,
-        "np_dens": curr_np, "temp": curr_temp, "pdyn": curr_pdyn, "pdyn_lag_1h": pdyn_l1, "pdyn_diff_1h": pdyn_diff1,
-        "ey_rectified": curr_ey, "newell_coupling": curr_newell, "akasofu_eps": curr_akasofu,
-        "borovsky_coupling": curr_borovsky, "newell_sum_3h": newell_sum3, "newell_sum_6h": newell_sum6,
-        "newell_sum_12h": newell_sum12, "kp": kp_now, "r_sunspot": r_sunspot, "f107": f107_now
+    The training frame (`v3_omni_context.parquet`) is built with rolling
+    windows over a strict hourly grid and `min_periods = win // 3`.  Serving
+    must use the same windows or the apex model sees a different distribution;
+    missing history stays NaN (never a climatological constant).
+    """
+    if live is None or live.empty:
+        return {}
+    h = live.copy()
+    h["datetime"] = pd.to_datetime(h["datetime"])
+    h = h.sort_values("datetime").set_index("datetime")
+    h = h.reindex(pd.date_range(h.index.min(), h.index.max(), freq="h"))
+    h.index.name = "datetime"
+    out = {}
+    if "pdyn" not in h and {"np_dens", "v_flow"} <= set(h.columns):
+        h["pdyn"] = 1.6726e-6 * h["np_dens"] * h["v_flow"] ** 2
+    if "e_field" not in h and {"v_flow", "bz_gsm"} <= set(h.columns):
+        h["e_field"] = -h["v_flow"] * h["bz_gsm"] / 1000.0
+    for win in (24, 48):
+        r = h.rolling(win, min_periods=max(1, win // 3))
+        if "v_flow" in h:
+            out[f"v_mean_{win}h"] = float(r["v_flow"].mean().iloc[-1])
+        if "bz_gsm" in h:
+            out[f"bz_min_{win}h"] = float(r["bz_gsm"].min().iloc[-1])
+        if "dst" in h:
+            out[f"dst_min_{win}h"] = float(r["dst"].min().iloc[-1])
+    for c in ("dst", "bz_gsm", "b_mag", "v_flow", "np_dens", "pdyn", "e_field"):
+        out[f"t0_{c}"] = float(h[c].iloc[-1]) if c in h else np.nan
+    lag_h = int(round(27.275 * 24))
+    for c in ("v_flow", "np_dens", "b_mag", "bz_gsm"):
+        if c in h:
+            smooth = h[c].rolling(25, center=True, min_periods=6).mean()
+            out[f"carr_{c}"] = float(smooth.shift(lag_h).iloc[-1])
+        else:
+            out[f"carr_{c}"] = np.nan
+    return out
+
+
+def _solar_cycle(ts) -> int:
+    """Same cycle rule used to build the catalogue (v3_01): 23 <=2008, 24 <=2019, 25 else."""
+    y = pd.Timestamp(ts).year
+    return 23 if y <= 2008 else (24 if y <= 2019 else 25)
+
+
+def _fill_geometry(row: pd.DataFrame, cme: dict) -> pd.DataFrame:
+    """Source geometry exactly as v3_02 computes it at training time."""
+    lon = cme.get("src_lon", np.nan)
+    lat = cme.get("src_lat", np.nan)
+    ar = cme.get("ar_num", np.nan)
+    row["abs_lon"] = abs(lon) if np.isfinite(lon) else np.nan
+    row["is_west"] = int(lon > 0) if np.isfinite(lon) else 0
+    row["is_east"] = int(lon < 0) if np.isfinite(lon) else 0
+    # `has_source` and `has_position` are *different* facts.  A CME can be
+    # associated with an active region (source known) while its longitude is
+    # still unknown; v3.2 collapsed both into one flag, so the live path could
+    # never reproduce the `has_source=1, has_position=0` rows seen in training.
+    has_pos = int(np.isfinite(lon) and np.isfinite(lat))
+    has_src = int(has_pos == 1 or (ar is not None and np.isfinite(ar)))
+    row["has_source"] = has_src
+    row["has_position"] = has_pos
+    if np.isfinite(lon) and np.isfinite(lat):
+        d = float(np.degrees(np.arccos(np.clip(
+            np.cos(np.radians(lat)) * np.cos(np.radians(lon)), -1, 1))))
+        cosd = float(np.maximum(0.35, np.cos(np.radians(d))))
+        row["d_earth_deg"] = d
+        row["cos_deprojection"] = cosd
+        row["v_3d_est"] = float(cme["v_lin"]) / cosd
+        row["cone_margin_deg"] = float(cme["width"]) / 2.0 - d
+        row["flank_margin_deg"] = float(cme["width"]) / 2.0 + 25.0 - d
+        row["v_eff_launch"] = float(cme["v_lin"]) / float(np.clip(cosd, 0.45, 1.0))
+    else:
+        for c in ("d_earth_deg", "cos_deprojection", "v_3d_est", "cone_margin_deg",
+                  "flank_margin_deg"):
+            row[c] = np.nan
+        row["v_eff_launch"] = float(cme["v_lin"])
+    return row
+
+
+# ---------------------------------------------------------------------------
+# stage 4A: apex
+# ---------------------------------------------------------------------------
+def run_apex(cme: dict, transit: dict, ambient: dict | None = None) -> dict:
+    from scipy.stats import norm
+    from v3_common import design_matrix
+    from v3_07_train_apex import add_geometry
+
+    path = MODELS_DIR / "apex_v3.joblib"
+    if not path.exists():
+        return {"status": "model_missing"}
+    blob = joblib.load(path)
+    row = pd.DataFrame([cme])
+    row["t_launch"] = pd.Timestamp(cme["launch_time"])
+    row = _fill_geometry(row, cme)
+    row["v1au_dbm"] = transit.get("v1au_km_s", np.nan)
+    row["t_phys"] = transit.get("t_phys_h", np.nan)
+    if ambient:
+        for k, v in ambient.items():
+            row[k] = v
+    # physical 1-AU forcing estimates, identical to v3_07.attach_physics
+    np0 = _scalar(row, "t0_np_dens")
+    row["pdyn_1au"] = 1.6726e-6 * np0 * row["v1au_dbm"] ** 2
+    bz0 = _scalar(row, "t0_bz_gsm")
+    row["ey_1au_max"] = row["v1au_dbm"] * (abs(bz0) if np.isfinite(bz0) else np.nan) * 1e-3
+    row = add_geometry(row)
+    for c in blob["features"]:
+        if c not in row:
+            row[c] = np.nan
+    X = design_matrix(row, blob["features"])
+    mu = float(blob["mu_model"].predict(X)[0])
+    sig = float(np.clip(blob["sig_model"].predict(X)[0], 15.0, 220.0))
+    if blob.get("band_mode") == "normalized":
+        half = float(blob["q90_norm"]) * sig
+    else:
+        half = float(blob["q90_dst"])
+    out = {"p_dst_le": {}, "dst_min_pred": _f(mu),
+           "dst_min_band": [_f(mu - half), _f(mu + half)],
+           "dst_min_band_mode": blob.get("band_mode", "static"),
+           "sigma_conditional_nt": _f(sig)}
+    bpath = MODELS_DIR / "apex_bmag.joblib"
+    if bpath.exists():
+        bb = joblib.load(bpath)
+        bm = float(bb["model"].predict(X)[0])
+        out["b_mag_max_pred"] = _f(bm)
+        out["b_mag_max_band"] = [_f(bm - bb["q90"]), _f(bm + bb["q90"])]
+    from v3_07_train_apex import _apply_platt
+    for thr in (50, 100, 200):
+        key = f"-{thr}"
+        which = blob["selected"].get(key)
+        if which is None:
+            continue
+        if which == "gaussian_tail":
+            p_raw = float(norm.cdf(((-thr) - mu) / blob["sigma"]))
+        elif which == "gaussian_tail_conditional":
+            p_raw = float(norm.cdf(((-thr) - mu) / sig))
+        elif which == "conformal_empirical":
+            z = ((-thr) - mu) / sig
+            p_raw = float(np.mean(blob["z_oof"] <= z))
+        else:
+            entry = blob["classifiers"].get(key)
+            if entry is None:
+                continue
+            kind = entry.get("kind") if isinstance(entry, dict) else None
+            if kind in ("compact_logit", "blend_logit_tail"):
+                feats = entry.get("features") or []
+                for c in feats:
+                    if c not in row:
+                        row[c] = np.nan
+                Xc = design_matrix(row, feats)
+                clf = entry.get("model")
+                p_logit = (float(entry.get("prior", 0.0)) if clf is None
+                           else float(clf.predict_proba(Xc)[:, 1][0]))
+                if kind == "blend_logit_tail":
+                    p_tail = float(norm.cdf(((-thr) - mu) / blob["sigma"]))
+                    p_raw = 0.5 * p_logit + 0.5 * p_tail
+                else:
+                    p_raw = p_logit
+            elif isinstance(entry, dict):
+                clf = entry.get("model")
+                p_raw = (float(entry.get("prior", 0.0)) if clf is None
+                         else float(clf.predict_proba(X)[:, 1][0]))
+            else:  # legacy artifact: bare estimator
+                p_raw = float(entry.predict_proba(X)[:, 1][0])
+        ab = blob["platt_ab"].get(key)
+        p = float(_apply_platt(np.array([p_raw]), tuple(ab))[0]) if ab else p_raw
+        out["p_dst_le"][key] = _f(p)
+        out.setdefault("model_used", {})[key] = which
+    # Same three-way rule as `v3_07.bz_tag`, including its launch-speed input
+    # (`v_lin`, not the decelerated 1-AU speed).  `sharp_r_value` is SHARP
+    # `R_VALUE`, an unsigned flux, so it cannot encode Hale polarity: the
+    # branch only flags a southern source with SHARP coverage.  The live CLI
+    # does not fetch it, so without `--cme_sharp_r` that branch is skipped.
+    r = cme.get("sharp_r_value", np.nan)
+    r = float(r) if isinstance(r, (int, float, np.floating)) else np.nan
+    lat0 = cme.get("src_lat", np.nan)
+    lat0 = float(lat0) if isinstance(lat0, (int, float, np.floating)) else np.nan
+    hem = float(np.sign(lat0)) if np.isfinite(lat0) else 0.0
+    v0 = cme.get("v_lin", np.nan)
+    v0 = float(v0) if isinstance(v0, (int, float, np.floating)) else np.nan
+    if np.isfinite(r) and hem < 0 and r > 0:
+        out["bz_risk_tag"] = "SOUTHERN_SOURCE"
+    elif np.isfinite(v0) and v0 >= 900:
+        out["bz_risk_tag"] = "SHEATH_DRIVEN"
+    else:
+        out["bz_risk_tag"] = "POLARITY_UNCERTAIN_AWAIT_L1"
+    out["bz_risk_tag_inputs"] = {
+        "sharp_r_value": _f(r), "src_lat": _f(lat0), "v_lin": _f(v0),
     }
-    return pd.DataFrame([row])[FEATURE_COLS]
+    return out
 
 
-def run_synthetic_sample(scenario="extreme", as_json=False):
-    if not as_json:
-        print(f"🧪 Generating Synthetic L1 Scenario: [{scenario.upper()}]...")
-    if scenario == "extreme":
-        # May 2024 Superstorm peak simulation
-        row = {
-            "dst": -210.0, "dst_lag_1h": -145.0, "dst_lag_2h": -85.0, "dst_lag_3h": -40.0,
-            "dst_lag_6h": -15.0, "dst_lag_12h": -10.0, "dst_lag_24h": -5.0,
-            "dst_mean_6h": -80.0, "dst_std_6h": 70.0, "dst_min_24h": -210.0, "dst_diff_1h": -65.0,
-            "bz_gsm": -38.5, "bz_lag_1h": -32.0, "bz_lag_2h": -25.0, "bz_lag_3h": -18.0, "bz_lag_6h": -5.0,
-            "bz_min_3h": -38.5, "bz_min_6h": -38.5, "bz_mean_6h": -25.0, "bz_diff_1h": -6.5,
-            "by_gsm": 15.0, "b_mag": 45.0, "b_transverse": 41.3, "clock_angle": 2.78,
-            "v_flow": 820.0, "v_lag_1h": 780.0, "v_lag_2h": 720.0, "v_lag_3h": 650.0, "v_diff_1h": 40.0,
-            "np_dens": 28.0, "temp": 180000.0, "pdyn": 31.4, "pdyn_lag_1h": 26.0, "pdyn_diff_1h": 5.4,
-            "ey_rectified": 31.5, "newell_coupling": 34500.0, "akasofu_eps": 185.0,
-            "borovsky_coupling": 9.2, "newell_sum_3h": 95000.0, "newell_sum_6h": 165000.0,
-            "newell_sum_12h": 210000.0, "kp": 8.7, "r_sunspot": 220.0, "f107": 240.0
-        }
-    elif scenario == "moderate":
-        # Moderate G1/G2 geomagnetic storm simulation
-        row = {
-            "dst": -45.0, "dst_lag_1h": -35.0, "dst_lag_2h": -25.0, "dst_lag_3h": -18.0,
-            "dst_lag_6h": -12.0, "dst_lag_12h": -10.0, "dst_lag_24h": -8.0,
-            "dst_mean_6h": -25.0, "dst_std_6h": 12.0, "dst_min_24h": -55.0, "dst_diff_1h": -10.0,
-            "bz_gsm": -8.5, "bz_lag_1h": -7.0, "bz_lag_2h": -5.0, "bz_lag_3h": -2.0, "bz_lag_6h": 0.0,
-            "bz_min_3h": -8.5, "bz_min_6h": -8.5, "bz_mean_6h": -5.0, "bz_diff_1h": -1.5,
-            "by_gsm": 4.0, "b_mag": 12.0, "b_transverse": 9.4, "clock_angle": 2.7,
-            "v_flow": 520.0, "v_lag_1h": 510.0, "v_lag_2h": 490.0, "v_lag_3h": 460.0, "v_diff_1h": 10.0,
-            "np_dens": 8.5, "temp": 85000.0, "pdyn": 3.8, "pdyn_lag_1h": 3.5, "pdyn_diff_1h": 0.3,
-            "ey_rectified": 4.4, "newell_coupling": 6800.0, "akasofu_eps": 18.0,
-            "borovsky_coupling": 2.2, "newell_sum_3h": 19000.0, "newell_sum_6h": 32000.0,
-            "newell_sum_12h": 45000.0, "kp": 4.3, "r_sunspot": 150.0, "f107": 165.0
-        }
-    else:
-        # Quiet solar wind
-        row = {
-            "dst": -8.0, "dst_lag_1h": -7.0, "dst_lag_2h": -6.0, "dst_lag_3h": -5.0,
-            "dst_lag_6h": -5.0, "dst_lag_12h": -4.0, "dst_lag_24h": -3.0,
-            "dst_mean_6h": -6.0, "dst_std_6h": 1.5, "dst_min_24h": -12.0, "dst_diff_1h": -1.0,
-            "bz_gsm": 1.5, "bz_lag_1h": 1.0, "bz_lag_2h": 0.5, "bz_lag_3h": 0.0, "bz_lag_6h": 1.0,
-            "bz_min_3h": 0.0, "bz_min_6h": 0.0, "bz_mean_6h": 0.8, "bz_diff_1h": 0.5,
-            "by_gsm": 0.5, "b_mag": 4.5, "b_transverse": 1.6, "clock_angle": 0.3,
-            "v_flow": 380.0, "v_lag_1h": 382.0, "v_lag_2h": 379.0, "v_lag_3h": 385.0, "v_diff_1h": -2.0,
-            "np_dens": 3.5, "temp": 45000.0, "pdyn": 0.85, "pdyn_lag_1h": 0.86, "pdyn_diff_1h": -0.01,
-            "ey_rectified": 0.0, "newell_coupling": 420.0, "akasofu_eps": 0.05,
-            "borovsky_coupling": 0.01, "newell_sum_3h": 1200.0, "newell_sum_6h": 2500.0,
-            "newell_sum_12h": 5000.0, "kp": 1.0, "r_sunspot": 120.0, "f107": 140.0
-        }
-    return pd.DataFrame([row])
+# ---------------------------------------------------------------------------
+# stage 4B: L1 magnetic obstacle + 3DCORE-lite
+# ---------------------------------------------------------------------------
+def detect_mo(live: pd.DataFrame) -> dict:
+    path = MODELS_DIR / "mo_net.joblib"
+    if not path.exists() or len(live) < 72 or "bx_gse" not in live:
+        return {"mo_active": None, "reason": "model_or_data_missing"}
+    blob = joblib.load(path)
+    h = live.copy().tail(288)  # 24 h of 5-min samples, identical to v3_08 training
+    h["t_exp"] = (0.031 * h["v_flow"] - 5.1) ** 2 * 1e3
+    h["t_ratio"] = h["temp"] / h["t_exp"]
+    for w in (6, 12, 36):
+        h[f"b_std_{w}"] = h["b_mag"].rolling(w, min_periods=w // 2).std()
+        h[f"v_mean_{w}"] = h["v_flow"].rolling(w, min_periods=w // 2).mean()
+        h[f"pdyn_max_{w}"] = h["pdyn"].rolling(w, min_periods=w // 2).max()
+        h[f"beta_mean_{w}"] = h["beta"].rolling(w, min_periods=w // 2).mean()
+        h[f"bz_min_{w}"] = h["bz_gsm"].rolling(w, min_periods=w // 2).min()
+    h["db_mag"] = h["b_mag"].diff()
+    h["dpdyn"] = h["pdyn"].diff()
+    # v3_08 computes rot_angle on the GSE vector (line 219); serving must match.
+    u = h[["bx_gse", "by_gse", "bz_gse"]].div(h["b_mag"].replace(0, np.nan), axis=0)
+    dot = (u * u.shift()).sum(axis=1).clip(-1, 1)
+    h["rot_angle"] = np.degrees(np.arccos(dot.values))
+    h["rot_var_12"] = h["rot_angle"].rolling(12, min_periods=6).mean()
+    X = h.reindex(columns=blob["features"]).replace([np.inf, -np.inf], np.nan).tail(1)
+    p = float(blob["model"].predict_proba(X)[:, 1][0])
+    return {"mo_active": bool(p >= 0.5), "p_mo": _f(p)}
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Zar-Manah HELIOS 2.0: Unified Space Weather Intelligence Architecture (v2.5.19)")
-    parser.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS 2.0 (v2.5.19)")
-    parser.add_argument("--live", action="store_true", help="Fetch real-time L1 telemetry from NOAA SWPC")
-    parser.add_argument("--sample", choices=["extreme", "moderate", "quiet"], default=None, help="Run on synthetic benchmark profile")
-    parser.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float, default=None, help="Initial solar launch speed (km/s) for 24-72h transit forecast")
-    parser.add_argument("--cme_width", "--cme-width", "--width", dest="cme_width", type=float, default=360.0, help="Angular width of CME in degrees (default 360 for halo)")
-    parser.add_argument("--cme_lat", "--cme-lat", "--lat", dest="cme_lat", type=float, default=0.0, help="Eruption solar latitude in degrees (-90 to +90, default 0)")
-    parser.add_argument("--cme_lon", "--cme-lon", "--lon", dest="cme_lon", type=float, default=0.0, help="Eruption solar longitude in degrees (-180 to +180, Stonyhurst, default 0)")
-    parser.add_argument("--cme_accel", "--cme-accel", "--accel", dest="cme_accel", type=float, default=0.0, help="Initial acceleration in m/s^2")
-    parser.add_argument("--halo", action="store_true", help="Flag as full 360-degree Halo CME")
-    parser.add_argument("--cme", action="store_true", help="Activate 24-72h CME transit forecast route")
-    parser.add_argument("--json", action="store_true", help="Output predictions as machine-readable JSON")
-    parser.add_argument("--dashboard", action="store_true", help="Launch interactive Space Weather UI Dashboard in browser")
+def run_3dcore(live: pd.DataFrame) -> dict:
+    from v3_08_flux_rope_3dcore import fit_flux_rope, lundquist_profile
 
-    args = parser.parse_args()
+    if len(live) < 36 or "bx_gse" not in live:
+        return {"status": "insufficient_data"}
+    h = live.tail(288).dropna(subset=["bx_gse", "by_gsm", "bz_gsm", "v_flow"])
+    if len(h) < 36:
+        return {"status": "insufficient_data"}
+    t_s = (h["datetime"] - h["datetime"].iloc[0]).dt.total_seconds().values
+    # v3_08 fits the rope with bx_gse / by_gsm / bz_gsm (line 150).
+    B = h[["bx_gse", "by_gsm", "bz_gsm"]].values
+    v = float(np.nanmedian(h["v_flow"].values))
+    fit = fit_flux_rope(t_s, B, v)
+    if fit is None:
+        return {"status": "fit_failed"}
+    fut = np.arange(0, 6 * 3600 + 1, 300.0) + t_s[-1]
+    pred = lundquist_profile(fut, v, fit["b0"], fit["theta"], fit["phi"],
+                             fit["t_c"], fit["radius"], fit["helicity"])
+    return {"status": "ok", **{k: _f(vv) for k, vv in fit.items()},
+            "bz_forecast_6h_min": _f(np.min(pred[:, 2])),
+            "bz_forecast_6h_mean": _f(np.mean(pred[:, 2]))}
 
-    # Input Physical Validation
-    if args.cme_speed is not None:
-        if args.cme_speed < 100.0 or args.cme_speed > 3500.0:
-            parser.error(f"Invalid --cme_speed ({args.cme_speed} km/s). Physical solar launch speeds must reside in [100.0, 3500.0] km/s.")
-    if abs(args.cme_lat) > 90.0:
-        parser.error(f"Invalid --cme_lat ({args.cme_lat}°). Solar heliographic latitude must reside in [-90.0, +90.0]°.")
-    if abs(args.cme_lon) > 180.0:
-        parser.error(f"Invalid --cme_lon ({args.cme_lon}°). Solar heliographic longitude must reside in [-180.0, +180.0]°.")
-    if args.cme_width <= 0.0 or args.cme_width > 360.0:
-        parser.error(f"Invalid --cme_width ({args.cme_width}°). CME angular width must reside in (0.0, 360.0]°.")
 
-    # Route 0: Open Visual Dashboard
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+def build_cme(args) -> dict:
+    lon = args.cme_lon
+    lat = args.cme_lat
+    width = 360.0 if args.halo else args.cme_width
+    d = np.nan
+    if np.isfinite(lon) and np.isfinite(lat):
+        d = float(np.degrees(np.arccos(np.clip(
+            np.cos(np.radians(lat)) * np.cos(np.radians(lon)), -1, 1))))
+    launch = args.launch_time or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+    v = args.cme_speed
+    v20 = args.cme_v20r
+    mass = args.cme_mass
+    energy = args.cme_energy
+    return {
+        "launch_time": launch,
+        "v_lin": v, "width": width,
+        "cpa": np.nan if width >= 360 else args.cme_cpa,
+        "is_halo": int(width >= 360), "is_partial_halo": int(180 <= width < 360),
+        "is_narrow": int(width < 30), "accel_true": args.cme_accel,
+        "v_20R": v20,
+        "v_20r_ratio": (float(v20 / v) if (np.isfinite(v20) and np.isfinite(v) and v > 0)
+                        else np.nan),
+        "dv_2nd": args.cme_dv2,
+        "mass": mass, "energy": energy,
+        "log_mass": float(np.log10(mass)) if (np.isfinite(mass) and mass > 0) else np.nan,
+        "log_energy": float(np.log10(energy)) if (np.isfinite(energy) and energy > 0) else np.nan,
+        "log_speed": float(np.log10(v)) if (np.isfinite(v) and v > 0) else np.nan,
+        "log_momentum": (float(np.log10(mass * v))
+                         if (np.isfinite(mass) and mass > 0
+                             and np.isfinite(v) and v > 0) else np.nan),
+        "src_lon": lon, "src_lat": lat,
+        "sharp_r_value": args.cme_sharp_r,
+        "solar_cycle": _solar_cycle(launch), "ar_num": args.cme_ar,
+    }
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="HELIOS v3.4 operational forecast")
+    ap.add_argument("--version", "-V", action="version", version="Zar-Manah HELIOS v3.4")
+    ap.add_argument("--live", action="store_true", help="fetch real-time NOAA SWPC telemetry")
+    ap.add_argument("--cme", action="store_true", help="run the launch-time CME pipeline")
+    ap.add_argument("--cme_speed", "--cme-speed", "--speed", dest="cme_speed", type=float)
+    ap.add_argument("--cme_width", "--cme-width", "--width", dest="cme_width", type=float, default=60.0)
+    ap.add_argument("--cme_lat", "--cme-lat", "--lat", dest="cme_lat", type=float, default=np.nan)
+    ap.add_argument("--cme_lon", "--cme-lon", "--lon", dest="cme_lon", type=float, default=np.nan)
+    ap.add_argument("--cme_accel", "--cme-accel", "--accel", dest="cme_accel", type=float, default=np.nan)
+    ap.add_argument("--cme_cpa", "--cme-cpa", "--cpa", dest="cme_cpa", type=float, default=np.nan,
+                    help="central position angle in degrees (ignored for full halos)")
+    ap.add_argument("--cme_v20r", "--cme-v20r", dest="cme_v20r", type=float, default=np.nan,
+                    help="CDAW 20R speed (km/s) from the DONKI CDAW analysis")
+    ap.add_argument("--cme_dv2", "--cme-dv2", dest="cme_dv2", type=float, default=np.nan,
+                    help="second-order speed difference dv2 (km/s) from CDAW")
+    ap.add_argument("--cme_mass", "--cme-mass", dest="cme_mass", type=float, default=np.nan,
+                    help="CME mass estimate (g) from the DONKI CDAW analysis")
+    ap.add_argument("--cme_energy", "--cme-energy", dest="cme_energy", type=float, default=np.nan,
+                    help="CME kinetic energy estimate (erg) from the DONKI CDAW analysis")
+    ap.add_argument("--cme_ar", "--cme-ar", dest="cme_ar", type=float, default=np.nan,
+                    help="NOAA active-region number (source known, position may be unknown)")
+    ap.add_argument("--cme_sharp_r", "--cme-sharp-r", dest="cme_sharp_r", type=float,
+                    default=np.nan,
+                    help="SHARP R_VALUE (unsigned flux near polarity inversion lines); "
+                         "it carries no Hale-polarity sign, so it only flags a "
+                         "southern source; not fetched automatically")
+    ap.add_argument("--halo", action="store_true")
+    ap.add_argument("--launch_time", default=None)
+    ap.add_argument("--json", action="store_true")
+    ap.add_argument("--dashboard", action="store_true")
+    args = ap.parse_args()
+
+    report = {"version": "3.4.0", "generated_utc": datetime.now(timezone.utc).isoformat()}
+    live = pd.DataFrame()
+    if args.live:
+        live, completeness = build_live_frame()
+        live5 = build_live_5min()
+        report["data_completeness"] = completeness
+        report["data_completeness"]["l1_5min_rows"] = int(len(live5))
+        if not live.empty:
+            report["l1_now"] = {
+                "as_of": str(live["datetime"].iloc[-1]),
+                "b_mag": _f(live["b_mag"].iloc[-1]),
+                "bz_gsm": _f(live["bz_gsm"].iloc[-1]),
+                "v_flow": _f(live["v_flow"].iloc[-1]),
+                "np_dens": _f(live["np_dens"].iloc[-1]),
+                "dst": _f(live["dst"].iloc[-1]),
+            }
+            report["mo"] = detect_mo(live5)
+            bz6 = None
+            if report["mo"].get("mo_active"):
+                report["flux_rope_3dcore"] = run_3dcore(live5)
+                if report["flux_rope_3dcore"].get("status") == "ok":
+                    bz6 = report["flux_rope_3dcore"].get("bz_forecast_6h_min")
+            report["tactical"] = run_tactical(live, bz_forecast=bz6)
+            report["live_feeds"] = {
+                "goes_xray": fetch_goes_xray(),
+                "hek": fetch_hek_events(days=3),
+                "enlil": fetch_enlil(),
+            }
+    if args.cme:
+        if not args.cme_speed:
+            ap.error("--cme requires --cme_speed")
+        cme = build_cme(args)
+        report["cme_input"] = {k: _f(v) if isinstance(v, (int, float, np.floating)) else v
+                               for k, v in cme.items()}
+        report["impact"] = run_impact(cme)
+        report["transit"] = run_transit(cme)
+        ambient = build_ambient_context(live) if not live.empty else {}
+        report["apex"] = run_apex(cme, report["transit"], ambient)
     if args.dashboard:
-        dash_path = os.path.join(os.path.dirname(__file__), "Zar-Manah_HELIOS.html")
-        print(f"🚀 Opening Zar-Manah HELIOS Space Weather Cockpit: {dash_path}")
-        if sys.platform == "darwin":
-            import subprocess
-            subprocess.run(["open", os.path.abspath(dash_path)], check=False)
-        else:
-            import webbrowser
-            webbrowser.open(f"file://{os.path.abspath(dash_path)}")
-        return
-
-    # Route 1: Transit Prediction (24-72h CME)
-    if args.cme_speed is not None or args.cme:
-        speed_val = args.cme_speed if args.cme_speed is not None else 1000.0
-        is_halo = 1 if (args.halo or args.cme_width >= 360.0) else 0
-        predict_transit_cme(speed_val, args.cme_width, args.cme_accel, is_halo, lat=args.cme_lat, lon=args.cme_lon, as_json=args.json)
-        return
-
-    # Route 2: Tactical Prediction (1-6h Nowcasting)
-    models, metrics = load_tactical_models()
-
-    fallback_reason = None
-    if args.sample:
-        data_source = "synthetic_benchmark"
-        features_df = run_synthetic_sample(args.sample, as_json=args.json)
-    else:
-        # Default mode: Live NOAA SWPC L1 telemetry (or explicitly flagged synthetic fallback)
-        try:
-            features_df = fetch_noaa_live(as_json=args.json)
-            data_source = "live_noaa_swpc"
-        except Exception as e:
-            data_source = "synthetic_fallback"
-            fallback_reason = str(e)
-            print(f"⚠️ Live telemetry stream error: {e}", file=sys.stderr)
-            print("🔄 Falling back to synthetic quiet baseline scenario (flagged in JSON).", file=sys.stderr)
-            features_df = run_synthetic_sample("quiet", as_json=args.json)
-
-    results = predict_tactical_storm(features_df[FEATURE_COLS], models, metrics)
-
+        print("HELIOS v3.4 serves no dashboard from this CLI: open Zar-Manah_HELIOS.html "
+              "(physics + live L1) or run server.py (this pipeline on 127.0.0.1:8787). "
+              "Use --json for machine output.")
     if args.json:
-        out = {
-            "system": "Zar-Manah HELIOS 2.0",
-            "version": "2.5.19",
-            "doi": "10.5281/zenodo.24215019",
-            "concept_doi": "10.5281/zenodo.24215019",
-            "version_doi": "10.5281/zenodo.24262095",
-            "type": "tactical_dst_forecast",
-            "data_source": data_source,
-            "horizons": {}
-        }
-        if fallback_reason:
-            out["fallback_reason"] = fallback_reason
-        for lead in [1, 2, 3, 6]:
-            r = results[lead]
-            pt = float(r["pred"])
-            if pt <= -200:
-                threat = "G5 EXTREME SUPERSTORM"
-            elif pt <= -100:
-                threat = "G3/G4 SEVERE STORM"
-            elif pt <= -50:
-                threat = "G1/G2 MODERATE STORM"
-            else:
-                threat = "G0 QUIET / MINOR"
-            out["horizons"][f"plus_{lead}h"] = {
-                "expected_dst_nT": round(pt, 2),
-                "conformal_interval_90_nT": [round(float(r["q10"]), 2), round(float(r["q90"]), 2)],
-                "margin_nT": round(float(r["margin"]), 2),
-                "severity_threat": threat
-            }
-        print(json.dumps(out, indent=2))
-        return
+        print(json.dumps(report, indent=2, default=float))
+    else:
+        _pretty(report)
+    return 0
 
-    print("\n" + "=" * 78)
-    print("⚡ ZAR-MANAH HELIOS-TACTICAL: MULTI-HORIZON RING CURRENT (Dst) FORECAST")
-    print("=" * 78)
-    print(f"{'Horizon':<10} | {'Expected Dst':<14} | {'90% Conformal Interval':<26} | {'Severity Threat Level':<20}")
-    print("-" * 78)
 
-    for lead in [1, 2, 3, 6]:
-        r = results[lead]
-        pt = r["pred"]
-        lo = r["q10"]
-        hi = r["q90"]
-
-        if pt <= -200:
-            threat = "🔴 G5 EXTREME SUPERSTORM"
-        elif pt <= -100:
-            threat = "🟠 G3/G4 SEVERE STORM"
-        elif pt <= -50:
-            threat = "🟡 G1/G2 MODERATE STORM"
-        else:
-            threat = "🟢 QUIET / MINOR"
-
-        print(f"+{lead}h Lead   | {pt:<+6.1f} nT       | [{lo:<+6.1f} nT, {hi:<+6.1f} nT] (±{r['margin']:.1f}) | {threat:<20}")
-    print("=" * 78)
-    print("Calibration: Conformal Quantile Regression guarantees 90% target coverage on Cycle 25.")
+def _pretty(report: dict) -> None:
+    print(f"HELIOS v3.4  generated {report['generated_utc']}")
+    if "data_completeness" in report:
+        print("data completeness:", report["data_completeness"])
+    if "l1_now" in report:
+        print("L1 now:", report["l1_now"])
+    if "tactical" in report and "horizons" in report["tactical"]:
+        print(f"tactical (Dst now {report['tactical'].get('dst_now')}):")
+        for h, v in report["tactical"]["horizons"].items():
+            print(f"  {h:>5}  pred={v['dst_pred']}  ode={v['dst_ode']}  resid={v['residual']}")
+    if "mo" in report:
+        print("magnetic obstacle:", report["mo"])
+    if "flux_rope_3dcore" in report:
+        print("3DCORE:", report["flux_rope_3dcore"])
+    if "cme_input" in report:
+        print("CME:", report["cme_input"])
+    if "impact" in report:
+        print("impact:", report["impact"])
+    if "transit" in report:
+        print("transit:", report["transit"])
+    if "apex" in report:
+        print("apex:", report["apex"])
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

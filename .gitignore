@@ -1,9 +1,22 @@
+# Local-only safety net. This file does not create a repository; it only tells any
+# future publishing step what must never travel.
+
+# Python junk
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ipynb_checkpoints/
+
+# OS junk
 .DS_Store
-data/raw/omni2_all_years.dat
-data/processed/*.parquet
-*.pt.cache
-*.tar.gz
+Thumbs.db
+
+# Raw observations. The six processed inputs in data/processed/ DO travel,
+# and so does models/v3/ with its checksum manifest.
 data/raw/
-models/_*.pt
+
+# Local environment
+.venv/
+venv/
+.env

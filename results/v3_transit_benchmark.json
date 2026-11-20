@@ -1,0 +1,242 @@
+{
+  "mode": "full",
+  "physics": {
+    "w_amb_km_s": 419.9995732679588,
+    "gamma_km_inv": 1.9074347013964563e-08,
+    "physics_only_mae_h": 25.052471514781022
+  },
+  "conformal_q": {
+    "0": 8.620047579308014,
+    "1": 8.99949956430483,
+    "2": 12.823943178195819,
+    "global": 9.405874955950516
+  },
+  "q_abs": {
+    "0": 32.659498677327186,
+    "1": 42.93814113934463,
+    "2": 35.810988162768275,
+    "global": 35.80253619765642
+  },
+  "q_norm": {
+    "0": 1.583374353872709,
+    "1": 1.680533043073005,
+    "2": 1.9200984865541897,
+    "global": 1.6821175146960927
+  },
+  "regime_sigma": {
+    "0": 20.626517410394257,
+    "1": 25.550310549579198,
+    "2": 18.650599650768278,
+    "global": 21.097712277168693
+  },
+  "band_mode": "cqr",
+  "band_level": 0.9,
+  "coverage_floor": 0.88,
+  "selection_rule_satisfied": true,
+  "eligible": {
+    "cqr": true,
+    "abs_conformal": true,
+    "abs_conformal_normalized": true
+  },
+  "oof_band": {
+    "cqr": {
+      "coverage": 0.8975,
+      "width_h": 71.41139223636046
+    },
+    "abs_conformal": {
+      "coverage": 0.8975,
+      "width_h": 74.48300197378059
+    },
+    "abs_conformal_normalized": {
+      "coverage": 0.8975,
+      "width_h": 74.48300197378057
+    }
+  },
+  "regime_edges_v_lin": [
+    603.0,
+    938.0
+  ],
+  "feature_selection": {
+    "chosen_groups": [
+      "preconditioning"
+    ],
+    "trace": [
+      {
+        "step": 0,
+        "added": null,
+        "n_features": 16,
+        "oof_mae_h": 17.572940439036003,
+        "oof_se_h": null,
+        "rule": "one-SE paired (pre-2020 OOF)"
+      },
+      {
+        "step": 1,
+        "added": "preconditioning",
+        "n_features": 19,
+        "oof_mae_h": 17.349991811007364,
+        "oof_se_h": 0.19523344181794208,
+        "gain_h": 0.222948628028641,
+        "need_h": 0.19523344181794208,
+        "n_paired": 400,
+        "rule": "one-SE paired (pre-2020 OOF)"
+      },
+      {
+        "step": 2,
+        "added": null,
+        "rejected_best": "geometry",
+        "n_features": 19,
+        "oof_mae_h": 17.349991811007364,
+        "oof_se_h": 0.13841668011482106,
+        "candidate_oof_mae_h": 17.23705975048067,
+        "gain_h": 0.11293206052669282,
+        "need_h": 0.13841668011482106,
+        "n_paired": 400,
+        "rule": "one-SE paired (pre-2020 OOF)"
+      }
+    ],
+    "min_gain_h": 0.05
+  },
+  "ensemble": {
+    "blend_mode": "inverse_mae",
+    "weights": {
+      "lgb": 0.25095388668266255,
+      "xgb": 0.24800891704273398,
+      "et": 0.25475421822094535,
+      "ridge": 0.24628297805365806
+    },
+    "target_space": "log",
+    "member_oof_mae_h": {
+      "lgb": 17.523456987071302,
+      "xgb": 17.7315384118397,
+      "et": 17.262048376400323,
+      "ridge": 17.855800160350082
+    },
+    "blend_oof_mae_h": {
+      "equal": 17.21408994149245,
+      "inverse_mae": 17.213183845246416,
+      "nnls": 17.237649202214538
+    },
+    "space_selection": {
+      "linear": {
+        "member_oof_mae_h": {
+          "lgb": 17.412054171919376,
+          "xgb": 17.547723070229424,
+          "et": 17.478289983227,
+          "ridge": 18.171299963728938,
+          "lgb_residual": 19.034000601900324
+        },
+        "blend_oof_mae_h": {
+          "equal": 17.27552815944437,
+          "inverse_mae": 17.27541597583599,
+          "nnls": 17.26185818636932
+        },
+        "n_full_oof": 400
+      },
+      "log": {
+        "member_oof_mae_h": {
+          "lgb": 17.523456987071302,
+          "xgb": 17.7315384118397,
+          "et": 17.262048376400323,
+          "ridge": 17.855800160350082
+        },
+        "blend_oof_mae_h": {
+          "equal": 17.21408994149245,
+          "inverse_mae": 17.213183845246416,
+          "nnls": 17.237649202214538
+        },
+        "n_full_oof": 400
+      }
+    }
+  },
+  "features": [
+    "v_lin",
+    "width",
+    "v_20R",
+    "is_halo",
+    "v_diff_ambient",
+    "drag_accel_proxy",
+    "transit_hours_dbm_prior",
+    "is_fast_cme",
+    "sin_cycle",
+    "cos_cycle",
+    "dbm0_w350_g8",
+    "dbm1_w400_g8",
+    "dbm2_w450_g8",
+    "dbm3_w500_g8",
+    "dbm4_w350_g8",
+    "dbm5_w450_g8",
+    "prior_36h_max_speed",
+    "prior_24h_max_speed",
+    "prior_6h_count"
+  ],
+  "params": {
+    "n_estimators": 200,
+    "learning_rate": 0.04,
+    "num_leaves": 7,
+    "max_depth": 3,
+    "min_child_samples": 20,
+    "subsample": 0.85,
+    "colsample_bytree": 0.8,
+    "reg_lambda": 2.0,
+    "objective": "mae"
+  },
+  "n_seeds": 7,
+  "train": {
+    "n": 484,
+    "mae": 13.129865379236186,
+    "rmse": 17.097746463546372,
+    "median_ae": 10.161657041111244,
+    "bias": -2.635456926018392,
+    "coverage90": 0.9979338842975206,
+    "mean_width_h": 74.82470753344857,
+    "fast_n": 137,
+    "fast_mae": 13.348706103094582,
+    "fast_rmse": 17.79502227075021,
+    "fast_coverage90": 1.0
+  },
+  "test_cycle25": {
+    "n": 126,
+    "mae": 15.471326752903948,
+    "rmse": 20.746867548029662,
+    "median_ae": 12.249883312747098,
+    "bias": -1.4743990175649833,
+    "coverage90": 0.9206349206349206,
+    "mean_width_h": 74.04189215198109,
+    "fast_n": 33,
+    "fast_mae": 20.42922667286433,
+    "fast_rmse": 26.409268797276837,
+    "fast_coverage90": 0.8787878787878788
+  },
+  "symmetric_band_floor_h": 69.31261077350318,
+  "asymmetric_band_floor_h": 64.62501313143652,
+  "baseline_dbm_static": {
+    "n": 108,
+    "mae": 17.614018890355002,
+    "rmse": 22.423805287824504,
+    "median_ae": 13.70160391542108
+  },
+  "baseline_dbm_legacy_constants": {
+    "n": 109,
+    "mae": 26.066844437074685,
+    "rmse": 29.408175098740028,
+    "median_ae": 23.96662963456913
+  },
+  "baseline_persistence_mean_transit": {
+    "n": 126,
+    "mae": 17.260793905869665
+  },
+  "test_bench91_served": {
+    "n": 91,
+    "mae": 11.579221493303312,
+    "rmse": 16.128426346044886,
+    "median_ae": 8.848939975502248,
+    "bias": -1.459772502848889,
+    "coverage90": 0.9560439560439561,
+    "mean_width_h": 71.43927012651751,
+    "fast_n": 14,
+    "fast_mae": 15.698218338179393,
+    "fast_rmse": 21.265329675511484,
+    "fast_coverage90": 0.8571428571428571,
+    "note": "served production model on the 91-event benchmark; not a gate"
+  }
+}

@@ -1,38 +1,44 @@
 cff-version: 1.2.0
-message: "If you use this software or its results, please cite both the concept DOI (all versions) and the exact version DOI below."
-title: "Zar-Manah HELIOS: Dual-Scale Space Weather Intelligence Coupling Tactical Conformal Nowcasting (1-6h) and Planetary CME Shock Transit (24-72h) across Solar Cycles 23-25"
+message: >-
+  This metadata describes the v3.4 limits study. No DOI is claimed here: a DOI
+  exists only after a deposit, so none is embedded in this package.
+title: >-
+  Zar-Manah HELIOS v3.4: Where Remote CME Forecasting Stops — An Empirical
+  Information-Ceiling Study Across Solar Cycles 23–25
 abstract: >-
-  HELIOS 2.0 is an open, locally executable four-tier space weather intelligence
-  architecture. It couples de-projected 3D CME kinematics and coronal magnetic
-  proxies (HELIOS-CHIRALITY-APEX, HELIOS-STORM-APEX), a dynamic MoK + GBDT shock
-  transit ensemble (HELIOS-Transit), and calibrated conformal nowcasting of the
-  ring current at L1 (HELIOS-Tactical). All models are evaluated out-of-distribution
-  on Solar Cycle 25 and released with reproducible artifacts, checksums, and a
-  command-line inference client.
+  An empirical study of the limits of remote CME arrival-time forecasting,
+  built on a frozen catalogue of 43,559 CDAW CMEs, 610 matched CME–ICME
+  associations and a held-out Solar Cycle 25 cohort. Two frozen transit models
+  are evaluated on two frozen cohorts and all four cells are reported. On the
+  full cohort (n = 126) the served and benchmark models are statistically
+  indistinguishable (15.4713 h vs 15.4275 h; paired ΔMAE = +0.0438 h, 95 % CI
+  [−0.8367, +0.9117], p = 0.94), while on the frozen one-to-one subset (n = 91)
+  both improve by four to five hours (11.5792 h vs 10.5336 h). The cohort
+  effect therefore dominates the model effect by a factor of five. Two design
+  targets are reported as information-infeasible rather than redefined: a 90 %
+  conformal interval narrower than 35 h (measured 74.0419 h at 0.9206 coverage;
+  static floor 69.3126 h symmetric, 64.6250 h asymmetric) and an Apex Brier
+  skill score above 0.25 for Dst ≤ −100 nT (measured 0.0768; oracle ceiling
+  0.1500). The operational context is recomputed directly from the CCMC Earth
+  CME Scoreboard public API and stated as a like-for-like caveat: the best
+  public entry, 9.72 h, is obtained on 47 self-selected CMEs with human
+  adjustment of the cone parameters, whereas HELIOS is fully automatic and runs
+  on a single consumer CPU core.
 authors:
   - family-names: "Manah"
     given-names: "Zar"
-version: "2.5.19"
-date-released: "2026-11-15"
-doi: "10.5281/zenodo.24262095"
+    alias: "Zar-Manah"
+version: "3.4.0"
 license:
   - "MIT"
   - "CC-BY-4.0"
-repository-code: "https://github.com/Zar-Manah/HELIOS-Space-Weather"
-url: "https://doi.org/10.5281/zenodo.24215019"
 keywords:
   - space weather
   - coronal mass ejection
+  - arrival time
   - conformal prediction
-  - geomagnetic storm
-  - Dst index
+  - information ceiling
+  - reproducibility
   - solar cycle 25
   - machine learning
   - open science
-identifiers:
-  - type: doi
-    value: "10.5281/zenodo.24262095"
-    description: "Version DOI (v2.5.19)"
-  - type: doi
-    value: "10.5281/zenodo.24215019"
-    description: "Concept DOI (all versions)"

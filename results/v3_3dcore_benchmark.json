@@ -1,0 +1,43 @@
+{
+  "n_mc_total": 428,
+  "n_fits": 1195,
+  "calibrator": {
+    "n_train": 946,
+    "n_test": 249
+  },
+  "by_fraction": {
+    "frac_20": {
+      "n": 77,
+      "rmse_bz_rest": 10.41847501669832,
+      "mae_bzmin_rest": 6.0402874823352,
+      "mae_bzmin_persistence": 4.21,
+      "bzmin_skill_vs_persistence": -0.4347476205071734,
+      "mean_corr_bz_rest": 0.11127588567209722,
+      "fit_rmse_median": 2.0955770081575813,
+      "mae_bzmin_calibrated": 3.3537595851219546,
+      "bzmin_skill_calibrated": 0.20338252134870438
+    },
+    "frac_35": {
+      "n": 86,
+      "rmse_bz_rest": 5.9681752211012515,
+      "mae_bzmin_rest": 4.440776976910573,
+      "mae_bzmin_persistence": 4.26,
+      "bzmin_skill_vs_persistence": -0.04243591007290459,
+      "mean_corr_bz_rest": 0.23970648718679533,
+      "fit_rmse_median": 2.134505500702244,
+      "mae_bzmin_calibrated": 3.5352360881486575,
+      "bzmin_skill_calibrated": 0.170132373674024
+    },
+    "frac_50": {
+      "n": 86,
+      "rmse_bz_rest": 4.8036465048407315,
+      "mae_bzmin_rest": 4.84746023834566,
+      "mae_bzmin_persistence": 4.6850000000000005,
+      "bzmin_skill_vs_persistence": -0.0346766784088921,
+      "mean_corr_bz_rest": 0.1272199520775846,
+      "fit_rmse_median": 2.166141219512372,
+      "mae_bzmin_calibrated": 2.8185495345531475,
+      "bzmin_skill_calibrated": 0.3983885732010358
+    }
+  }
+}
