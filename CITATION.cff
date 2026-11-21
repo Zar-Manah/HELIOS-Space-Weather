@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: >-
-  This metadata describes the v3.4 limits study. No DOI is claimed here: a DOI
-  exists only after a deposit, so none is embedded in this package.
+  If you use this software or study, please cite it using the metadata from this
+  file and the Zenodo deposition.
 title: >-
   Zar-Manah HELIOS v3.4: Where Remote CME Forecasting Stops — An Empirical
   Information-Ceiling Study Across Solar Cycles 23–25
@@ -28,7 +28,11 @@ authors:
   - family-names: "Manah"
     given-names: "Zar"
     alias: "Zar-Manah"
-version: "3.4.0"
+    orcid: "https://orcid.org/0009-0007-8443-8999"
+    affiliation: "Independent Researcher, Madrid, Spain"
+version: "3.4.1"
+doi: "10.5281/zenodo.24215019"
+date-released: "2026-11-21"
 license:
   - "MIT"
   - "CC-BY-4.0"

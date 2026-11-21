@@ -4,7 +4,7 @@
 
 [![License: MIT / CC BY 4.0](https://img.shields.io/badge/License-MIT%20%2F%20CC%20BY%204.0-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Status: local study](https://img.shields.io/badge/status-local%20study%2C%20not%20deposited-lightgrey.svg)](#status)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24215019.svg)](https://doi.org/10.5281/zenodo.24215019)
 
 ---
 
@@ -210,8 +210,10 @@ The limits study lives in `paper/limits_study/`:
 
 | File | Contents |
 |---|---|
-| `manuscript_limits.md` | the study |
+| `manuscript_limits.md` | the study (raw markdown) |
+| `manuscript_limits.pdf` | academic preprint (typeset PDF with figures) |
 | `RESULTS_TABLE.md` | generated four-cell table |
+| `figures/` | scientific figures (four-cell scatter, conformal bands, tactical horizons) |
 
 ## What this work does not claim
 
@@ -224,8 +226,7 @@ The limits study lives in `paper/limits_study/`:
 
 ## Status
 
-Independent research study released as an open package. `CITATION.cff` carries
-no DOI: the citation record of this package is the package itself.
+Independent research study deposited on Zenodo under Concept DOI [`10.5281/zenodo.24215019`](https://doi.org/10.5281/zenodo.24215019) (Version 3.4.1: [`10.5281/zenodo.24420405`](https://doi.org/10.5281/zenodo.24420405)). Typeset academic preprint with figures is available at [`paper/limits_study/manuscript_limits.pdf`](paper/limits_study/manuscript_limits.pdf).
 
 ## Data attributions
 
