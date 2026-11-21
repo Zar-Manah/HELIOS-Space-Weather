@@ -226,7 +226,7 @@ The limits study lives in `paper/limits_study/`:
 
 ## Status
 
-Independent research study deposited on Zenodo under Concept DOI [`10.5281/zenodo.24215019`](https://doi.org/10.5281/zenodo.24215019) (Version 3.4.1: [`10.5281/zenodo.24420405`](https://doi.org/10.5281/zenodo.24420405)). Typeset academic preprint with figures is available at [`paper/limits_study/manuscript_limits.pdf`](paper/limits_study/manuscript_limits.pdf).
+Independent research study deposited on Zenodo under Concept DOI [`10.5281/zenodo.24215019`](https://doi.org/10.5281/zenodo.24215019) (Version 3.4.1: [`10.5281/zenodo.24421551`](https://doi.org/10.5281/zenodo.24421551)). Typeset academic preprint with figures is available at [`paper/limits_study/manuscript_limits.pdf`](paper/limits_study/manuscript_limits.pdf).
 
 ## Data attributions
 
